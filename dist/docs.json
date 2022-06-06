@@ -1,0 +1,107 @@
+{
+  "api": {
+    "name": "CapacitorFirestorePlugin",
+    "slug": "capacitorfirestoreplugin",
+    "docs": "",
+    "tags": [],
+    "methods": [
+      {
+        "name": "addDocumentSnapshotListener",
+        "signature": "<T>(options: DocumnentReference, callback: DocumentSnapshot<T>) => Promise<CallbackID>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "DocumnentReference"
+          },
+          {
+            "name": "callback",
+            "docs": "",
+            "type": "DocumentSnapshot<T>"
+          }
+        ],
+        "returns": "Promise<string>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [
+          "DocumnentReference",
+          "DocumentSnapshot",
+          "T",
+          "CallbackID"
+        ],
+        "slug": "adddocumentsnapshotlistener"
+      }
+    ],
+    "properties": []
+  },
+  "interfaces": [
+    {
+      "name": "DocumnentReference",
+      "slug": "documnentreference",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "reference",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "enums": [],
+  "typeAliases": [
+    {
+      "name": "DocumentSnapshot",
+      "slug": "documentsnapshot",
+      "docs": "",
+      "types": [
+        {
+          "text": "(data: T | null, err?: any): void",
+          "complexTypes": [
+            "T"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CallbackID",
+      "slug": "callbackid",
+      "docs": "",
+      "types": [
+        {
+          "text": "string",
+          "complexTypes": []
+        }
+      ]
+    }
+  ],
+  "pluginConfigs": [
+    {
+      "name": "CapacitorFirestore",
+      "slug": "capacitorfirestore",
+      "properties": [
+        {
+          "name": "projectId",
+          "tags": [
+            {
+              "text": "1.0.0",
+              "name": "since"
+            },
+            {
+              "text": "\"my-first-project\"",
+              "name": "example"
+            }
+          ],
+          "docs": "Set the GCP/Firebase project id",
+          "complexTypes": [],
+          "type": "string | undefined"
+        }
+      ],
+      "docs": ""
+    }
+  ]
+}
