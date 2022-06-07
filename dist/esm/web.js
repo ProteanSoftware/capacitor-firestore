@@ -1,33 +1,100 @@
 import { WebPlugin } from '@capacitor/core';
+import { initializeApp, deleteApp } from "@firebase/app";
+import { getAuth, signInWithCustomToken } from "@firebase/auth";
+import { initializeFirestore, terminate, enableIndexedDbPersistence, onSnapshot, doc, collection, query, where, CACHE_SIZE_UNLIMITED } from "@firebase/firestore";
 export class CapacitorFirestoreWeb extends WebPlugin {
-    addDocumentSnapshotListener(options, callback) {
-        callback({
-            id: '1',
-            data: {
-                item: 1
+    constructor() {
+        super(...arguments);
+        this.app = null;
+        this.firestore = null;
+        this.subscriptions = {};
+    }
+    initializeFirestore(options) {
+        let teardownPromise = Promise.resolve();
+        if (this.firestore !== null) {
+            teardownPromise = terminate(this.firestore);
+        }
+        teardownPromise = teardownPromise.then(() => {
+            if (this.app !== null) {
+                deleteApp(this.app);
             }
         });
-        return Promise.reject("Not implemented - " + options.reference);
+        const initPromise = teardownPromise.then(() => {
+            const app = initializeApp({
+                apiKey: options.apiKey,
+                appId: options.applicationId,
+                projectId: options.projectId
+            });
+            const firestore = initializeFirestore(app, {
+                cacheSizeBytes: CACHE_SIZE_UNLIMITED
+            });
+            return {
+                app,
+                firestore
+            };
+        });
+        return initPromise.then((setup) => {
+            enableIndexedDbPersistence(setup.firestore).then(() => {
+                this.app = setup.app;
+                this.firestore = setup.firestore;
+            });
+        });
+    }
+    addDocumentSnapshotListener(options, callback) {
+        if (this.firestore === null) {
+            return Promise.reject("Firestore not initialized");
+        }
+        const unSubFunc = onSnapshot(doc(this.firestore, options.reference), snapshot => {
+            callback({
+                id: snapshot.id,
+                data: snapshot.exists() ? snapshot.data() : null
+            });
+        });
+        const id = new Date().getTime().toString();
+        this.subscriptions[id] = unSubFunc;
+        return Promise.resolve(id);
     }
     addCollectionSnapshotListener(options, callback) {
-        callback({
-            collection: [
-                {
-                    id: '1',
-                    data: {
-                        item: 1
-                    }
-                }
-            ]
+        if (this.firestore === null) {
+            return Promise.reject("Firestore not initialized");
+        }
+        let collectionQuery;
+        if (options.queryConstraints) {
+            const constraints = options.queryConstraints.map(constraint => where(constraint.fieldPath, constraint.opStr, constraint.value));
+            collectionQuery = query(collection(this.firestore, options.reference), ...constraints);
+        }
+        else {
+            collectionQuery = query(collection(this.firestore, options.reference));
+        }
+        const unSubFunc = onSnapshot(collectionQuery, snapshot => {
+            callback({
+                collection: snapshot.docs.map(doc => {
+                    return {
+                        id: doc.id,
+                        data: doc.data()
+                    };
+                })
+            });
         });
-        return Promise.reject("Not implemented - " + options.reference);
+        const id = new Date().getTime().toString();
+        this.subscriptions[id] = unSubFunc;
+        return Promise.resolve(id);
     }
     removeSnapshotListener(options) {
-        return Promise.reject("Not implemented - " + options.callbackId);
+        const unSubFunc = this.subscriptions[options.callbackId];
+        if (unSubFunc === undefined) {
+            return Promise.reject("No callback with id " + options.callbackId);
+        }
+        unSubFunc();
+        delete this.subscriptions[options.callbackId];
+        return Promise.resolve();
     }
     signInWithCustomToken(options) {
-        console.log(options.token);
-        return Promise.reject("Not implemented");
+        if (this.app === null) {
+            return Promise.reject("app not initialized");
+        }
+        const auth = getAuth(this.app);
+        return signInWithCustomToken(auth, options.token).then();
     }
 }
 //# sourceMappingURL=web.js.map

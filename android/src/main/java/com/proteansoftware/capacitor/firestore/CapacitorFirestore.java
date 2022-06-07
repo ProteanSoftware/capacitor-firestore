@@ -1,10 +1,7 @@
 package com.proteansoftware.capacitor.firestore;
 
 import android.content.Context;
-import android.util.Log;
-
 import androidx.annotation.NonNull;
-
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -13,7 +10,6 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -21,33 +17,50 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class CapacitorFirestore {
 
-    private FirebaseApp app;
-    private FirebaseFirestore db;
+    private FirebaseApp app = null;
+    private FirebaseFirestore db = null;
 
-    public void Initialize(Context context, String projectId, String applicationId, String apiKey) {
+    public void Initialize(Context context, String projectId, String applicationId, String apiKey) throws Exception {
+        if (context == null) {
+            throw new Exception("Context must not be null");
+        }
+
+        if (projectId == null) {
+            throw new Exception("ProjectId must not be null");
+        }
+
+        if (applicationId == null) {
+            throw new Exception("ApplicationId must not be null");
+        }
+
+        if (apiKey == null) {
+            throw new Exception("apiKey must not be null");
+        }
+
         FirebaseOptions options = new FirebaseOptions.Builder()
-                .setApplicationId(applicationId)
-                .setApiKey(apiKey)
-                .setProjectId(projectId)
-                .build();
+            .setApplicationId(applicationId)
+            .setApiKey(apiKey)
+            .setProjectId(projectId)
+            .build();
+
+        if (app != null) {
+            app.delete();
+        }
 
         this.app = FirebaseApp.initializeApp(context, options, "CapacitorFirestore");
 
         this.InitializeFirestore();
     }
 
-    public void signInWithCustomToken(String token, @NonNull OnCompleteListener<AuthResult> completeListener)
-    {
+    public void signInWithCustomToken(String token, @NonNull OnCompleteListener<AuthResult> completeListener) {
         FirebaseAuth auth = FirebaseAuth.getInstance(this.app);
         auth.signInWithCustomToken(token).addOnCompleteListener(completeListener);
     }
@@ -56,7 +69,11 @@ public class CapacitorFirestore {
         return this.db.document(documentReference).addSnapshotListener(listener);
     }
 
-    public ListenerRegistration addCollectionSnapshotListener(String collectionReference, List<JSQueryConstraints> queryConstraints, @NonNull EventListener<QuerySnapshot> listener) throws Exception {
+    public ListenerRegistration addCollectionSnapshotListener(
+        String collectionReference,
+        List<JSQueryConstraints> queryConstraints,
+        @NonNull EventListener<QuerySnapshot> listener
+    ) throws Exception {
         Query collection = this.db.collection(collectionReference);
 
         for (JSQueryConstraints queryConstraint : queryConstraints) {
@@ -126,14 +143,14 @@ public class CapacitorFirestore {
         }
 
         ArrayList<JSQueryConstraints> list = new ArrayList<>();
-        for(int x = 0; x < array.length(); x++) {
+        for (int x = 0; x < array.length(); x++) {
             JSONObject item = array.getJSONObject(x);
             String fieldPath = item.getString("fieldPath");
             String operation = item.getString("opStr");
             Object value = item.get("value");
 
             if (value instanceof JSONObject) {
-                JSONObject jsonObject = ((JSONObject)value);
+                JSONObject jsonObject = ((JSONObject) value);
                 if (jsonObject.has("seconds") && jsonObject.has("nanoseconds")) {
                     value = new Timestamp(jsonObject.getLong("seconds"), jsonObject.getInt("nanoseconds"));
                 } else {
@@ -146,18 +163,21 @@ public class CapacitorFirestore {
         return list;
     }
 
-    private void InitializeFirestore() {
-      if (this.db != null) {
-        this.db.terminate();
-      }
+    private void InitializeFirestore() throws Exception {
+        if (this.app == null) {
+            throw new Exception("app must be initialized first");
+        }
+        if (this.db != null) {
+            this.db.terminate();
+        }
 
-      this.db = FirebaseFirestore.getInstance(app);
+        this.db = FirebaseFirestore.getInstance(app);
 
-      FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-        .setPersistenceEnabled(true)
-        .setCacheSizeBytes(FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED)
-        .build();
+        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+            .setPersistenceEnabled(true)
+            .setCacheSizeBytes(FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED)
+            .build();
 
-      this.db.setFirestoreSettings(settings);
+        this.db.setFirestoreSettings(settings);
     }
 }

@@ -6,6 +6,29 @@
     "tags": [],
     "methods": [
       {
+        "name": "initializeFirestore",
+        "signature": "(options: FirestoreConfig) => Promise<void>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "FirestoreConfig"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options"
+          }
+        ],
+        "docs": "Configure the firestore instance with new configuration options.",
+        "complexTypes": [
+          "FirestoreConfig"
+        ],
+        "slug": "initializefirestore"
+      },
+      {
         "name": "signInWithCustomToken",
         "signature": "(options: CustomToken) => Promise<void>",
         "parameters": [
@@ -16,8 +39,13 @@
           }
         ],
         "returns": "Promise<void>",
-        "tags": [],
-        "docs": "",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options"
+          }
+        ],
+        "docs": "Login to firestore using a customer JWT token.",
         "complexTypes": [
           "CustomToken"
         ],
@@ -39,8 +67,21 @@
           }
         ],
         "returns": "Promise<string>",
-        "tags": [],
-        "docs": "",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options"
+          },
+          {
+            "name": "param",
+            "text": "callback"
+          },
+          {
+            "name": "returns",
+            "text": "The callback id which can be used to remove the listener."
+          }
+        ],
+        "docs": "Listen for snapshot changes on a document.",
         "complexTypes": [
           "DocumnentReference",
           "DocumentSnapshotCallback",
@@ -65,8 +106,21 @@
           }
         ],
         "returns": "Promise<string>",
-        "tags": [],
-        "docs": "",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options"
+          },
+          {
+            "name": "param",
+            "text": "callback"
+          },
+          {
+            "name": "returns",
+            "text": "The callback id which can be used to remove the listener."
+          }
+        ],
+        "docs": "Listen for snapshot changes on a collection.",
         "complexTypes": [
           "ColllectionReference",
           "CollectionSnapshotCallback",
@@ -86,8 +140,13 @@
           }
         ],
         "returns": "Promise<void>",
-        "tags": [],
-        "docs": "",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options"
+          }
+        ],
+        "docs": "Stop listening for snapshot changes on a document or collection.",
         "complexTypes": [
           "RemoveSnapshotListener"
         ],
@@ -97,6 +156,63 @@
     "properties": []
   },
   "interfaces": [
+    {
+      "name": "FirestoreConfig",
+      "slug": "firestoreconfig",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "projectId",
+          "tags": [
+            {
+              "text": "1.0.0",
+              "name": "since"
+            },
+            {
+              "text": "\"my-first-project\"",
+              "name": "example"
+            }
+          ],
+          "docs": "Set the GCP/Firebase project id",
+          "complexTypes": [],
+          "type": "string | undefined"
+        },
+        {
+          "name": "applicationId",
+          "tags": [
+            {
+              "text": "1.0.0",
+              "name": "since"
+            },
+            {
+              "text": "\"1:00000000000:web:abc00000000000000000\"",
+              "name": "example"
+            }
+          ],
+          "docs": "Set the Firebase application id",
+          "complexTypes": [],
+          "type": "string | undefined"
+        },
+        {
+          "name": "apiKey",
+          "tags": [
+            {
+              "text": "1.0.0",
+              "name": "since"
+            },
+            {
+              "text": "\"XxxxxxxxxxxXXxxxxxxxxx\"",
+              "name": "example"
+            }
+          ],
+          "docs": "Set the Firebase api key",
+          "complexTypes": [],
+          "type": "string | undefined"
+        }
+      ]
+    },
     {
       "name": "CustomToken",
       "slug": "customtoken",
@@ -160,7 +276,7 @@
           "complexTypes": [
             "T"
           ],
-          "type": "T"
+          "type": "T | null"
         }
       ]
     },
@@ -325,61 +441,5 @@
       ]
     }
   ],
-  "pluginConfigs": [
-    {
-      "name": "CapacitorFirestore",
-      "slug": "capacitorfirestore",
-      "properties": [
-        {
-          "name": "projectId",
-          "tags": [
-            {
-              "text": "1.0.0",
-              "name": "since"
-            },
-            {
-              "text": "\"my-first-project\"",
-              "name": "example"
-            }
-          ],
-          "docs": "Set the GCP/Firebase project id",
-          "complexTypes": [],
-          "type": "string | undefined"
-        },
-        {
-          "name": "applicationId",
-          "tags": [
-            {
-              "text": "1.0.0",
-              "name": "since"
-            },
-            {
-              "text": "\"1:00000000000:web:abc00000000000000000\"",
-              "name": "example"
-            }
-          ],
-          "docs": "Set the Firebase application id",
-          "complexTypes": [],
-          "type": "string | undefined"
-        },
-        {
-          "name": "apiKey",
-          "tags": [
-            {
-              "text": "1.0.0",
-              "name": "since"
-            },
-            {
-              "text": "\"XxxxxxxxxxxXXxxxxxxxxx\"",
-              "name": "example"
-            }
-          ],
-          "docs": "Set the Firebase api key",
-          "complexTypes": [],
-          "type": "string | undefined"
-        }
-      ],
-      "docs": ""
-    }
-  ]
+  "pluginConfigs": []
 }

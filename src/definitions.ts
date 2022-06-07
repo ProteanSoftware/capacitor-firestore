@@ -2,32 +2,34 @@
 
 declare module "@capacitor/cli" {
   export interface PluginsConfig {
-    CapacitorFirestore?: {
-      /**
-       * Set the GCP/Firebase project id
-       *
-       * @since 1.0.0
-       * @example "my-first-project"
-       */
-      projectId?: string;
-
-      /**
-       * Set the Firebase application id
-       *
-       * @since 1.0.0
-       * @example "1:00000000000:web:abc00000000000000000"
-       */
-       applicationId?: string;
-
-       /**
-       * Set the Firebase api key
-       *
-       * @since 1.0.0
-       * @example "XxxxxxxxxxxXXxxxxxxxxx"
-       */
-        apiKey?: string;
-    };
+    CapacitorFirestore?: FirestoreConfig;
   }
+}
+
+export interface FirestoreConfig {
+  /**
+   * Set the GCP/Firebase project id
+   *
+   * @since 1.0.0
+   * @example "my-first-project"
+   */
+  projectId?: string;
+
+  /**
+   * Set the Firebase application id
+   *
+   * @since 1.0.0
+   * @example "1:00000000000:web:abc00000000000000000"
+   */
+  applicationId?: string;
+
+  /**
+  * Set the Firebase api key
+  *
+  * @since 1.0.0
+  * @example "XxxxxxxxxxxXXxxxxxxxxx"
+  */
+  apiKey?: string;
 }
 
 export type CallbackId = string;
@@ -57,11 +59,11 @@ export interface DocumnentReference {
 }
 
 export interface DocumentSnapshot<T> {
-   /**
-   * The id of the document.
-   *
-   * @since 1.0.0
-   */
+  /**
+  * The id of the document.
+  *
+  * @since 1.0.0
+  */
   id: string;
 
   /**
@@ -69,7 +71,7 @@ export interface DocumentSnapshot<T> {
    *
    * @since 1.0.0
    */
-  data?: T;
+  data: T | null;
 }
 
 export interface CollectionSnapshot<T> {
@@ -89,8 +91,37 @@ export type DocumentSnapshotCallback<T> = (data: DocumentSnapshot<T> | null, err
 export type CollectionSnapshotCallback<T> = (data: CollectionSnapshot<T> | null, err?: any) => void;
 
 export interface CapacitorFirestorePlugin {
+  /**
+   * Configure the firestore instance with new configuration options.
+   * @param options 
+   */
+  initializeFirestore(options: FirestoreConfig): Promise<void>;
+  
+  /**
+   * Login to firestore using a customer JWT token.
+   * @param options 
+   */
   signInWithCustomToken(options: CustomToken): Promise<void>;
+  
+  /**
+   * Listen for snapshot changes on a document.
+   * @param options 
+   * @param callback
+   * @returns The callback id which can be used to remove the listener.
+   */
   addDocumentSnapshotListener<T>(options: DocumnentReference, callback: DocumentSnapshotCallback<T>): Promise<CallbackId>;
+  
+  /**
+   * Listen for snapshot changes on a collection.
+   * @param options 
+   * @param callback 
+   * @returns The callback id which can be used to remove the listener.
+   */
   addCollectionSnapshotListener<T>(options: ColllectionReference, callback: CollectionSnapshotCallback<T>): Promise<CallbackId>;
+  
+  /**
+   * Stop listening for snapshot changes on a document or collection.
+   * @param options
+   */
   removeSnapshotListener(options: RemoveSnapshotListener): Promise<void>;
 }
