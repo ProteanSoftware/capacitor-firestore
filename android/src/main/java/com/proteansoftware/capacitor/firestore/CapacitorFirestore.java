@@ -97,7 +97,21 @@ public class CapacitorFirestore {
             JSObject data = new JSObject();
 
             for (Map.Entry<String, Object> entry : firestoreData.entrySet()) {
-                data.put(entry.getKey(), entry.getValue());
+                Object value = entry.getValue();
+
+                if (value instanceof Timestamp) {
+                    JSONObject jsonObject = new JSObject();
+                    try {
+                        jsonObject.put("seconds", ((Timestamp) value).getSeconds());
+                        jsonObject.put("nanoseconds", ((Timestamp) value).getNanoseconds());
+                        jsonObject.put("specialType", "Timestamp");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    value = jsonObject;
+                }
+
+                data.put(entry.getKey(), value);
             }
 
             result.put("data", data);
