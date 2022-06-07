@@ -3,14 +3,17 @@ package com.proteansoftware.capacitor.firestore;
 import android.content.Context;
 import android.util.Log;
 
+import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @CapacitorPlugin(name = "CapacitorFirestore")
@@ -43,7 +46,19 @@ public class CapacitorFirestorePlugin extends Plugin {
     @PluginMethod()
     public void removeSnapshotListener(PluginCall call) {
         String callbackId = call.getString("callbackId");
+
+        if (callbackId == null) {
+            call.reject("callbackId is null");
+            return;
+        }
+
         ListenerRegistration listener = listeners.get(callbackId);
+
+        if (listener == null) {
+            call.reject("Could not find listener for callback: " + callbackId);
+            return;
+        }
+
         listener.remove();
         call.resolve();
     }
@@ -57,22 +72,44 @@ public class CapacitorFirestorePlugin extends Plugin {
             if (error != null) {
                 call.reject(error.getMessage(), error);
             } else {
-                JSObject result = new JSObject();
-                result.put("id", value.getId());
-                if (value.exists()) {
-                    Map<String, Object> firestoreData = value.getData();
-                    JSObject data = new JSObject();
-
-                    for (Map.Entry<String, Object> entry : firestoreData.entrySet()) {
-                        data.put(entry.getKey(), entry.getValue());
-                    }
-
-                    result.put("data", data);
-                }
-
+                JSObject result = implementation.ConvertSnapshotToJSObject(value);
                 call.resolve(result);
             }
         });
+
+        listeners.put(callbackId, listener);
+    }
+
+    @PluginMethod(returnType = PluginMethod.RETURN_CALLBACK)
+    public void addCollectionSnapshotListener(PluginCall call) {
+        call.setKeepAlive(true);
+        String callbackId = call.getCallbackId();
+        String collectionReference = call.getString("reference");
+        JSArray clientQueryConstraints = call.getArray("queryConstraints");
+        ListenerRegistration listener = null;
+        try {
+            List<JSQueryConstraints> queryConstraints = implementation.ConvertJSArrayToQueryConstraints(clientQueryConstraints);
+            listener = implementation.addCollectionSnapshotListener(collectionReference, queryConstraints, (value, error) -> {
+                if (error != null) {
+                    call.reject(error.getMessage(), error);
+                } else {
+                    JSObject result = new JSObject();
+                    JSArray items = new JSArray();
+
+                    List<DocumentSnapshot> documents = value.getDocuments();
+                    for (DocumentSnapshot documentSnapshot : documents) {
+                        JSObject item = implementation.ConvertSnapshotToJSObject(documentSnapshot);
+                        items.put(item);
+                    }
+
+                    result.put("collection", items);
+                    call.resolve(result);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            call.reject(e.getMessage(), e);
+        }
 
         listeners.put(callbackId, listener);
     }

@@ -1,19 +1,33 @@
 package com.proteansoftware.capacitor.firestore;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.getcapacitor.JSArray;
+import com.getcapacitor.JSObject;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class CapacitorFirestore {
 
@@ -40,6 +54,82 @@ public class CapacitorFirestore {
 
     public ListenerRegistration addDocumentSnapshotListener(String documentReference, @NonNull EventListener<DocumentSnapshot> listener) {
         return this.db.document(documentReference).addSnapshotListener(listener);
+    }
+
+    public ListenerRegistration addCollectionSnapshotListener(String collectionReference, List<JSQueryConstraints> queryConstraints, @NonNull EventListener<QuerySnapshot> listener) throws Exception {
+        Query collection = this.db.collection(collectionReference);
+
+        for (JSQueryConstraints queryConstraint : queryConstraints) {
+            String operation = queryConstraint.getOperation();
+
+            switch (operation) {
+                case "==":
+                    collection = collection.whereEqualTo(queryConstraint.getFieldPath(), queryConstraint.getValue());
+                    break;
+                case ">=":
+                    collection = collection.whereGreaterThanOrEqualTo(queryConstraint.getFieldPath(), queryConstraint.getValue());
+                    break;
+                case "<=":
+                    collection = collection.whereLessThanOrEqualTo(queryConstraint.getFieldPath(), queryConstraint.getValue());
+                    break;
+                case ">":
+                    collection = collection.whereGreaterThan(queryConstraint.getFieldPath(), queryConstraint.getValue());
+                    break;
+                case "<":
+                    collection = collection.whereLessThan(queryConstraint.getFieldPath(), queryConstraint.getValue());
+                    break;
+                case "array-contains":
+                    collection = collection.whereArrayContains(queryConstraint.getFieldPath(), queryConstraint.getValue());
+                    break;
+                default:
+                    throw new Exception("query operation not support: " + operation);
+            }
+        }
+
+        return collection.addSnapshotListener(listener);
+    }
+
+    public JSObject ConvertSnapshotToJSObject(DocumentSnapshot documentSnapshot) {
+        JSObject result = new JSObject();
+        result.put("id", documentSnapshot.getId());
+        if (documentSnapshot.exists()) {
+            Map<String, Object> firestoreData = documentSnapshot.getData();
+            JSObject data = new JSObject();
+
+            for (Map.Entry<String, Object> entry : firestoreData.entrySet()) {
+                data.put(entry.getKey(), entry.getValue());
+            }
+
+            result.put("data", data);
+        }
+
+        return result;
+    }
+
+    public List<JSQueryConstraints> ConvertJSArrayToQueryConstraints(JSArray array) throws Exception {
+        if (array == null) {
+            return null;
+        }
+
+        ArrayList<JSQueryConstraints> list = new ArrayList<>();
+        for(int x = 0; x < array.length(); x++) {
+            JSONObject item = array.getJSONObject(x);
+            String fieldPath = item.getString("fieldPath");
+            String operation = item.getString("opStr");
+            Object value = item.get("value");
+
+            if (value instanceof JSONObject) {
+                JSONObject jsonObject = ((JSONObject)value);
+                if (jsonObject.has("seconds") && jsonObject.has("nanoseconds")) {
+                    value = new Timestamp(jsonObject.getLong("seconds"), jsonObject.getInt("nanoseconds"));
+                } else {
+                    throw new Exception("unhandled JSONObject type: " + jsonObject);
+                }
+            }
+            list.add(new JSQueryConstraints(fieldPath, operation, value));
+        }
+
+        return list;
     }
 
     private void InitializeFirestore() {

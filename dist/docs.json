@@ -50,6 +50,32 @@
         "slug": "adddocumentsnapshotlistener"
       },
       {
+        "name": "addCollectionSnapshotListener",
+        "signature": "<T>(options: ColllectionReference, callback: CollectionSnapshotCallback<T>) => Promise<CallbackId>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "ColllectionReference"
+          },
+          {
+            "name": "callback",
+            "docs": "",
+            "type": "CollectionSnapshotCallback<T>"
+          }
+        ],
+        "returns": "Promise<string>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [
+          "ColllectionReference",
+          "CollectionSnapshotCallback",
+          "T",
+          "CallbackId"
+        ],
+        "slug": "addcollectionsnapshotlistener"
+      },
+      {
         "name": "removeSnapshotListener",
         "signature": "(options: RemoveSnapshotListener) => Promise<void>",
         "parameters": [
@@ -139,6 +165,75 @@
       ]
     },
     {
+      "name": "ColllectionReference",
+      "slug": "colllectionreference",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "queryConstraints",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "QueryConstraint"
+          ],
+          "type": "QueryConstraint[] | undefined"
+        }
+      ]
+    },
+    {
+      "name": "QueryConstraint",
+      "slug": "queryconstraint",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "fieldPath",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "opStr",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "QueryOperators"
+          ],
+          "type": "QueryOperators"
+        },
+        {
+          "name": "value",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "any"
+        }
+      ]
+    },
+    {
+      "name": "CollectionSnapshot",
+      "slug": "collectionsnapshot",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "collection",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "DocumentSnapshot",
+            "T"
+          ],
+          "type": "DocumentSnapshot<T>[]"
+        }
+      ]
+    },
+    {
       "name": "RemoveSnapshotListener",
       "slug": "removesnapshotlistener",
       "docs": "",
@@ -181,6 +276,51 @@
         {
           "text": "string",
           "complexTypes": []
+        }
+      ]
+    },
+    {
+      "name": "QueryOperators",
+      "slug": "queryoperators",
+      "docs": "",
+      "types": [
+        {
+          "text": "\"==\"",
+          "complexTypes": []
+        },
+        {
+          "text": "\">=\"",
+          "complexTypes": []
+        },
+        {
+          "text": "\"<=\"",
+          "complexTypes": []
+        },
+        {
+          "text": "\"<\"",
+          "complexTypes": []
+        },
+        {
+          "text": "\">\"",
+          "complexTypes": []
+        },
+        {
+          "text": "\"array-contains\"",
+          "complexTypes": []
+        }
+      ]
+    },
+    {
+      "name": "CollectionSnapshotCallback",
+      "slug": "collectionsnapshotcallback",
+      "docs": "",
+      "types": [
+        {
+          "text": "(data: CollectionSnapshot<T> | null, err?: any): void",
+          "complexTypes": [
+            "CollectionSnapshot",
+            "T"
+          ]
         }
       ]
     }

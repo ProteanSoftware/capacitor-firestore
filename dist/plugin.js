@@ -1,6 +1,15 @@
 var capacitorCapacitorFirestore = (function (exports, core) {
     'use strict';
 
+    /// <reference types="@capacitor/cli" />
+    function createQueryConstraint(field, operator, value) {
+        return {
+            fieldPath: field,
+            opStr: operator,
+            value: value
+        };
+    }
+
     const CapacitorFirestore = core.registerPlugin('CapacitorFirestore', {
         web: () => Promise.resolve().then(function () { return web; }).then(m => new m.CapacitorFirestoreWeb()),
     });
@@ -12,6 +21,19 @@ var capacitorCapacitorFirestore = (function (exports, core) {
                 data: {
                     item: 1
                 }
+            });
+            return Promise.reject("Not implemented - " + options.reference);
+        }
+        addCollectionSnapshotListener(options, callback) {
+            callback({
+                collection: [
+                    {
+                        id: '1',
+                        data: {
+                            item: 1
+                        }
+                    }
+                ]
             });
             return Promise.reject("Not implemented - " + options.reference);
         }
@@ -30,6 +52,7 @@ var capacitorCapacitorFirestore = (function (exports, core) {
     });
 
     exports.CapacitorFirestore = CapacitorFirestore;
+    exports.createQueryConstraint = createQueryConstraint;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

@@ -15,6 +15,7 @@ npx cap sync
 
 * [`signInWithCustomToken(...)`](#signinwithcustomtoken)
 * [`addDocumentSnapshotListener(...)`](#adddocumentsnapshotlistener)
+* [`addCollectionSnapshotListener(...)`](#addcollectionsnapshotlistener)
 * [`removeSnapshotListener(...)`](#removesnapshotlistener)
 * [Interfaces](#interfaces)
 * [Type Aliases](#type-aliases)
@@ -47,6 +48,22 @@ addDocumentSnapshotListener<T>(options: DocumnentReference, callback: DocumentSn
 | -------------- | -------------------------------------------------------------------------------------- |
 | **`options`**  | <code><a href="#documnentreference">DocumnentReference</a></code>                      |
 | **`callback`** | <code><a href="#documentsnapshotcallback">DocumentSnapshotCallback</a>&lt;T&gt;</code> |
+
+**Returns:** <code>Promise&lt;string&gt;</code>
+
+--------------------
+
+
+### addCollectionSnapshotListener(...)
+
+```typescript
+addCollectionSnapshotListener<T>(options: ColllectionReference, callback: CollectionSnapshotCallback<T>) => Promise<CallbackId>
+```
+
+| Param          | Type                                                                                       |
+| -------------- | ------------------------------------------------------------------------------------------ |
+| **`options`**  | <code><a href="#colllectionreference">ColllectionReference</a></code>                      |
+| **`callback`** | <code><a href="#collectionsnapshotcallback">CollectionSnapshotCallback</a>&lt;T&gt;</code> |
 
 **Returns:** <code>Promise&lt;string&gt;</code>
 
@@ -91,6 +108,29 @@ removeSnapshotListener(options: RemoveSnapshotListener) => Promise<void>
 | **`data`** | <code>T</code>      | The fields of the document or null if the document doesn't exist. | 1.0.0 |
 
 
+#### ColllectionReference
+
+| Prop                   | Type                           |
+| ---------------------- | ------------------------------ |
+| **`queryConstraints`** | <code>QueryConstraint[]</code> |
+
+
+#### QueryConstraint
+
+| Prop            | Type                                                      |
+| --------------- | --------------------------------------------------------- |
+| **`fieldPath`** | <code>string</code>                                       |
+| **`opStr`**     | <code><a href="#queryoperators">QueryOperators</a></code> |
+| **`value`**     | <code>any</code>                                          |
+
+
+#### CollectionSnapshot
+
+| Prop             | Type                                                                     |
+| ---------------- | ------------------------------------------------------------------------ |
+| **`collection`** | <code><a href="#documentsnapshot">DocumentSnapshot</a>&lt;T&gt;[]</code> |
+
+
 #### RemoveSnapshotListener
 
 | Prop             | Type                                              |
@@ -109,5 +149,15 @@ removeSnapshotListener(options: RemoveSnapshotListener) => Promise<void>
 #### CallbackId
 
 <code>string</code>
+
+
+#### QueryOperators
+
+<code>"==" | "&gt;=" | "&lt;=" | "&lt;" | "&gt;" | "array-contains"</code>
+
+
+#### CollectionSnapshotCallback
+
+<code>(data: <a href="#collectionsnapshot">CollectionSnapshot</a>&lt;T&gt; | null, err?: any): void</code>
 
 </docgen-api>

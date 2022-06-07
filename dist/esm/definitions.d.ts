@@ -26,6 +26,16 @@ declare module "@capacitor/cli" {
     }
 }
 export declare type CallbackId = string;
+export declare type QueryOperators = "==" | ">=" | "<=" | "<" | ">" | "array-contains";
+export declare function createQueryConstraint(field: string, operator: QueryOperators, value: any): QueryConstraint;
+export interface QueryConstraint {
+    fieldPath: string;
+    opStr: QueryOperators;
+    value: any;
+}
+export interface ColllectionReference extends DocumnentReference {
+    queryConstraints?: QueryConstraint[];
+}
 export interface DocumnentReference {
     reference: string;
 }
@@ -43,6 +53,9 @@ export interface DocumentSnapshot<T> {
      */
     data?: T;
 }
+export interface CollectionSnapshot<T> {
+    collection: DocumentSnapshot<T>[];
+}
 export interface CustomToken {
     token: string;
 }
@@ -50,8 +63,10 @@ export interface RemoveSnapshotListener {
     callbackId: CallbackId;
 }
 export declare type DocumentSnapshotCallback<T> = (data: DocumentSnapshot<T> | null, err?: any) => void;
+export declare type CollectionSnapshotCallback<T> = (data: CollectionSnapshot<T> | null, err?: any) => void;
 export interface CapacitorFirestorePlugin {
     signInWithCustomToken(options: CustomToken): Promise<void>;
     addDocumentSnapshotListener<T>(options: DocumnentReference, callback: DocumentSnapshotCallback<T>): Promise<CallbackId>;
+    addCollectionSnapshotListener<T>(options: ColllectionReference, callback: CollectionSnapshotCallback<T>): Promise<CallbackId>;
     removeSnapshotListener(options: RemoveSnapshotListener): Promise<void>;
 }

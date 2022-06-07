@@ -4,6 +4,15 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 var core = require('@capacitor/core');
 
+/// <reference types="@capacitor/cli" />
+function createQueryConstraint(field, operator, value) {
+    return {
+        fieldPath: field,
+        opStr: operator,
+        value: value
+    };
+}
+
 const CapacitorFirestore = core.registerPlugin('CapacitorFirestore', {
     web: () => Promise.resolve().then(function () { return web; }).then(m => new m.CapacitorFirestoreWeb()),
 });
@@ -15,6 +24,19 @@ class CapacitorFirestoreWeb extends core.WebPlugin {
             data: {
                 item: 1
             }
+        });
+        return Promise.reject("Not implemented - " + options.reference);
+    }
+    addCollectionSnapshotListener(options, callback) {
+        callback({
+            collection: [
+                {
+                    id: '1',
+                    data: {
+                        item: 1
+                    }
+                }
+            ]
         });
         return Promise.reject("Not implemented - " + options.reference);
     }
@@ -33,4 +55,5 @@ var web = /*#__PURE__*/Object.freeze({
 });
 
 exports.CapacitorFirestore = CapacitorFirestore;
+exports.createQueryConstraint = createQueryConstraint;
 //# sourceMappingURL=plugin.cjs.js.map
