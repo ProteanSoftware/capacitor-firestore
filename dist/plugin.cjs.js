@@ -11,7 +11,10 @@ const CapacitorFirestore = core.registerPlugin('CapacitorFirestore', {
 class CapacitorFirestoreWeb extends core.WebPlugin {
     addDocumentSnapshotListener(options, callback) {
         callback({
-            item: 1
+            id: '1',
+            data: {
+                item: 1
+            }
         });
         return Promise.resolve(options.reference);
     }

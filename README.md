@@ -39,13 +39,13 @@ signInWithCustomToken(options: CustomToken) => Promise<void>
 ### addDocumentSnapshotListener(...)
 
 ```typescript
-addDocumentSnapshotListener<T>(options: DocumnentReference, callback: DocumentSnapshot<T>) => Promise<CallbackID>
+addDocumentSnapshotListener<T>(options: DocumnentReference, callback: DocumentSnapshotCallback<T>) => Promise<CallbackID>
 ```
 
-| Param          | Type                                                                   |
-| -------------- | ---------------------------------------------------------------------- |
-| **`options`**  | <code><a href="#documnentreference">DocumnentReference</a></code>      |
-| **`callback`** | <code><a href="#documentsnapshot">DocumentSnapshot</a>&lt;T&gt;</code> |
+| Param          | Type                                                                                   |
+| -------------- | -------------------------------------------------------------------------------------- |
+| **`options`**  | <code><a href="#documnentreference">DocumnentReference</a></code>                      |
+| **`callback`** | <code><a href="#documentsnapshotcallback">DocumentSnapshotCallback</a>&lt;T&gt;</code> |
 
 **Returns:** <code>Promise&lt;string&gt;</code>
 
@@ -69,12 +69,20 @@ addDocumentSnapshotListener<T>(options: DocumnentReference, callback: DocumentSn
 | **`reference`** | <code>string</code> |
 
 
+#### DocumentSnapshot
+
+| Prop       | Type                | Description                                                       | Since |
+| ---------- | ------------------- | ----------------------------------------------------------------- | ----- |
+| **`id`**   | <code>string</code> | The id of the document.                                           | 1.0.0 |
+| **`data`** | <code>T</code>      | The fields of the document or null if the document doesn't exist. | 1.0.0 |
+
+
 ### Type Aliases
 
 
-#### DocumentSnapshot
+#### DocumentSnapshotCallback
 
-<code>(data: T | null, err?: any): void</code>
+<code>(data: <a href="#documentsnapshot">DocumentSnapshot</a>&lt;T&gt; | null, err?: any): void</code>
 
 
 #### CallbackID

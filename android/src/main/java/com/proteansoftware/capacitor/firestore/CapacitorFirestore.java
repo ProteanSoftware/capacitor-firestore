@@ -20,21 +20,16 @@ public class CapacitorFirestore {
     private FirebaseApp app;
     private FirebaseFirestore db;
 
-    public void Initialize(Context context, String projectId, String applicationId) {
+    public void Initialize(Context context, String projectId, String applicationId, String apiKey) {
         FirebaseOptions options = new FirebaseOptions.Builder()
                 .setApplicationId(applicationId)
+                .setApiKey(apiKey)
                 .setProjectId(projectId)
                 .build();
 
         this.app = FirebaseApp.initializeApp(context, options, "CapacitorFirestore");
-        this.db = FirebaseFirestore.getInstance(app);
 
-        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-                .setPersistenceEnabled(true)
-                .setCacheSizeBytes(FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED)
-                .build();
-
-        this.db.setFirestoreSettings(settings);
+        this.InitializeFirestore();
     }
 
     public void signInWithCustomToken(String token, @NonNull OnCompleteListener<AuthResult> completeListener)
@@ -45,5 +40,20 @@ public class CapacitorFirestore {
 
     public ListenerRegistration addDocumentSnapshotListener(String documentReference, @NonNull EventListener<DocumentSnapshot> listener) {
         return this.db.document(documentReference).addSnapshotListener(listener);
+    }
+
+    private void InitializeFirestore() {
+      if (this.db != null) {
+        this.db.terminate();
+      }
+
+      this.db = FirebaseFirestore.getInstance(app);
+
+      FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+        .setPersistenceEnabled(true)
+        .setCacheSizeBytes(FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED)
+        .build();
+
+      this.db.setFirestoreSettings(settings);
     }
 }

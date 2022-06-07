@@ -25,7 +25,7 @@
       },
       {
         "name": "addDocumentSnapshotListener",
-        "signature": "<T>(options: DocumnentReference, callback: DocumentSnapshot<T>) => Promise<CallbackID>",
+        "signature": "<T>(options: DocumnentReference, callback: DocumentSnapshotCallback<T>) => Promise<CallbackID>",
         "parameters": [
           {
             "name": "options",
@@ -35,7 +35,7 @@
           {
             "name": "callback",
             "docs": "",
-            "type": "DocumentSnapshot<T>"
+            "type": "DocumentSnapshotCallback<T>"
           }
         ],
         "returns": "Promise<string>",
@@ -43,7 +43,7 @@
         "docs": "",
         "complexTypes": [
           "DocumnentReference",
-          "DocumentSnapshot",
+          "DocumentSnapshotCallback",
           "T",
           "CallbackID"
         ],
@@ -84,18 +84,54 @@
           "type": "string"
         }
       ]
+    },
+    {
+      "name": "DocumentSnapshot",
+      "slug": "documentsnapshot",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "id",
+          "tags": [
+            {
+              "text": "1.0.0",
+              "name": "since"
+            }
+          ],
+          "docs": "The id of the document.",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "data",
+          "tags": [
+            {
+              "text": "1.0.0",
+              "name": "since"
+            }
+          ],
+          "docs": "The fields of the document or null if the document doesn't exist.",
+          "complexTypes": [
+            "T"
+          ],
+          "type": "T"
+        }
+      ]
     }
   ],
   "enums": [],
   "typeAliases": [
     {
-      "name": "DocumentSnapshot",
-      "slug": "documentsnapshot",
+      "name": "DocumentSnapshotCallback",
+      "slug": "documentsnapshotcallback",
       "docs": "",
       "types": [
         {
-          "text": "(data: T | null, err?: any): void",
+          "text": "(data: DocumentSnapshot<T> | null, err?: any): void",
           "complexTypes": [
+            "DocumentSnapshot",
             "T"
           ]
         }
@@ -147,6 +183,22 @@
             }
           ],
           "docs": "Set the Firebase application id",
+          "complexTypes": [],
+          "type": "string | undefined"
+        },
+        {
+          "name": "apiKey",
+          "tags": [
+            {
+              "text": "1.0.0",
+              "name": "since"
+            },
+            {
+              "text": "\"XxxxxxxxxxxXXxxxxxxxxx\"",
+              "name": "example"
+            }
+          ],
+          "docs": "Set the Firebase api key",
           "complexTypes": [],
           "type": "string | undefined"
         }

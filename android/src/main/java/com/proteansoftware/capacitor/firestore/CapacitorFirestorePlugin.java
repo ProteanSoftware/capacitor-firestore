@@ -1,6 +1,7 @@
 package com.proteansoftware.capacitor.firestore;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
@@ -23,7 +24,8 @@ public class CapacitorFirestorePlugin extends Plugin {
         Context context = this.getContext();
         String projectId = getConfig().getString("projectId");
         String applicationId = getConfig().getString("applicationId");
-        implementation.Initialize(context, projectId, applicationId);
+        String apiKey = getConfig().getString("apiKey");
+        implementation.Initialize(context, projectId, applicationId, apiKey);
     }
 
     @PluginMethod()
@@ -47,6 +49,8 @@ public class CapacitorFirestorePlugin extends Plugin {
             if (error != null) {
                 call.reject(error.getMessage(), error);
             } else {
+                JSObject result = new JSObject();
+                result.put("id", value.getId());
                 if (value.exists()) {
                     Map<String, Object> firestoreData = value.getData();
                     JSObject data = new JSObject();
@@ -55,10 +59,10 @@ public class CapacitorFirestorePlugin extends Plugin {
                         data.put(entry.getKey(), entry.getValue());
                     }
 
-                    call.resolve(data);
-                } else {
-                    call.resolve(null);
+                    result.put("data", data);
                 }
+
+                call.resolve(result);
             }
         });
 
