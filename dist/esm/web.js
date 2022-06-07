@@ -6,5 +6,9 @@ export class CapacitorFirestoreWeb extends WebPlugin {
         });
         return Promise.resolve(options.reference);
     }
+    signInWithCustomToken(options) {
+        console.log(options.token);
+        return Promise.resolve();
+    }
 }
 //# sourceMappingURL=web.js.map

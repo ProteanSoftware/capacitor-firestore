@@ -15,6 +15,10 @@ class CapacitorFirestoreWeb extends core.WebPlugin {
         });
         return Promise.resolve(options.reference);
     }
+    signInWithCustomToken(options) {
+        console.log(options.token);
+        return Promise.resolve();
+    }
 }
 
 var web = /*#__PURE__*/Object.freeze({

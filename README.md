@@ -13,6 +13,7 @@ npx cap sync
 
 <docgen-index>
 
+* [`signInWithCustomToken(...)`](#signinwithcustomtoken)
 * [`addDocumentSnapshotListener(...)`](#adddocumentsnapshotlistener)
 * [Interfaces](#interfaces)
 * [Type Aliases](#type-aliases)
@@ -21,6 +22,19 @@ npx cap sync
 
 <docgen-api>
 <!--Update the source file JSDoc comments and rerun docgen to update the docs below-->
+
+### signInWithCustomToken(...)
+
+```typescript
+signInWithCustomToken(options: CustomToken) => Promise<void>
+```
+
+| Param         | Type                                                |
+| ------------- | --------------------------------------------------- |
+| **`options`** | <code><a href="#customtoken">CustomToken</a></code> |
+
+--------------------
+
 
 ### addDocumentSnapshotListener(...)
 
@@ -39,6 +53,13 @@ addDocumentSnapshotListener<T>(options: DocumnentReference, callback: DocumentSn
 
 
 ### Interfaces
+
+
+#### CustomToken
+
+| Prop        | Type                |
+| ----------- | ------------------- |
+| **`token`** | <code>string</code> |
 
 
 #### DocumnentReference

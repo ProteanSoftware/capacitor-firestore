@@ -22,7 +22,20 @@ public class CapacitorFirestorePlugin extends Plugin {
     public void load() {
         Context context = this.getContext();
         String projectId = getConfig().getString("projectId");
-        implementation.Initialize(context, projectId);
+        String applicationId = getConfig().getString("applicationId");
+        implementation.Initialize(context, projectId, applicationId);
+    }
+
+    @PluginMethod()
+    public void signInWithCustomToken(PluginCall call) {
+        String token = call.getString("token");
+        implementation.signInWithCustomToken(token, (result) -> {
+            if (result.isSuccessful()) {
+                call.resolve();
+            } else {
+                call.reject("Sign-in failed", result.getException());
+            }
+        });
     }
 
     @PluginMethod(returnType = PluginMethod.RETURN_CALLBACK)

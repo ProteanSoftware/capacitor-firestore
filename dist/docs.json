@@ -6,6 +6,24 @@
     "tags": [],
     "methods": [
       {
+        "name": "signInWithCustomToken",
+        "signature": "(options: CustomToken) => Promise<void>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "CustomToken"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [
+          "CustomToken"
+        ],
+        "slug": "signinwithcustomtoken"
+      },
+      {
         "name": "addDocumentSnapshotListener",
         "signature": "<T>(options: DocumnentReference, callback: DocumentSnapshot<T>) => Promise<CallbackID>",
         "parameters": [
@@ -35,6 +53,22 @@
     "properties": []
   },
   "interfaces": [
+    {
+      "name": "CustomToken",
+      "slug": "customtoken",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "token",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string"
+        }
+      ]
+    },
     {
       "name": "DocumnentReference",
       "slug": "documnentreference",
@@ -97,6 +131,22 @@
             }
           ],
           "docs": "Set the GCP/Firebase project id",
+          "complexTypes": [],
+          "type": "string | undefined"
+        },
+        {
+          "name": "applicationId",
+          "tags": [
+            {
+              "text": "1.0.0",
+              "name": "since"
+            },
+            {
+              "text": "\"1:00000000000:web:abc00000000000000000\"",
+              "name": "example"
+            }
+          ],
+          "docs": "Set the Firebase application id",
           "complexTypes": [],
           "type": "string | undefined"
         }
