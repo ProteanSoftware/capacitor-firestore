@@ -1,20 +1,25 @@
 import { WebPlugin } from '@capacitor/core';
 
-import type { CallbackID, CapacitorFirestorePlugin, CustomToken, DocumentSnapshotCallback, DocumnentReference } from './definitions';
+import type { CallbackId, CapacitorFirestorePlugin, CustomToken, DocumentSnapshotCallback, DocumnentReference, RemoveSnapshotListener } from './definitions';
 
 export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFirestorePlugin {
-  public addDocumentSnapshotListener<T>(options: DocumnentReference, callback: DocumentSnapshotCallback<T>): Promise<CallbackID> {
+  public addDocumentSnapshotListener<T>(options: DocumnentReference, callback: DocumentSnapshotCallback<T>): Promise<CallbackId> {
     callback({
-        id: '1',
-        data: {
-          item: 1
-        } as unknown as T
+      id: '1',
+      data: {
+        item: 1
+      } as unknown as T
     });
-    return Promise.resolve(options.reference);
+
+    return Promise.reject("Not implemented - " + options.reference);
+  }
+
+  public removeSnapshotListener(options: RemoveSnapshotListener): Promise<void> {
+    return Promise.reject("Not implemented - " + options.callbackId);
   }
 
   public signInWithCustomToken(options: CustomToken): Promise<void> {
     console.log(options.token);
-    return Promise.resolve();
+    return Promise.reject("Not implemented");
   }
 }

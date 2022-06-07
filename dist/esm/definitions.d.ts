@@ -25,7 +25,7 @@ declare module "@capacitor/cli" {
         };
     }
 }
-export declare type CallbackID = string;
+export declare type CallbackId = string;
 export interface DocumnentReference {
     reference: string;
 }
@@ -46,8 +46,12 @@ export interface DocumentSnapshot<T> {
 export interface CustomToken {
     token: string;
 }
+export interface RemoveSnapshotListener {
+    callbackId: CallbackId;
+}
 export declare type DocumentSnapshotCallback<T> = (data: DocumentSnapshot<T> | null, err?: any) => void;
 export interface CapacitorFirestorePlugin {
     signInWithCustomToken(options: CustomToken): Promise<void>;
-    addDocumentSnapshotListener<T>(options: DocumnentReference, callback: DocumentSnapshotCallback<T>): Promise<CallbackID>;
+    addDocumentSnapshotListener<T>(options: DocumnentReference, callback: DocumentSnapshotCallback<T>): Promise<CallbackId>;
+    removeSnapshotListener(options: RemoveSnapshotListener): Promise<void>;
 }

@@ -25,7 +25,7 @@
       },
       {
         "name": "addDocumentSnapshotListener",
-        "signature": "<T>(options: DocumnentReference, callback: DocumentSnapshotCallback<T>) => Promise<CallbackID>",
+        "signature": "<T>(options: DocumnentReference, callback: DocumentSnapshotCallback<T>) => Promise<CallbackId>",
         "parameters": [
           {
             "name": "options",
@@ -45,9 +45,27 @@
           "DocumnentReference",
           "DocumentSnapshotCallback",
           "T",
-          "CallbackID"
+          "CallbackId"
         ],
         "slug": "adddocumentsnapshotlistener"
+      },
+      {
+        "name": "removeSnapshotListener",
+        "signature": "(options: RemoveSnapshotListener) => Promise<void>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "RemoveSnapshotListener"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [
+          "RemoveSnapshotListener"
+        ],
+        "slug": "removesnapshotlistener"
       }
     ],
     "properties": []
@@ -119,6 +137,24 @@
           "type": "T"
         }
       ]
+    },
+    {
+      "name": "RemoveSnapshotListener",
+      "slug": "removesnapshotlistener",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "callbackId",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "CallbackId"
+          ],
+          "type": "CallbackId"
+        }
+      ]
     }
   ],
   "enums": [],
@@ -138,7 +174,7 @@
       ]
     },
     {
-      "name": "CallbackID",
+      "name": "CallbackId",
       "slug": "callbackid",
       "docs": "",
       "types": [

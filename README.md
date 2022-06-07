@@ -15,6 +15,7 @@ npx cap sync
 
 * [`signInWithCustomToken(...)`](#signinwithcustomtoken)
 * [`addDocumentSnapshotListener(...)`](#adddocumentsnapshotlistener)
+* [`removeSnapshotListener(...)`](#removesnapshotlistener)
 * [Interfaces](#interfaces)
 * [Type Aliases](#type-aliases)
 
@@ -39,7 +40,7 @@ signInWithCustomToken(options: CustomToken) => Promise<void>
 ### addDocumentSnapshotListener(...)
 
 ```typescript
-addDocumentSnapshotListener<T>(options: DocumnentReference, callback: DocumentSnapshotCallback<T>) => Promise<CallbackID>
+addDocumentSnapshotListener<T>(options: DocumnentReference, callback: DocumentSnapshotCallback<T>) => Promise<CallbackId>
 ```
 
 | Param          | Type                                                                                   |
@@ -48,6 +49,19 @@ addDocumentSnapshotListener<T>(options: DocumnentReference, callback: DocumentSn
 | **`callback`** | <code><a href="#documentsnapshotcallback">DocumentSnapshotCallback</a>&lt;T&gt;</code> |
 
 **Returns:** <code>Promise&lt;string&gt;</code>
+
+--------------------
+
+
+### removeSnapshotListener(...)
+
+```typescript
+removeSnapshotListener(options: RemoveSnapshotListener) => Promise<void>
+```
+
+| Param         | Type                                                                      |
+| ------------- | ------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#removesnapshotlistener">RemoveSnapshotListener</a></code> |
 
 --------------------
 
@@ -77,6 +91,13 @@ addDocumentSnapshotListener<T>(options: DocumnentReference, callback: DocumentSn
 | **`data`** | <code>T</code>      | The fields of the document or null if the document doesn't exist. | 1.0.0 |
 
 
+#### RemoveSnapshotListener
+
+| Prop             | Type                                              |
+| ---------------- | ------------------------------------------------- |
+| **`callbackId`** | <code><a href="#callbackid">CallbackId</a></code> |
+
+
 ### Type Aliases
 
 
@@ -85,7 +106,7 @@ addDocumentSnapshotListener<T>(options: DocumnentReference, callback: DocumentSn
 <code>(data: <a href="#documentsnapshot">DocumentSnapshot</a>&lt;T&gt; | null, err?: any): void</code>
 
 
-#### CallbackID
+#### CallbackId
 
 <code>string</code>
 

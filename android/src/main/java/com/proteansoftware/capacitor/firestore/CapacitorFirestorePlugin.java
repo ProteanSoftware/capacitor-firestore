@@ -40,6 +40,14 @@ public class CapacitorFirestorePlugin extends Plugin {
         });
     }
 
+    @PluginMethod()
+    public void removeSnapshotListener(PluginCall call) {
+        String callbackId = call.getString("callbackId");
+        ListenerRegistration listener = listeners.get(callbackId);
+        listener.remove();
+        call.resolve();
+    }
+
     @PluginMethod(returnType = PluginMethod.RETURN_CALLBACK)
     public void addDocumentSnapshotListener(PluginCall call) {
         call.setKeepAlive(true);

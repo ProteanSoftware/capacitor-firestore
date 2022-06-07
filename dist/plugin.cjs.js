@@ -16,11 +16,14 @@ class CapacitorFirestoreWeb extends core.WebPlugin {
                 item: 1
             }
         });
-        return Promise.resolve(options.reference);
+        return Promise.reject("Not implemented - " + options.reference);
+    }
+    removeSnapshotListener(options) {
+        return Promise.reject("Not implemented - " + options.callbackId);
     }
     signInWithCustomToken(options) {
         console.log(options.token);
-        return Promise.resolve();
+        return Promise.reject("Not implemented");
     }
 }
 
