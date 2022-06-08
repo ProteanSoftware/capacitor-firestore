@@ -1,7 +1,7 @@
 import { WebPlugin } from '@capacitor/core';
 import { initializeApp, deleteApp } from "firebase/app";
 import { getAuth, signInWithCustomToken } from "firebase/auth";
-import { initializeFirestore, terminate, enableIndexedDbPersistence, onSnapshot, doc, getDoc, collection, query, where, CACHE_SIZE_UNLIMITED } from "firebase/firestore";
+import { initializeFirestore, terminate, enableIndexedDbPersistence, onSnapshot, doc, getDoc, getDocs, collection, query, where, CACHE_SIZE_UNLIMITED } from "firebase/firestore";
 export class CapacitorFirestoreWeb extends WebPlugin {
     constructor() {
         super(...arguments);
@@ -87,6 +87,29 @@ export class CapacitorFirestoreWeb extends WebPlugin {
         const id = new Date().getTime().toString();
         this.subscriptions[id] = unSubFunc;
         return Promise.resolve(id);
+    }
+    getCollection(options) {
+        if (this.firestore === null) {
+            return Promise.reject("Firestore not initialized");
+        }
+        let collectionQuery;
+        if (options.queryConstraints) {
+            const constraints = options.queryConstraints.map(constraint => where(constraint.fieldPath, constraint.opStr, constraint.value));
+            collectionQuery = query(collection(this.firestore, options.reference), ...constraints);
+        }
+        else {
+            collectionQuery = query(collection(this.firestore, options.reference));
+        }
+        return getDocs(collectionQuery).then(snapshot => {
+            return {
+                collection: snapshot.docs.map(doc => {
+                    return {
+                        id: doc.id,
+                        data: doc.data()
+                    };
+                })
+            };
+        });
     }
     removeSnapshotListener(options) {
         const unSubFunc = this.subscriptions[options.callbackId];

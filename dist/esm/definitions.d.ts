@@ -34,7 +34,7 @@ export interface QueryConstraint {
     opStr: QueryOperators;
     value: any;
 }
-export interface ColllectionReference extends DocumnentReference {
+export interface CollectionReference extends DocumnentReference {
     queryConstraints?: QueryConstraint[];
 }
 export interface DocumnentReference {
@@ -77,6 +77,12 @@ export interface CapacitorFirestorePlugin {
      */
     signInWithCustomToken(options: CustomToken): Promise<void>;
     /**
+      * Reads the document referred to by this DocumentReference
+      * @param options
+      * @returns The document snapshot
+      */
+    getDocument<T>(options: DocumnentReference): Promise<DocumentSnapshot<T>>;
+    /**
      * Listen for snapshot changes on a document.
      * @param options
      * @param callback
@@ -84,18 +90,18 @@ export interface CapacitorFirestorePlugin {
      */
     addDocumentSnapshotListener<T>(options: DocumnentReference, callback: DocumentSnapshotCallback<T>): Promise<CallbackId>;
     /**
-     * Reads the document referred to by this DocumentReference
-     * @param options
-     * @returns The document snapshot
-     */
-    getDocument<T>(options: DocumnentReference): Promise<DocumentSnapshot<T>>;
+    * Executes the query and returns the results as a CollectionSnapshot
+    * @param options
+    * @returns The collection snapshot
+    */
+    getCollection<T>(options: CollectionReference): Promise<CollectionSnapshot<T>>;
     /**
      * Listen for snapshot changes on a collection.
      * @param options
      * @param callback
      * @returns The callback id which can be used to remove the listener.
      */
-    addCollectionSnapshotListener<T>(options: ColllectionReference, callback: CollectionSnapshotCallback<T>): Promise<CallbackId>;
+    addCollectionSnapshotListener<T>(options: CollectionReference, callback: CollectionSnapshotCallback<T>): Promise<CallbackId>;
     /**
      * Stop listening for snapshot changes on a document or collection.
      * @param options

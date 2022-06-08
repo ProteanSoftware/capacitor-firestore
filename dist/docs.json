@@ -52,6 +52,35 @@
         "slug": "signinwithcustomtoken"
       },
       {
+        "name": "getDocument",
+        "signature": "<T>(options: DocumnentReference) => Promise<DocumentSnapshot<T>>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "DocumnentReference"
+          }
+        ],
+        "returns": "Promise<DocumentSnapshot<T>>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options"
+          },
+          {
+            "name": "returns",
+            "text": "The document snapshot"
+          }
+        ],
+        "docs": "Reads the document referred to by this DocumentReference",
+        "complexTypes": [
+          "DocumentSnapshot",
+          "T",
+          "DocumnentReference"
+        ],
+        "slug": "getdocument"
+      },
+      {
         "name": "addDocumentSnapshotListener",
         "signature": "<T>(options: DocumnentReference, callback: DocumentSnapshotCallback<T>) => Promise<CallbackId>",
         "parameters": [
@@ -91,16 +120,16 @@
         "slug": "adddocumentsnapshotlistener"
       },
       {
-        "name": "getDocument",
-        "signature": "<T>(options: DocumnentReference) => Promise<DocumentSnapshot<T>>",
+        "name": "getCollection",
+        "signature": "<T>(options: CollectionReference) => Promise<CollectionSnapshot<T>>",
         "parameters": [
           {
             "name": "options",
             "docs": "",
-            "type": "DocumnentReference"
+            "type": "CollectionReference"
           }
         ],
-        "returns": "Promise<DocumentSnapshot<T>>",
+        "returns": "Promise<CollectionSnapshot<T>>",
         "tags": [
           {
             "name": "param",
@@ -108,25 +137,25 @@
           },
           {
             "name": "returns",
-            "text": "The document snapshot"
+            "text": "The collection snapshot"
           }
         ],
-        "docs": "Reads the document referred to by this DocumentReference",
+        "docs": "Executes the query and returns the results as a CollectionSnapshot",
         "complexTypes": [
-          "DocumentSnapshot",
+          "CollectionSnapshot",
           "T",
-          "DocumnentReference"
+          "CollectionReference"
         ],
-        "slug": "getdocument"
+        "slug": "getcollection"
       },
       {
         "name": "addCollectionSnapshotListener",
-        "signature": "<T>(options: ColllectionReference, callback: CollectionSnapshotCallback<T>) => Promise<CallbackId>",
+        "signature": "<T>(options: CollectionReference, callback: CollectionSnapshotCallback<T>) => Promise<CallbackId>",
         "parameters": [
           {
             "name": "options",
             "docs": "",
-            "type": "ColllectionReference"
+            "type": "CollectionReference"
           },
           {
             "name": "callback",
@@ -151,7 +180,7 @@
         ],
         "docs": "Listen for snapshot changes on a collection.",
         "complexTypes": [
-          "ColllectionReference",
+          "CollectionReference",
           "CollectionSnapshotCallback",
           "T",
           "CallbackId"
@@ -259,22 +288,6 @@
       ]
     },
     {
-      "name": "DocumnentReference",
-      "slug": "documnentreference",
-      "docs": "",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "reference",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [],
-          "type": "string"
-        }
-      ]
-    },
-    {
       "name": "DocumentSnapshot",
       "slug": "documentsnapshot",
       "docs": "",
@@ -310,8 +323,43 @@
       ]
     },
     {
-      "name": "ColllectionReference",
-      "slug": "colllectionreference",
+      "name": "DocumnentReference",
+      "slug": "documnentreference",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "reference",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "CollectionSnapshot",
+      "slug": "collectionsnapshot",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "collection",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "DocumentSnapshot",
+            "T"
+          ],
+          "type": "DocumentSnapshot<T>[]"
+        }
+      ]
+    },
+    {
+      "name": "CollectionReference",
+      "slug": "collectionreference",
       "docs": "",
       "tags": [],
       "methods": [],
@@ -356,25 +404,6 @@
           "docs": "",
           "complexTypes": [],
           "type": "any"
-        }
-      ]
-    },
-    {
-      "name": "CollectionSnapshot",
-      "slug": "collectionsnapshot",
-      "docs": "",
-      "tags": [],
-      "methods": [],
-      "properties": [
-        {
-          "name": "collection",
-          "tags": [],
-          "docs": "",
-          "complexTypes": [
-            "DocumentSnapshot",
-            "T"
-          ],
-          "type": "DocumentSnapshot<T>[]"
         }
       ]
     },

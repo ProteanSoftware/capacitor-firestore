@@ -106,6 +106,29 @@ class CapacitorFirestoreWeb extends core.WebPlugin {
         this.subscriptions[id] = unSubFunc;
         return Promise.resolve(id);
     }
+    getCollection(options) {
+        if (this.firestore === null) {
+            return Promise.reject("Firestore not initialized");
+        }
+        let collectionQuery;
+        if (options.queryConstraints) {
+            const constraints = options.queryConstraints.map(constraint => firestore.where(constraint.fieldPath, constraint.opStr, constraint.value));
+            collectionQuery = firestore.query(firestore.collection(this.firestore, options.reference), ...constraints);
+        }
+        else {
+            collectionQuery = firestore.query(firestore.collection(this.firestore, options.reference));
+        }
+        return firestore.getDocs(collectionQuery).then(snapshot => {
+            return {
+                collection: snapshot.docs.map(doc => {
+                    return {
+                        id: doc.id,
+                        data: doc.data()
+                    };
+                })
+            };
+        });
+    }
     removeSnapshotListener(options) {
         const unSubFunc = this.subscriptions[options.callbackId];
         if (unSubFunc === undefined) {

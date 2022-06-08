@@ -11,6 +11,8 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,6 +118,30 @@ public class CapacitorFirestorePlugin extends Plugin {
         );
 
         listeners.put(callbackId, listener);
+    }
+
+    @PluginMethod
+    public void getCollection(PluginCall call) {
+        String documentReference = call.getString("reference");
+        Task<QuerySnapshot> listener = implementation.getCollection(documentReference);
+
+        listener.addOnSuccessListener((value) -> {
+            JSObject result = new JSObject();
+            JSArray items = new JSArray();
+
+            List<DocumentSnapshot> documents = value.getDocuments();
+            for (DocumentSnapshot documentSnapshot : documents) {
+                JSObject item = implementation.ConvertSnapshotToJSObject(documentSnapshot);
+                items.put(item);
+            }
+
+            result.put("collection", items);
+            call.resolve(result);
+        });
+
+        listener.addOnFailureListener((error) -> {
+           call.reject(error.getMessage(), error);
+        });
     }
 
     @PluginMethod(returnType = PluginMethod.RETURN_CALLBACK)

@@ -74,6 +74,10 @@ public class CapacitorFirestore {
         return this.db.document(documentReference).get();
     }
 
+    public Task<QuerySnapshot> getCollection(String collectionReference) {
+        return this.db.collection(collectionReference).get();
+    }
+
     public ListenerRegistration addCollectionSnapshotListener(
         String collectionReference,
         List<JSQueryConstraints> queryConstraints,

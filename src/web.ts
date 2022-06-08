@@ -10,6 +10,7 @@ import {
   onSnapshot,
   doc,
   getDoc,
+  getDocs,
   collection,
   query,
   where,
@@ -19,8 +20,9 @@ import {
 import type {
   CallbackId,
   CapacitorFirestorePlugin,
+  CollectionSnapshot,
   CollectionSnapshotCallback,
-  ColllectionReference,
+  CollectionReference,
   CustomToken,
   DocumentSnapshot,
   DocumentSnapshotCallback,
@@ -102,7 +104,7 @@ export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFiresto
     });
   }
 
-  public addCollectionSnapshotListener<T>(options: ColllectionReference, callback: CollectionSnapshotCallback<T>): Promise<CallbackId> {
+  public addCollectionSnapshotListener<T>(options: CollectionReference, callback: CollectionSnapshotCallback<T>): Promise<CallbackId> {
     if (this.firestore === null) {
       return Promise.reject("Firestore not initialized");
     }
@@ -130,6 +132,31 @@ export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFiresto
     this.subscriptions[id] = unSubFunc;
 
     return Promise.resolve(id);
+  }
+
+  public getCollection<T>(options: CollectionReference): Promise<CollectionSnapshot<T>> {
+    if (this.firestore === null) {
+      return Promise.reject("Firestore not initialized");
+    }
+
+    let collectionQuery: Query;
+    if (options.queryConstraints) {
+      const constraints = options.queryConstraints.map(constraint => where(constraint.fieldPath, constraint.opStr, constraint.value));
+      collectionQuery =  query(collection(this.firestore, options.reference), ...constraints);
+    } else {
+      collectionQuery = query(collection(this.firestore, options.reference));
+    }
+
+    return getDocs(collectionQuery).then(snapshot => {
+      return {
+        collection: snapshot.docs.map(doc => {
+          return {
+            id: doc.id,
+            data: doc.data() as T
+          };
+        })
+      };
+    });
   }
 
   public removeSnapshotListener(options: RemoveSnapshotListener): Promise<void> {

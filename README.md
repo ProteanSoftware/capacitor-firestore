@@ -15,8 +15,9 @@ npx cap sync
 
 * [`initializeFirestore(...)`](#initializefirestore)
 * [`signInWithCustomToken(...)`](#signinwithcustomtoken)
-* [`addDocumentSnapshotListener(...)`](#adddocumentsnapshotlistener)
 * [`getDocument(...)`](#getdocument)
+* [`addDocumentSnapshotListener(...)`](#adddocumentsnapshotlistener)
+* [`getCollection(...)`](#getcollection)
 * [`addCollectionSnapshotListener(...)`](#addcollectionsnapshotlistener)
 * [`removeSnapshotListener(...)`](#removesnapshotlistener)
 * [Interfaces](#interfaces)
@@ -57,6 +58,23 @@ Login to firestore using a customer JWT token.
 --------------------
 
 
+### getDocument(...)
+
+```typescript
+getDocument<T>(options: DocumnentReference) => Promise<DocumentSnapshot<T>>
+```
+
+Reads the document referred to by this DocumentReference
+
+| Param         | Type                                                              |
+| ------------- | ----------------------------------------------------------------- |
+| **`options`** | <code><a href="#documnentreference">DocumnentReference</a></code> |
+
+**Returns:** <code>Promise&lt;<a href="#documentsnapshot">DocumentSnapshot</a>&lt;T&gt;&gt;</code>
+
+--------------------
+
+
 ### addDocumentSnapshotListener(...)
 
 ```typescript
@@ -75,19 +93,19 @@ Listen for snapshot changes on a document.
 --------------------
 
 
-### getDocument(...)
+### getCollection(...)
 
 ```typescript
-getDocument<T>(options: DocumnentReference) => Promise<DocumentSnapshot<T>>
+getCollection<T>(options: CollectionReference) => Promise<CollectionSnapshot<T>>
 ```
 
-Reads the document referred to by this DocumentReference
+Executes the query and returns the results as a <a href="#collectionsnapshot">CollectionSnapshot</a>
 
-| Param         | Type                                                              |
-| ------------- | ----------------------------------------------------------------- |
-| **`options`** | <code><a href="#documnentreference">DocumnentReference</a></code> |
+| Param         | Type                                                                |
+| ------------- | ------------------------------------------------------------------- |
+| **`options`** | <code><a href="#collectionreference">CollectionReference</a></code> |
 
-**Returns:** <code>Promise&lt;<a href="#documentsnapshot">DocumentSnapshot</a>&lt;T&gt;&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#collectionsnapshot">CollectionSnapshot</a>&lt;T&gt;&gt;</code>
 
 --------------------
 
@@ -95,14 +113,14 @@ Reads the document referred to by this DocumentReference
 ### addCollectionSnapshotListener(...)
 
 ```typescript
-addCollectionSnapshotListener<T>(options: ColllectionReference, callback: CollectionSnapshotCallback<T>) => Promise<CallbackId>
+addCollectionSnapshotListener<T>(options: CollectionReference, callback: CollectionSnapshotCallback<T>) => Promise<CallbackId>
 ```
 
 Listen for snapshot changes on a collection.
 
 | Param          | Type                                                                                       |
 | -------------- | ------------------------------------------------------------------------------------------ |
-| **`options`**  | <code><a href="#colllectionreference">ColllectionReference</a></code>                      |
+| **`options`**  | <code><a href="#collectionreference">CollectionReference</a></code>                        |
 | **`callback`** | <code><a href="#collectionsnapshotcallback">CollectionSnapshotCallback</a>&lt;T&gt;</code> |
 
 **Returns:** <code>Promise&lt;string&gt;</code>
@@ -144,13 +162,6 @@ Stop listening for snapshot changes on a document or collection.
 | **`token`** | <code>string</code> |
 
 
-#### DocumnentReference
-
-| Prop            | Type                |
-| --------------- | ------------------- |
-| **`reference`** | <code>string</code> |
-
-
 #### DocumentSnapshot
 
 | Prop       | Type                   | Description                                                       | Since |
@@ -159,7 +170,21 @@ Stop listening for snapshot changes on a document or collection.
 | **`data`** | <code>T \| null</code> | The fields of the document or null if the document doesn't exist. | 1.0.0 |
 
 
-#### ColllectionReference
+#### DocumnentReference
+
+| Prop            | Type                |
+| --------------- | ------------------- |
+| **`reference`** | <code>string</code> |
+
+
+#### CollectionSnapshot
+
+| Prop             | Type                                                                     |
+| ---------------- | ------------------------------------------------------------------------ |
+| **`collection`** | <code><a href="#documentsnapshot">DocumentSnapshot</a>&lt;T&gt;[]</code> |
+
+
+#### CollectionReference
 
 | Prop                   | Type                           |
 | ---------------------- | ------------------------------ |
@@ -173,13 +198,6 @@ Stop listening for snapshot changes on a document or collection.
 | **`fieldPath`** | <code>string</code>                                       |
 | **`opStr`**     | <code><a href="#queryoperators">QueryOperators</a></code> |
 | **`value`**     | <code>any</code>                                          |
-
-
-#### CollectionSnapshot
-
-| Prop             | Type                                                                     |
-| ---------------- | ------------------------------------------------------------------------ |
-| **`collection`** | <code><a href="#documentsnapshot">DocumentSnapshot</a>&lt;T&gt;[]</code> |
 
 
 #### RemoveSnapshotListener
