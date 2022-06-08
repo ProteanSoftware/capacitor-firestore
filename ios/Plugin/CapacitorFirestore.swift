@@ -76,6 +76,14 @@ enum CapacitorFirestoreError: Error {
         return self.db?.collection(collectionReference).addSnapshotListener(completion);
     }
     
+    @objc public func getCollection(collectionReference: String?, completion: @escaping (QuerySnapshot?, Error?) -> Void) -> Void {
+        guard let collectionReference = collectionReference as String? else {
+            assert(false, "collectionReference must not be null");
+        }
+        
+        self.db?.collection(collectionReference).getDocuments(completion: completion);
+    }
+    
     public func ConvertJSArrayToQueryConstraints(array: [JSObject]?) throws -> [JSQueryConstraints]? {
         if (array == nil) {
             return nil;

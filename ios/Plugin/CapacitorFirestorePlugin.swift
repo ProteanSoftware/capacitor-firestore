@@ -139,4 +139,25 @@ public class CapacitorFirestorePlugin: CAPPlugin {
             call.reject("Unknown error", nil, error, [:]);
         }
     }
+    
+    @objc func getCollection(_ call: CAPPluginCall) {
+        let collectionReference = call.getString("reference");
+        implementation.getCollection(collectionReference: collectionReference) { value, error in
+            if (error != nil) {
+                call.reject("Collection snapshot error", nil, error, [:]);
+            } else {
+                let docs = value!.documents;
+                var data: [JSObject] = [];
+                
+                for item in docs {
+                    let result = self.implementation.ConvertSnapshotToJSObject(documentSnapshot: item);
+                    data.append(result);
+                }
+                
+                call.resolve([
+                    "collection": data
+                ]);
+            }
+        }
+    }
 }
