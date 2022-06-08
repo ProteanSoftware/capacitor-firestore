@@ -3,7 +3,18 @@ import { initializeApp, deleteApp } from "firebase/app";
 import type { FirebaseApp } from "firebase/app";
 import { getAuth, signInWithCustomToken } from "firebase/auth";
 import type { Firestore, Query, Unsubscribe } from "firebase/firestore";
-import { initializeFirestore as firestoreInitialize, terminate, enableIndexedDbPersistence, onSnapshot, doc, collection, query, where, CACHE_SIZE_UNLIMITED } from "firebase/firestore";
+import {
+  initializeFirestore,
+  terminate,
+  enableIndexedDbPersistence,
+  onSnapshot,
+  doc,
+  getDoc,
+  collection,
+  query,
+  where,
+  CACHE_SIZE_UNLIMITED
+} from "firebase/firestore";
 
 import type {
   CallbackId,
@@ -11,6 +22,7 @@ import type {
   CollectionSnapshotCallback,
   ColllectionReference,
   CustomToken,
+  DocumentSnapshot,
   DocumentSnapshotCallback,
   DocumnentReference,
   FirestoreConfig,
@@ -45,7 +57,7 @@ export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFiresto
 
       this.app = app;
 
-      const firestore = firestoreInitialize(app, {
+      const firestore = initializeFirestore(app, {
         cacheSizeBytes: CACHE_SIZE_UNLIMITED
       });
 
@@ -75,6 +87,19 @@ export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFiresto
     this.subscriptions[id] = unSubFunc;
 
     return Promise.resolve(id);
+  }
+
+  public getDocument<T>(options: DocumnentReference): Promise<DocumentSnapshot<T>> {
+    if (this.firestore === null) {
+      return Promise.reject("Firestore not initialized");
+    }
+
+    return getDoc(doc(this.firestore, options.reference)).then(snapshot => {
+      return {
+        id: snapshot.id,
+        data: snapshot.exists() ? snapshot.data() as T : null
+      };
+    });
   }
 
   public addCollectionSnapshotListener<T>(options: ColllectionReference, callback: CollectionSnapshotCallback<T>): Promise<CallbackId> {

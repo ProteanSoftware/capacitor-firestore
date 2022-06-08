@@ -91,6 +91,35 @@
         "slug": "adddocumentsnapshotlistener"
       },
       {
+        "name": "getDocument",
+        "signature": "<T>(options: DocumnentReference) => Promise<DocumentSnapshot<T>>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "DocumnentReference"
+          }
+        ],
+        "returns": "Promise<DocumentSnapshot<T>>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options"
+          },
+          {
+            "name": "returns",
+            "text": "The document snapshot"
+          }
+        ],
+        "docs": "Reads the document referred to by this DocumentReference",
+        "complexTypes": [
+          "DocumentSnapshot",
+          "T",
+          "DocumnentReference"
+        ],
+        "slug": "getdocument"
+      },
+      {
         "name": "addCollectionSnapshotListener",
         "signature": "<T>(options: ColllectionReference, callback: CollectionSnapshotCallback<T>) => Promise<CallbackId>",
         "parameters": [

@@ -84,6 +84,12 @@ export interface CapacitorFirestorePlugin {
      */
     addDocumentSnapshotListener<T>(options: DocumnentReference, callback: DocumentSnapshotCallback<T>): Promise<CallbackId>;
     /**
+     * Reads the document referred to by this DocumentReference
+     * @param options
+     * @returns The document snapshot
+     */
+    getDocument<T>(options: DocumnentReference): Promise<DocumentSnapshot<T>>;
+    /**
      * Listen for snapshot changes on a collection.
      * @param options
      * @param callback

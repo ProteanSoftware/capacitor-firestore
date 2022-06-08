@@ -63,6 +63,17 @@ var capacitorCapacitorFirestore = (function (exports, core, app, auth, firestore
             this.subscriptions[id] = unSubFunc;
             return Promise.resolve(id);
         }
+        getDocument(options) {
+            if (this.firestore === null) {
+                return Promise.reject("Firestore not initialized");
+            }
+            return firestore.getDoc(firestore.doc(this.firestore, options.reference)).then(snapshot => {
+                return {
+                    id: snapshot.id,
+                    data: snapshot.exists() ? snapshot.data() : null
+                };
+            });
+        }
         addCollectionSnapshotListener(options, callback) {
             if (this.firestore === null) {
                 return Promise.reject("Firestore not initialized");

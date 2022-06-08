@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.Timestamp;
@@ -67,6 +68,10 @@ public class CapacitorFirestore {
 
     public ListenerRegistration addDocumentSnapshotListener(String documentReference, @NonNull EventListener<DocumentSnapshot> listener) {
         return this.db.document(documentReference).addSnapshotListener(listener);
+    }
+
+    public Task<DocumentSnapshot> getDocument(String documentReference) {
+        return this.db.document(documentReference).get();
     }
 
     public ListenerRegistration addCollectionSnapshotListener(

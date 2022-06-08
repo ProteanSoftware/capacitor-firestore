@@ -16,6 +16,7 @@ npx cap sync
 * [`initializeFirestore(...)`](#initializefirestore)
 * [`signInWithCustomToken(...)`](#signinwithcustomtoken)
 * [`addDocumentSnapshotListener(...)`](#adddocumentsnapshotlistener)
+* [`getDocument(...)`](#getdocument)
 * [`addCollectionSnapshotListener(...)`](#addcollectionsnapshotlistener)
 * [`removeSnapshotListener(...)`](#removesnapshotlistener)
 * [Interfaces](#interfaces)
@@ -70,6 +71,23 @@ Listen for snapshot changes on a document.
 | **`callback`** | <code><a href="#documentsnapshotcallback">DocumentSnapshotCallback</a>&lt;T&gt;</code> |
 
 **Returns:** <code>Promise&lt;string&gt;</code>
+
+--------------------
+
+
+### getDocument(...)
+
+```typescript
+getDocument<T>(options: DocumnentReference) => Promise<DocumentSnapshot<T>>
+```
+
+Reads the document referred to by this DocumentReference
+
+| Param         | Type                                                              |
+| ------------- | ----------------------------------------------------------------- |
+| **`options`** | <code><a href="#documnentreference">DocumnentReference</a></code> |
+
+**Returns:** <code>Promise&lt;<a href="#documentsnapshot">DocumentSnapshot</a>&lt;T&gt;&gt;</code>
 
 --------------------
 
