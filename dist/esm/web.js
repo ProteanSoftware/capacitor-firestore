@@ -1,7 +1,7 @@
 import { WebPlugin } from '@capacitor/core';
-import { initializeApp, deleteApp } from "@firebase/app";
-import { getAuth, signInWithCustomToken } from "@firebase/auth";
-import { initializeFirestore, terminate, enableIndexedDbPersistence, onSnapshot, doc, collection, query, where, CACHE_SIZE_UNLIMITED } from "@firebase/firestore";
+import { initializeApp, deleteApp } from "firebase/app";
+import { getAuth, signInWithCustomToken } from "firebase/auth";
+import { initializeFirestore as firestoreInitialize, terminate, enableIndexedDbPersistence, onSnapshot, doc, collection, query, where, CACHE_SIZE_UNLIMITED } from "firebase/firestore";
 export class CapacitorFirestoreWeb extends WebPlugin {
     constructor() {
         super(...arguments);
@@ -24,19 +24,16 @@ export class CapacitorFirestoreWeb extends WebPlugin {
                 apiKey: options.apiKey,
                 appId: options.applicationId,
                 projectId: options.projectId
-            });
-            const firestore = initializeFirestore(app, {
+            }, "CapacitorFirestore");
+            this.app = app;
+            const firestore = firestoreInitialize(app, {
                 cacheSizeBytes: CACHE_SIZE_UNLIMITED
             });
-            return {
-                app,
-                firestore
-            };
+            return firestore;
         });
-        return initPromise.then((setup) => {
-            enableIndexedDbPersistence(setup.firestore).then(() => {
-                this.app = setup.app;
-                this.firestore = setup.firestore;
+        return initPromise.then(firestore => {
+            enableIndexedDbPersistence(firestore).then(() => {
+                this.firestore = firestore;
             });
         });
     }

@@ -15,13 +15,23 @@ export default {
     },
     {
       file: 'dist/plugin.cjs.js',
-      format: 'cjs',
-      sourcemap: true,
-      inlineDynamicImports: true,
+        format: 'cjs',
+        sourcemap: true,
+        inlineDynamicImports: true,
     },
   ],
-  plugins: [nodeResolve()],
-  external: [
+  plugins: [
+    nodeResolve({
+      // allowlist of dependencies to bundle in
+      // @see https://github.com/rollup/plugins/tree/master/packages/node-resolve#resolveonly
+      resolveOnly: [
+        'firebase/app',
+        'firebase/auth',
+        'firebase/firestore',
+      ],
+    }),
+  ],
+  external: [ 
     '@capacitor/core'
   ],
 };

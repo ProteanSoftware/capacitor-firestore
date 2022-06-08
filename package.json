@@ -1,6 +1,6 @@
 {
   "name": "@proteansoftware/capacitor-firestore",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "description": "Capacitor Plugin for Native Firestore",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
@@ -63,9 +63,7 @@
   },
   "peerDependencies": {
     "@capacitor/core": "^3.0.0",
-    "@firebase/app": "^0.7.25",
-    "@firebase/auth": "^0.20.2",
-    "@firebase/firestore": "^3.4.9"
+    "firebase": "^9.8.2"
   },
   "prettier": "@ionic/prettier-config",
   "swiftlint": "@ionic/swiftlint-config",
