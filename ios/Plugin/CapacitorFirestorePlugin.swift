@@ -88,6 +88,18 @@ public class CapacitorFirestorePlugin: CAPPlugin {
         listeners[callbackId] = listener;
     }
     
+    @objc func getDocument(_ call: CAPPluginCall) {
+        let documentReference = call.getString("reference");
+        implementation.getDocument(documentReference: documentReference) { value, error in
+            if (error != nil) {
+                call.reject("Document snapshot error", nil, error, [:]);
+            } else {
+                let result = self.implementation.ConvertSnapshotToJSObject(documentSnapshot: value);
+                call.resolve(result);
+            }
+        }
+    }
+    
     @objc func addCollectionSnapshotListener(_ call: CAPPluginCall) {
         call.keepAlive = true;
         let callbackId = call.callbackId;

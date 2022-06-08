@@ -7,6 +7,7 @@ CAP_PLUGIN(CapacitorFirestorePlugin, "CapacitorFirestore",
            CAP_PLUGIN_METHOD(initializeFirestore, CAPPluginReturnPromise);
            CAP_PLUGIN_METHOD(signInWithCustomToken, CAPPluginReturnPromise);
            CAP_PLUGIN_METHOD(removeSnapshotListener, CAPPluginReturnPromise);
+           CAP_PLUGIN_METHOD(getDocument, CAPPluginReturnPromise);
            CAP_PLUGIN_METHOD(addDocumentSnapshotListener, CAPPluginReturnCallback);
            CAP_PLUGIN_METHOD(addCollectionSnapshotListener, CAPPluginReturnCallback);
 )

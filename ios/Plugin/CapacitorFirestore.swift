@@ -60,6 +60,14 @@ enum CapacitorFirestoreError: Error {
         return self.db?.document(documentReference).addSnapshotListener(completion);
     }
     
+    @objc public func getDocument(documentReference: String?, completion: @escaping (DocumentSnapshot?, Error?) -> Void) -> Void {
+        guard let documentReference = documentReference as String? else {
+            assert(false, "documentReference must not be null");
+        }
+        
+        self.db?.document(documentReference).getDocument(completion: completion);
+    }
+    
     @objc public func addCollectionSnapshotListener(collectionReference: String?, queryConstaints: [JSQueryConstraints]?, completion: @escaping (QuerySnapshot?, Error?) -> Void) -> ListenerRegistration? {
         guard let collectionReference = collectionReference as String? else {
             assert(false, "collectionReference must not be null");
