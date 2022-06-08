@@ -1,6 +1,6 @@
 {
   "name": "@proteansoftware/capacitor-firestore",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Capacitor Plugin for Native Firestore",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
