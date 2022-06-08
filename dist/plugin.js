@@ -74,6 +74,12 @@ var capacitorCapacitorFirestore = (function (exports, core, app, auth, firestore
                 };
             });
         }
+        updateDocument(options) {
+            if (this.firestore === null) {
+                return Promise.reject("Firestore not initialized");
+            }
+            return firestore.updateDoc(firestore.doc(this.firestore, options.reference), options.data);
+        }
         addCollectionSnapshotListener(options, callback) {
             if (this.firestore === null) {
                 return Promise.reject("Firestore not initialized");

@@ -81,6 +81,34 @@
         "slug": "getdocument"
       },
       {
+        "name": "updateDocument",
+        "signature": "<T>(options: UpdateDocument<T>) => Promise<void>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "UpdateDocument<T>"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options"
+          },
+          {
+            "name": "returns",
+            "text": "The document snapshot"
+          }
+        ],
+        "docs": "Reads the document referred to by this DocumentReference",
+        "complexTypes": [
+          "UpdateDocument",
+          "T"
+        ],
+        "slug": "updatedocument"
+      },
+      {
         "name": "addDocumentSnapshotListener",
         "signature": "<T>(options: DocumnentReference, callback: DocumentSnapshotCallback<T>) => Promise<CallbackId>",
         "parameters": [
@@ -335,6 +363,24 @@
           "docs": "",
           "complexTypes": [],
           "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "UpdateDocument",
+      "slug": "updatedocument",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "data",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [
+            "T"
+          ],
+          "type": "T"
         }
       ]
     },

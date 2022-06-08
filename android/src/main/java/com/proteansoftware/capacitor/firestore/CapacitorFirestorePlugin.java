@@ -13,7 +13,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.json.JSONException;
+
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -97,6 +100,36 @@ public class CapacitorFirestorePlugin extends Plugin {
 
         listener.addOnFailureListener((error) -> {
            call.reject(error.getMessage(), error);
+        });
+    }
+
+    @PluginMethod
+    public void updateDocument(PluginCall call) {
+        String documentReference = call.getString("reference");
+        JSObject data = call.getObject("data");
+
+        HashMap<String, Object> mapData = new HashMap<>();
+        Iterator<String> keys = data.keys();
+
+        while(keys.hasNext()) {
+            String key = keys.next();
+            try {
+                Object value = data.get(key);
+                mapData.put(key, value);
+            } catch (JSONException e) {
+                call.reject(e.getMessage(), e);
+                return;
+            }
+        }
+
+        Task<Void> listener = implementation.updateDocument(documentReference, mapData);
+
+        listener.addOnSuccessListener((value) -> {
+            call.resolve();
+        });
+
+        listener.addOnFailureListener((error) -> {
+            call.reject(error.getMessage(), error);
         });
     }
 

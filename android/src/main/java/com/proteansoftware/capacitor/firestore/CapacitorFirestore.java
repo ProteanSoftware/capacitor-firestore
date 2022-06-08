@@ -74,6 +74,10 @@ public class CapacitorFirestore {
         return this.db.document(documentReference).get();
     }
 
+    public Task<Void> updateDocument(String documentReference, Map<String, Object> data) {
+        return this.db.document(documentReference).update(data);
+    }
+
     public Task<QuerySnapshot> getCollection(String collectionReference) {
         return this.db.collection(collectionReference).get();
     }

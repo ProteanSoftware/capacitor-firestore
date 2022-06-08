@@ -16,6 +16,7 @@ npx cap sync
 * [`initializeFirestore(...)`](#initializefirestore)
 * [`signInWithCustomToken(...)`](#signinwithcustomtoken)
 * [`getDocument(...)`](#getdocument)
+* [`updateDocument(...)`](#updatedocument)
 * [`addDocumentSnapshotListener(...)`](#adddocumentsnapshotlistener)
 * [`getCollection(...)`](#getcollection)
 * [`addCollectionSnapshotListener(...)`](#addcollectionsnapshotlistener)
@@ -71,6 +72,21 @@ Reads the document referred to by this DocumentReference
 | **`options`** | <code><a href="#documnentreference">DocumnentReference</a></code> |
 
 **Returns:** <code>Promise&lt;<a href="#documentsnapshot">DocumentSnapshot</a>&lt;T&gt;&gt;</code>
+
+--------------------
+
+
+### updateDocument(...)
+
+```typescript
+updateDocument<T>(options: UpdateDocument<T>) => Promise<void>
+```
+
+Reads the document referred to by this DocumentReference
+
+| Param         | Type                                                               |
+| ------------- | ------------------------------------------------------------------ |
+| **`options`** | <code><a href="#updatedocument">UpdateDocument</a>&lt;T&gt;</code> |
 
 --------------------
 
@@ -175,6 +191,13 @@ Stop listening for snapshot changes on a document or collection.
 | Prop            | Type                |
 | --------------- | ------------------- |
 | **`reference`** | <code>string</code> |
+
+
+#### UpdateDocument
+
+| Prop       | Type           |
+| ---------- | -------------- |
+| **`data`** | <code>T</code> |
 
 
 #### CollectionSnapshot

@@ -1,7 +1,7 @@
 import { WebPlugin } from '@capacitor/core';
 import { initializeApp, deleteApp } from "firebase/app";
 import { getAuth, signInWithCustomToken } from "firebase/auth";
-import { initializeFirestore, terminate, enableIndexedDbPersistence, onSnapshot, doc, getDoc, getDocs, collection, query, where, CACHE_SIZE_UNLIMITED } from "firebase/firestore";
+import { initializeFirestore, terminate, enableIndexedDbPersistence, onSnapshot, doc, getDoc, getDocs, updateDoc, collection, query, where, CACHE_SIZE_UNLIMITED } from "firebase/firestore";
 export class CapacitorFirestoreWeb extends WebPlugin {
     constructor() {
         super(...arguments);
@@ -61,6 +61,12 @@ export class CapacitorFirestoreWeb extends WebPlugin {
                 data: snapshot.exists() ? snapshot.data() : null
             };
         });
+    }
+    updateDocument(options) {
+        if (this.firestore === null) {
+            return Promise.reject("Firestore not initialized");
+        }
+        return updateDoc(doc(this.firestore, options.reference), options.data);
     }
     addCollectionSnapshotListener(options, callback) {
         if (this.firestore === null) {

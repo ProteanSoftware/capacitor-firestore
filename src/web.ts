@@ -11,6 +11,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  updateDoc,
   collection,
   query,
   where,
@@ -28,7 +29,8 @@ import type {
   DocumentSnapshotCallback,
   DocumnentReference,
   FirestoreConfig,
-  RemoveSnapshotListener
+  RemoveSnapshotListener,
+  UpdateDocument
 } from './definitions';
 
 export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFirestorePlugin {
@@ -102,6 +104,14 @@ export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFiresto
         data: snapshot.exists() ? snapshot.data() as T : null
       };
     });
+  }
+
+  public updateDocument<T>(options: UpdateDocument<T>): Promise<void> {
+    if (this.firestore === null) {
+      return Promise.reject("Firestore not initialized");
+    }
+
+    return updateDoc(doc(this.firestore, options.reference), options.data);
   }
 
   public addCollectionSnapshotListener<T>(options: CollectionReference, callback: CollectionSnapshotCallback<T>): Promise<CallbackId> {

@@ -63,6 +63,9 @@ export interface CustomToken {
 export interface RemoveSnapshotListener {
     callbackId: CallbackId;
 }
+export interface UpdateDocument<T> extends DocumnentReference {
+    data: T;
+}
 export declare type DocumentSnapshotCallback<T> = (data: DocumentSnapshot<T> | null, err?: any) => void;
 export declare type CollectionSnapshotCallback<T> = (data: CollectionSnapshot<T> | null, err?: any) => void;
 export interface CapacitorFirestorePlugin {
@@ -82,6 +85,12 @@ export interface CapacitorFirestorePlugin {
       * @returns The document snapshot
       */
     getDocument<T>(options: DocumnentReference): Promise<DocumentSnapshot<T>>;
+    /**
+      * Reads the document referred to by this DocumentReference
+      * @param options
+      * @returns The document snapshot
+      */
+    updateDocument<T>(options: UpdateDocument<T>): Promise<void>;
     /**
      * Listen for snapshot changes on a document.
      * @param options
