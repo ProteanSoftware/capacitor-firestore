@@ -125,6 +125,18 @@ public class CapacitorFirestorePlugin: CAPPlugin {
         }
     }
     
+    @objc func deleteDocument(_ call: CAPPluginCall) {
+        let documentReference = call.getString("reference");
+
+        implementation.deleteDocument(documentReference: documentReference) { error in
+            if (error != nil) {
+                call.reject("Document set error", nil, error, [:]);
+            } else {
+                call.resolve();
+            }
+        }
+    }
+    
     @objc func addCollectionSnapshotListener(_ call: CAPPluginCall) {
         call.keepAlive = true;
         let callbackId = call.callbackId;

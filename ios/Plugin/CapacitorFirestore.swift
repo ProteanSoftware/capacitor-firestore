@@ -92,6 +92,14 @@ enum CapacitorFirestoreError: Error {
         self.db?.document(documentReference).setData(data, merge: merge, completion: completion);
     }
     
+    public func deleteDocument(documentReference: String?, completion: @escaping (Error?) -> Void) -> Void {
+        guard let documentReference = documentReference as String? else {
+            assert(false, "documentReference must not be null");
+        }
+        
+        self.db?.document(documentReference).delete(completion: completion);
+    }
+    
     @objc public func addCollectionSnapshotListener(collectionReference: String?, queryConstaints: [JSQueryConstraints]?, completion: @escaping (QuerySnapshot?, Error?) -> Void) -> ListenerRegistration? {
         guard let collectionReference = collectionReference as String? else {
             assert(false, "collectionReference must not be null");
