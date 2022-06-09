@@ -182,6 +182,18 @@ var capacitorCapacitorFirestore = (function (exports, core, app, auth, firestore
             const auth$1 = auth.getAuth(this.app);
             return auth.signInWithCustomToken(auth$1, options.token).then();
         }
+        enableNetwork() {
+            if (this.firestore === null) {
+                return Promise.reject("Firestore not initialized");
+            }
+            return firestore.enableNetwork(this.firestore);
+        }
+        disableNetwork() {
+            if (this.firestore === null) {
+                return Promise.reject("Firestore not initialized");
+            }
+            return firestore.disableNetwork(this.firestore);
+        }
     }
 
     var web = /*#__PURE__*/Object.freeze({

@@ -15,4 +15,6 @@ export declare class CapacitorFirestoreWeb extends WebPlugin implements Capacito
     getCollection<T>(options: CollectionQuery): Promise<CollectionSnapshot<T>>;
     removeSnapshotListener(options: RemoveSnapshotListener): Promise<void>;
     signInWithCustomToken(options: CustomToken): Promise<void>;
+    enableNetwork(): Promise<void>;
+    disableNetwork(): Promise<void>;
 }

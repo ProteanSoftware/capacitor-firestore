@@ -4,6 +4,8 @@ import type { FirebaseApp } from "firebase/app";
 import { getAuth, signInWithCustomToken } from "firebase/auth";
 import type { Firestore, Query, Unsubscribe } from "firebase/firestore";
 import {
+  enableNetwork,
+  disableNetwork,
   initializeFirestore,
   terminate,
   enableIndexedDbPersistence,
@@ -230,5 +232,21 @@ export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFiresto
 
     const auth = getAuth(this.app);
     return signInWithCustomToken(auth, options.token).then();
+  }
+
+  public enableNetwork(): Promise<void> {
+    if (this.firestore === null) {
+      return Promise.reject("Firestore not initialized");
+    }
+
+    return enableNetwork(this.firestore);
+  }
+
+  public disableNetwork(): Promise<void> {
+    if (this.firestore === null) {
+      return Promise.reject("Firestore not initialized");
+    }
+
+    return disableNetwork(this.firestore);
   }
 }

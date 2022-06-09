@@ -321,6 +321,36 @@
           "RemoveSnapshotListener"
         ],
         "slug": "removesnapshotlistener"
+      },
+      {
+        "name": "enableNetwork",
+        "signature": "() => Promise<void>",
+        "parameters": [],
+        "returns": "Promise<void>",
+        "tags": [
+          {
+            "name": "returns",
+            "text": "A `Promise` that is resolved once the network has been enabled."
+          }
+        ],
+        "docs": "Re-enables use of the network for this Firestore instance after a prior\r\ncall to {@link disableNetwork}.",
+        "complexTypes": [],
+        "slug": "enablenetwork"
+      },
+      {
+        "name": "disableNetwork",
+        "signature": "() => Promise<void>",
+        "parameters": [],
+        "returns": "Promise<void>",
+        "tags": [
+          {
+            "name": "returns",
+            "text": "A `Promise` that is resolved once the network has been disabled."
+          }
+        ],
+        "docs": "Disables network usage for this instance. It can be re-enabled via {@link enableNetwork}.\r\nWhile the network is disabled, any snapshot listeners, {@link getDocument}\r\nor {@link getCollection} calls will return results from cache, and any write\r\noperations will be queued until the network is restored.",
+        "complexTypes": [],
+        "slug": "disablenetwork"
       }
     ],
     "properties": []

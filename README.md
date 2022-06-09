@@ -24,6 +24,8 @@ npx cap sync
 * [`getCollection(...)`](#getcollection)
 * [`addCollectionSnapshotListener(...)`](#addcollectionsnapshotlistener)
 * [`removeSnapshotListener(...)`](#removesnapshotlistener)
+* [`enableNetwork()`](#enablenetwork)
+* [`disableNetwork()`](#disablenetwork)
 * [Interfaces](#interfaces)
 * [Type Aliases](#type-aliases)
 
@@ -209,6 +211,32 @@ Stop listening for snapshot changes on a document or collection.
 | Param         | Type                                                                      |
 | ------------- | ------------------------------------------------------------------------- |
 | **`options`** | <code><a href="#removesnapshotlistener">RemoveSnapshotListener</a></code> |
+
+--------------------
+
+
+### enableNetwork()
+
+```typescript
+enableNetwork() => Promise<void>
+```
+
+Re-enables use of the network for this Firestore instance after a prior
+call to {@link disableNetwork}.
+
+--------------------
+
+
+### disableNetwork()
+
+```typescript
+disableNetwork() => Promise<void>
+```
+
+Disables network usage for this instance. It can be re-enabled via {@link enableNetwork}.
+While the network is disabled, any snapshot listeners, {@link getDocument}
+or {@link getCollection} calls will return results from cache, and any write
+operations will be queued until the network is restored.
 
 --------------------
 

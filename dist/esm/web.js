@@ -1,7 +1,7 @@
 import { WebPlugin } from '@capacitor/core';
 import { initializeApp, deleteApp } from "firebase/app";
 import { getAuth, signInWithCustomToken } from "firebase/auth";
-import { initializeFirestore, terminate, enableIndexedDbPersistence, onSnapshot, doc, getDoc, getDocs, updateDoc, setDoc, deleteDoc, addDoc, collection, query, where, CACHE_SIZE_UNLIMITED } from "firebase/firestore";
+import { enableNetwork, disableNetwork, initializeFirestore, terminate, enableIndexedDbPersistence, onSnapshot, doc, getDoc, getDocs, updateDoc, setDoc, deleteDoc, addDoc, collection, query, where, CACHE_SIZE_UNLIMITED } from "firebase/firestore";
 export class CapacitorFirestoreWeb extends WebPlugin {
     constructor() {
         super(...arguments);
@@ -161,6 +161,18 @@ export class CapacitorFirestoreWeb extends WebPlugin {
         }
         const auth = getAuth(this.app);
         return signInWithCustomToken(auth, options.token).then();
+    }
+    enableNetwork() {
+        if (this.firestore === null) {
+            return Promise.reject("Firestore not initialized");
+        }
+        return enableNetwork(this.firestore);
+    }
+    disableNetwork() {
+        if (this.firestore === null) {
+            return Promise.reject("Firestore not initialized");
+        }
+        return disableNetwork(this.firestore);
     }
 }
 //# sourceMappingURL=web.js.map

@@ -95,14 +95,14 @@ export interface DocumentReference {
   *
   * @since 1.0.0
   */
-   id: string;
+  id: string;
 
-   /**
-    * A string representing the path of the referenced document (relative
-    * to the root of the database).
-    * @since 1.0.0
-    */
-   path: string;
+  /**
+   * A string representing the path of the referenced document (relative
+   * to the root of the database).
+   * @since 1.0.0
+   */
+  path: string;
 }
 
 export interface DocumentSnapshot<T> extends DocumentReference {
@@ -246,4 +246,22 @@ export interface CapacitorFirestorePlugin {
    * @param options
    */
   removeSnapshotListener(options: RemoveSnapshotListener): Promise<void>;
+
+  /**
+   * Re-enables use of the network for this Firestore instance after a prior
+   * call to {@link disableNetwork}.
+   *
+   * @returns A `Promise` that is resolved once the network has been enabled.
+   */
+  enableNetwork(): Promise<void>;
+
+  /**
+   * Disables network usage for this instance. It can be re-enabled via {@link enableNetwork}.
+   * While the network is disabled, any snapshot listeners, {@link getDocument}
+   * or {@link getCollection} calls will return results from cache, and any write
+   * operations will be queued until the network is restored.
+   *
+   * @returns A `Promise` that is resolved once the network has been disabled.
+   */
+  disableNetwork(): Promise<void>;
 }

@@ -295,4 +295,30 @@ public class CapacitorFirestorePlugin extends Plugin {
 
         listeners.put(callbackId, listener);
     }
+
+    @PluginMethod
+    public void enableNetwork(PluginCall call) {
+        Task<Void> listener = implementation.enableNetwork();
+
+        listener.addOnSuccessListener((value) -> {
+            call.resolve();
+        });
+
+        listener.addOnFailureListener((error) -> {
+            call.reject(error.getMessage(), error);
+        });
+    }
+
+    @PluginMethod
+    public void disableNetwork(PluginCall call) {
+        Task<Void> listener = implementation.disableNetwork();
+
+        listener.addOnSuccessListener((value) -> {
+            call.resolve();
+        });
+
+        listener.addOnFailureListener((error) -> {
+            call.reject(error.getMessage(), error);
+        });
+    }
 }

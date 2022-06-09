@@ -213,4 +213,12 @@ public class CapacitorFirestore {
 
         this.db.setFirestoreSettings(settings);
     }
+
+    public Task<Void> enableNetwork() {
+        return this.db.enableNetwork();
+    }
+
+    public Task<Void> disableNetwork() {
+        return this.db.enableNetwork();
+    }
 }
