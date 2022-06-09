@@ -16,10 +16,12 @@ public class CapacitorFirestorePlugin: CAPPlugin {
         let applicationId = getConfigValue("applicationId") as? String;
         let apiKey = getConfigValue("apiKey") as? String;
         
-        do {
-            try implementation.Initialize(projectId: projectId, applicationId: applicationId, apiKey: apiKey);
-        } catch {
-            print(error);
+        if (projectId != nil && applicationId != nil && apiKey != nil) {
+            do {
+                try implementation.Initialize(projectId: projectId, applicationId: applicationId, apiKey: apiKey);
+            } catch {
+                print(error);
+            }
         }
     }
 

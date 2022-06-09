@@ -10,6 +10,7 @@ enum CapacitorFirestoreError: Error {
 
 @objc public class CapacitorFirestore: NSObject {
     private var db: Firestore? = nil;
+    private var app: FirebaseApp? = nil;
     
     @objc public func Initialize(projectId: String?, applicationId: String?, apiKey: String?) throws -> Void {
         guard let projectId = projectId as String? else {
@@ -29,12 +30,25 @@ enum CapacitorFirestoreError: Error {
         options.apiKey = apiKey;
         options.projectID = projectId;
 
-        let app = FirebaseApp.app(name: "CapacitorFirestore");
-        app?.delete({ _ in });
-                
-        FirebaseApp.configure(name: "CapacitorFirestore", options: options);
-
-        try self.InitializeFirestore();
+        if (self.app != nil) {
+            app?.delete() { error in
+                if (error) {
+                    print(error);
+                } else {
+                    do {
+                        FirebaseApp.configure(name: "CapacitorFirestore", options: options);
+                        self.app = FirebaseApp.app(name: "CapacitorFirestore")!;
+                        try self.InitializeFirestore();
+                    } catch {
+                        print(error);
+                    }
+                }
+            };
+        } else {
+            FirebaseApp.configure(name: "CapacitorFirestore", options: options);
+            self.app = FirebaseApp.app(name: "CapacitorFirestore")!;
+            try self.InitializeFirestore();
+        }
     }
     
     @objc public func signInWithCustomToken(token: String?, completion: @escaping (AuthDataResult?, Error?) -> Void) throws -> Void {
@@ -42,9 +56,9 @@ enum CapacitorFirestoreError: Error {
             throw CapacitorFirestoreError.runtimeError("token must not be null");
         }
         
-        guard let app = FirebaseApp.app(name: "CapacitorFirestore")
+        guard let app = self.app as FirebaseApp?
           else {
-            throw CapacitorFirestoreError.runtimeError("app must be initialized first");
+            throw CapacitorFirestoreError.runtimeError("signInWithCustomToken - app must be initialized first");
         }
         let auth = FirebaseAuth.Auth.auth(app: app);
         auth.signIn(withCustomToken: token) { user, error in
@@ -220,18 +234,25 @@ enum CapacitorFirestoreError: Error {
     }
     
     @objc private func InitializeFirestore() throws -> Void {
-        guard let app = FirebaseApp.app(name: "CapacitorFirestore")
+        guard let app = self.app as FirebaseApp?
           else {
-            throw CapacitorFirestoreError.runtimeError("app must be initialized first");
+            throw CapacitorFirestoreError.runtimeError("InitializeFirestore - app must be initialized first");
         }
-        
-        self.db?.terminate();
-
-        self.db = Firestore.firestore(app: app);
         
         let settings = FirestoreSettings();
         settings.isPersistenceEnabled = true;
         settings.cacheSizeBytes = FirestoreCacheSizeUnlimited;
-        self.db?.settings = settings;
+        
+        if (self.db != nil) {
+            self.db?.terminate() { error in
+                if (error != nil) {
+                    self.db = Firestore.firestore(app: app);
+                    self.db?.settings = settings;
+                }
+            }
+        } else {
+            self.db = Firestore.firestore(app: app);
+            self.db?.settings = settings;
+        }
     }
 }
