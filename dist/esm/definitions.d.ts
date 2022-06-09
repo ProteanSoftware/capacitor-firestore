@@ -60,16 +60,16 @@ export interface QueryConstraint {
      */
     value: any;
 }
-export interface CollectionReference extends DocumnentReference {
+export interface CollectionQuery extends DocumnentQuery {
     queryConstraints?: QueryConstraint[];
 }
-export interface DocumnentReference {
+export interface DocumnentQuery {
     /**
      * A reference to the document/collection
      */
     reference: string;
 }
-export interface DocumentSnapshot<T> {
+export interface DocumentReference {
     /**
     * The id of the document.
     *
@@ -82,6 +82,8 @@ export interface DocumentSnapshot<T> {
      * @since 1.0.0
      */
     path: string;
+}
+export interface DocumentSnapshot<T> extends DocumentReference {
     /**
      * The fields of the document or null if the document doesn't exist.
      *
@@ -98,7 +100,7 @@ export interface CustomToken {
 export interface RemoveSnapshotListener {
     callbackId: CallbackId;
 }
-export interface UpdateDocument<T> extends DocumnentReference {
+export interface UpdateDocument<T> extends DocumnentQuery {
     /**
      * An object containing the fields and values with which to
      * update the document. Fields can contain dots to reference nested fields
@@ -106,7 +108,7 @@ export interface UpdateDocument<T> extends DocumnentReference {
      */
     data: Partial<T>;
 }
-export interface SetDocument<T> extends DocumnentReference {
+export interface SetDocument<T> extends DocumnentQuery {
     /**
      * A map of the fields and values for the document.
      */
@@ -118,6 +120,12 @@ export interface SetDocument<T> extends DocumnentReference {
      * nested fields are overwritten.
      */
     merge?: boolean;
+}
+export interface AddDocument<T> extends DocumnentQuery {
+    /**
+     * An Object containing the data for the new document.
+     */
+    data: T;
 }
 export declare type DocumentSnapshotCallback<T> = (data: DocumentSnapshot<T> | null, err?: any) => void;
 export declare type CollectionSnapshotCallback<T> = (data: CollectionSnapshot<T> | null, err?: any) => void;
@@ -133,13 +141,13 @@ export interface CapacitorFirestorePlugin {
      */
     signInWithCustomToken(options: CustomToken): Promise<void>;
     /**
-     * Reads the document referred to by this DocumentReference
+     * Reads the document referred to by this DocumnentQuery
      * @param options
      * @returns The document snapshot
      */
-    getDocument<T>(options: DocumnentReference): Promise<DocumentSnapshot<T>>;
+    getDocument<T>(options: DocumnentQuery): Promise<DocumentSnapshot<T>>;
     /**
-      * Updates fields in the document referred to by the specified DocumentReference.
+      * Updates fields in the document referred to by the specified DocumnentQuery.
       * The update will fail if applied to a document that does not exist.
       * @param options
       * @returns A `Promise` resolved once the data has been successfully written
@@ -147,7 +155,7 @@ export interface CapacitorFirestorePlugin {
       */
     updateDocument<T>(options: UpdateDocument<T>): Promise<void>;
     /**
-     * Writes to the document referred to by the specified DocumentReference.
+     * Writes to the document referred to by the specified DocumnentQuery.
      * If the document does not yet exist, it will be created.
      * If you provide merge or mergeFields, the provided data can be merged into an existing document.
      * @param options
@@ -156,32 +164,41 @@ export interface CapacitorFirestorePlugin {
      */
     setDocument<T>(options: SetDocument<T>): Promise<void>;
     /**
-     * Deletes the document referred to by the specified DocumentReference.
+     * Deletes the document referred to by the specified DocumnentQuery.
      * @param options
      * @returns A Promise resolved once the document has been successfully
      * deleted from the backend (note that it won't resolve while you're offline).
      */
-    deleteDocument(options: DocumnentReference): Promise<void>;
+    deleteDocument(options: DocumnentQuery): Promise<void>;
+    /**
+     * Add a new document to specified `CollectionQuery` with the given data,
+     * assigning it a document ID automatically.
+     * @param options
+     * @returns A `Promise` resolved with a `DocumentReference` pointing to the
+     * newly created document after it has been written to the backend (Note that it
+     * won't resolve while you're offline).
+     */
+    addDocument<T>(options: AddDocument<T>): Promise<DocumentReference>;
     /**
      * Listen for snapshot changes on a document.
      * @param options
      * @param callback
      * @returns The callback id which can be used to remove the listener.
      */
-    addDocumentSnapshotListener<T>(options: DocumnentReference, callback: DocumentSnapshotCallback<T>): Promise<CallbackId>;
+    addDocumentSnapshotListener<T>(options: DocumnentQuery, callback: DocumentSnapshotCallback<T>): Promise<CallbackId>;
     /**
      * Executes the query and returns the results as a CollectionSnapshot
      * @param options
      * @returns The collection snapshot
      */
-    getCollection<T>(options: CollectionReference): Promise<CollectionSnapshot<T>>;
+    getCollection<T>(options: CollectionQuery): Promise<CollectionSnapshot<T>>;
     /**
      * Listen for snapshot changes on a collection.
      * @param options
      * @param callback
      * @returns The callback id which can be used to remove the listener.
      */
-    addCollectionSnapshotListener<T>(options: CollectionReference, callback: CollectionSnapshotCallback<T>): Promise<CallbackId>;
+    addCollectionSnapshotListener<T>(options: CollectionQuery, callback: CollectionSnapshotCallback<T>): Promise<CallbackId>;
     /**
      * Stop listening for snapshot changes on a document or collection.
      * @param options

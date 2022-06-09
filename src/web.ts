@@ -14,6 +14,7 @@ import {
   updateDoc,
   setDoc,
   deleteDoc,
+  addDoc,
   collection,
   query,
   where,
@@ -25,15 +26,17 @@ import type {
   CapacitorFirestorePlugin,
   CollectionSnapshot,
   CollectionSnapshotCallback,
-  CollectionReference,
   CustomToken,
   DocumentSnapshot,
   DocumentSnapshotCallback,
-  DocumnentReference,
+  DocumentReference,
   FirestoreConfig,
   RemoveSnapshotListener,
   UpdateDocument,
-  SetDocument
+  SetDocument,
+  AddDocument,
+  DocumnentQuery,
+  CollectionQuery
 } from './definitions';
 
 export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFirestorePlugin {
@@ -78,7 +81,7 @@ export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFiresto
     });
   }
 
-  public addDocumentSnapshotListener<T>(options: DocumnentReference, callback: DocumentSnapshotCallback<T>): Promise<CallbackId> {
+  public addDocumentSnapshotListener<T>(options: DocumnentQuery, callback: DocumentSnapshotCallback<T>): Promise<CallbackId> {
     if (this.firestore === null) {
       return Promise.reject("Firestore not initialized");
     }
@@ -97,7 +100,7 @@ export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFiresto
     return Promise.resolve(id);
   }
 
-  public getDocument<T>(options: DocumnentReference): Promise<DocumentSnapshot<T>> {
+  public getDocument<T>(options: DocumnentQuery): Promise<DocumentSnapshot<T>> {
     if (this.firestore === null) {
       return Promise.reject("Firestore not initialized");
     }
@@ -129,7 +132,7 @@ export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFiresto
     });
   }
 
-  public deleteDocument(options: DocumnentReference): Promise<void> {
+  public deleteDocument(options: DocumnentQuery): Promise<void> {
     if (this.firestore === null) {
       return Promise.reject("Firestore not initialized");
     }
@@ -137,7 +140,20 @@ export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFiresto
     return deleteDoc(doc(this.firestore, options.reference));
   }
 
-  public addCollectionSnapshotListener<T>(options: CollectionReference, callback: CollectionSnapshotCallback<T>): Promise<CallbackId> {
+  public addDocument<T>(options: AddDocument<T>): Promise<DocumentReference> {
+    if (this.firestore === null) {
+      return Promise.reject("Firestore not initialized");
+    }
+
+    return addDoc(collection(this.firestore, options.reference), options.data as T).then(docRef => {
+      return {
+        id: docRef.id,
+        path: docRef.path
+      }
+    });
+  }
+
+  public addCollectionSnapshotListener<T>(options: CollectionQuery, callback: CollectionSnapshotCallback<T>): Promise<CallbackId> {
     if (this.firestore === null) {
       return Promise.reject("Firestore not initialized");
     }
@@ -168,7 +184,7 @@ export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFiresto
     return Promise.resolve(id);
   }
 
-  public getCollection<T>(options: CollectionReference): Promise<CollectionSnapshot<T>> {
+  public getCollection<T>(options: CollectionQuery): Promise<CollectionSnapshot<T>> {
     if (this.firestore === null) {
       return Promise.reject("Firestore not initialized");
     }

@@ -19,6 +19,7 @@ npx cap sync
 * [`updateDocument(...)`](#updatedocument)
 * [`setDocument(...)`](#setdocument)
 * [`deleteDocument(...)`](#deletedocument)
+* [`addDocument(...)`](#adddocument)
 * [`addDocumentSnapshotListener(...)`](#adddocumentsnapshotlistener)
 * [`getCollection(...)`](#getcollection)
 * [`addCollectionSnapshotListener(...)`](#addcollectionsnapshotlistener)
@@ -64,14 +65,14 @@ Login to firestore using a customer JWT token.
 ### getDocument(...)
 
 ```typescript
-getDocument<T>(options: DocumnentReference) => Promise<DocumentSnapshot<T>>
+getDocument<T>(options: DocumnentQuery) => Promise<DocumentSnapshot<T>>
 ```
 
-Reads the document referred to by this DocumentReference
+Reads the document referred to by this <a href="#documnentquery">DocumnentQuery</a>
 
-| Param         | Type                                                              |
-| ------------- | ----------------------------------------------------------------- |
-| **`options`** | <code><a href="#documnentreference">DocumnentReference</a></code> |
+| Param         | Type                                                      |
+| ------------- | --------------------------------------------------------- |
+| **`options`** | <code><a href="#documnentquery">DocumnentQuery</a></code> |
 
 **Returns:** <code>Promise&lt;<a href="#documentsnapshot">DocumentSnapshot</a>&lt;T&gt;&gt;</code>
 
@@ -84,7 +85,7 @@ Reads the document referred to by this DocumentReference
 updateDocument<T>(options: UpdateDocument<T>) => Promise<void>
 ```
 
-Updates fields in the document referred to by the specified DocumentReference.
+Updates fields in the document referred to by the specified <a href="#documnentquery">DocumnentQuery</a>.
 The update will fail if applied to a document that does not exist.
 
 | Param         | Type                                                               |
@@ -100,7 +101,7 @@ The update will fail if applied to a document that does not exist.
 setDocument<T>(options: SetDocument<T>) => Promise<void>
 ```
 
-Writes to the document referred to by the specified DocumentReference.
+Writes to the document referred to by the specified <a href="#documnentquery">DocumnentQuery</a>.
 If the document does not yet exist, it will be created.
 If you provide merge or mergeFields, the provided data can be merged into an existing document.
 
@@ -114,14 +115,32 @@ If you provide merge or mergeFields, the provided data can be merged into an exi
 ### deleteDocument(...)
 
 ```typescript
-deleteDocument(options: DocumnentReference) => Promise<void>
+deleteDocument(options: DocumnentQuery) => Promise<void>
 ```
 
-Deletes the document referred to by the specified DocumentReference.
+Deletes the document referred to by the specified <a href="#documnentquery">DocumnentQuery</a>.
 
-| Param         | Type                                                              |
-| ------------- | ----------------------------------------------------------------- |
-| **`options`** | <code><a href="#documnentreference">DocumnentReference</a></code> |
+| Param         | Type                                                      |
+| ------------- | --------------------------------------------------------- |
+| **`options`** | <code><a href="#documnentquery">DocumnentQuery</a></code> |
+
+--------------------
+
+
+### addDocument(...)
+
+```typescript
+addDocument<T>(options: AddDocument<T>) => Promise<DocumentReference>
+```
+
+Add a new document to specified <a href="#collectionquery">`CollectionQuery`</a> with the given data,
+assigning it a document ID automatically.
+
+| Param         | Type                                                         |
+| ------------- | ------------------------------------------------------------ |
+| **`options`** | <code><a href="#adddocument">AddDocument</a>&lt;T&gt;</code> |
+
+**Returns:** <code>Promise&lt;<a href="#documentreference">DocumentReference</a>&gt;</code>
 
 --------------------
 
@@ -129,14 +148,14 @@ Deletes the document referred to by the specified DocumentReference.
 ### addDocumentSnapshotListener(...)
 
 ```typescript
-addDocumentSnapshotListener<T>(options: DocumnentReference, callback: DocumentSnapshotCallback<T>) => Promise<CallbackId>
+addDocumentSnapshotListener<T>(options: DocumnentQuery, callback: DocumentSnapshotCallback<T>) => Promise<CallbackId>
 ```
 
 Listen for snapshot changes on a document.
 
 | Param          | Type                                                                                   |
 | -------------- | -------------------------------------------------------------------------------------- |
-| **`options`**  | <code><a href="#documnentreference">DocumnentReference</a></code>                      |
+| **`options`**  | <code><a href="#documnentquery">DocumnentQuery</a></code>                              |
 | **`callback`** | <code><a href="#documentsnapshotcallback">DocumentSnapshotCallback</a>&lt;T&gt;</code> |
 
 **Returns:** <code>Promise&lt;string&gt;</code>
@@ -147,14 +166,14 @@ Listen for snapshot changes on a document.
 ### getCollection(...)
 
 ```typescript
-getCollection<T>(options: CollectionReference) => Promise<CollectionSnapshot<T>>
+getCollection<T>(options: CollectionQuery) => Promise<CollectionSnapshot<T>>
 ```
 
 Executes the query and returns the results as a <a href="#collectionsnapshot">CollectionSnapshot</a>
 
-| Param         | Type                                                                |
-| ------------- | ------------------------------------------------------------------- |
-| **`options`** | <code><a href="#collectionreference">CollectionReference</a></code> |
+| Param         | Type                                                        |
+| ------------- | ----------------------------------------------------------- |
+| **`options`** | <code><a href="#collectionquery">CollectionQuery</a></code> |
 
 **Returns:** <code>Promise&lt;<a href="#collectionsnapshot">CollectionSnapshot</a>&lt;T&gt;&gt;</code>
 
@@ -164,14 +183,14 @@ Executes the query and returns the results as a <a href="#collectionsnapshot">Co
 ### addCollectionSnapshotListener(...)
 
 ```typescript
-addCollectionSnapshotListener<T>(options: CollectionReference, callback: CollectionSnapshotCallback<T>) => Promise<CallbackId>
+addCollectionSnapshotListener<T>(options: CollectionQuery, callback: CollectionSnapshotCallback<T>) => Promise<CallbackId>
 ```
 
 Listen for snapshot changes on a collection.
 
 | Param          | Type                                                                                       |
 | -------------- | ------------------------------------------------------------------------------------------ |
-| **`options`**  | <code><a href="#collectionreference">CollectionReference</a></code>                        |
+| **`options`**  | <code><a href="#collectionquery">CollectionQuery</a></code>                                |
 | **`callback`** | <code><a href="#collectionsnapshotcallback">CollectionSnapshotCallback</a>&lt;T&gt;</code> |
 
 **Returns:** <code>Promise&lt;string&gt;</code>
@@ -215,14 +234,12 @@ Stop listening for snapshot changes on a document or collection.
 
 #### DocumentSnapshot
 
-| Prop       | Type                   | Description                                                                                       | Since |
-| ---------- | ---------------------- | ------------------------------------------------------------------------------------------------- | ----- |
-| **`id`**   | <code>string</code>    | The id of the document.                                                                           | 1.0.0 |
-| **`path`** | <code>string</code>    | A string representing the path of the referenced document (relative to the root of the database). | 1.0.0 |
-| **`data`** | <code>T \| null</code> | The fields of the document or null if the document doesn't exist.                                 | 1.0.0 |
+| Prop       | Type                   | Description                                                       | Since |
+| ---------- | ---------------------- | ----------------------------------------------------------------- | ----- |
+| **`data`** | <code>T \| null</code> | The fields of the document or null if the document doesn't exist. | 1.0.0 |
 
 
-#### DocumnentReference
+#### DocumnentQuery
 
 | Prop            | Type                | Description                            |
 | --------------- | ------------------- | -------------------------------------- |
@@ -244,6 +261,21 @@ Stop listening for snapshot changes on a document or collection.
 | **`merge`** | <code>boolean</code> | Changes the behavior of a `setDocument()` call to only replace the values specified in its data argument. Fields omitted from the `setDocument()` call remain untouched. If your input sets any field to an empty map, all nested fields are overwritten. |
 
 
+#### DocumentReference
+
+| Prop       | Type                | Description                                                                                       | Since |
+| ---------- | ------------------- | ------------------------------------------------------------------------------------------------- | ----- |
+| **`id`**   | <code>string</code> | The id of the document.                                                                           | 1.0.0 |
+| **`path`** | <code>string</code> | A string representing the path of the referenced document (relative to the root of the database). | 1.0.0 |
+
+
+#### AddDocument
+
+| Prop       | Type           | Description                                         |
+| ---------- | -------------- | --------------------------------------------------- |
+| **`data`** | <code>T</code> | An Object containing the data for the new document. |
+
+
 #### CollectionSnapshot
 
 | Prop             | Type                                                                     |
@@ -251,7 +283,7 @@ Stop listening for snapshot changes on a document or collection.
 | **`collection`** | <code><a href="#documentsnapshot">DocumentSnapshot</a>&lt;T&gt;[]</code> |
 
 
-#### CollectionReference
+#### CollectionQuery
 
 | Prop                   | Type                           |
 | ---------------------- | ------------------------------ |

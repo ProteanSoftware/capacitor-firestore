@@ -11,6 +11,7 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -90,6 +91,10 @@ public class CapacitorFirestore {
 
     public Task<Void> deleteDocument(String documentReference) {
         return this.db.document(documentReference).delete();
+    }
+
+    public Task<DocumentReference> addDocument(String collectionReference, Map<String, Object> data) {
+        return this.db.collection(collectionReference).add(data);
     }
 
     public Task<QuerySnapshot> getCollection(String collectionReference) {

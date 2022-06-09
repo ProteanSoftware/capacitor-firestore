@@ -110,6 +110,17 @@ class CapacitorFirestoreWeb extends core.WebPlugin {
         }
         return firestore.deleteDoc(firestore.doc(this.firestore, options.reference));
     }
+    addDocument(options) {
+        if (this.firestore === null) {
+            return Promise.reject("Firestore not initialized");
+        }
+        return firestore.addDoc(firestore.collection(this.firestore, options.reference), options.data).then(docRef => {
+            return {
+                id: docRef.id,
+                path: docRef.path
+            };
+        });
+    }
     addCollectionSnapshotListener(options, callback) {
         if (this.firestore === null) {
             return Promise.reject("Firestore not initialized");

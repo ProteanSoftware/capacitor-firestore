@@ -53,12 +53,12 @@
       },
       {
         "name": "getDocument",
-        "signature": "<T>(options: DocumnentReference) => Promise<DocumentSnapshot<T>>",
+        "signature": "<T>(options: DocumnentQuery) => Promise<DocumentSnapshot<T>>",
         "parameters": [
           {
             "name": "options",
             "docs": "",
-            "type": "DocumnentReference"
+            "type": "DocumnentQuery"
           }
         ],
         "returns": "Promise<DocumentSnapshot<T>>",
@@ -72,11 +72,11 @@
             "text": "The document snapshot"
           }
         ],
-        "docs": "Reads the document referred to by this DocumentReference",
+        "docs": "Reads the document referred to by this DocumnentQuery",
         "complexTypes": [
           "DocumentSnapshot",
           "T",
-          "DocumnentReference"
+          "DocumnentQuery"
         ],
         "slug": "getdocument"
       },
@@ -101,7 +101,7 @@
             "text": "A `Promise` resolved once the data has been successfully written\r\nto the backend (note that it won't resolve while you're offline)."
           }
         ],
-        "docs": "Updates fields in the document referred to by the specified DocumentReference.\r\nThe update will fail if applied to a document that does not exist.",
+        "docs": "Updates fields in the document referred to by the specified DocumnentQuery.\r\nThe update will fail if applied to a document that does not exist.",
         "complexTypes": [
           "UpdateDocument",
           "T"
@@ -129,7 +129,7 @@
             "text": "A Promise resolved once the data has been successfully written\r\nto the backend (note that it won't resolve while you're offline)."
           }
         ],
-        "docs": "Writes to the document referred to by the specified DocumentReference.\r\nIf the document does not yet exist, it will be created.\r\nIf you provide merge or mergeFields, the provided data can be merged into an existing document.",
+        "docs": "Writes to the document referred to by the specified DocumnentQuery.\r\nIf the document does not yet exist, it will be created.\r\nIf you provide merge or mergeFields, the provided data can be merged into an existing document.",
         "complexTypes": [
           "SetDocument",
           "T"
@@ -138,12 +138,12 @@
       },
       {
         "name": "deleteDocument",
-        "signature": "(options: DocumnentReference) => Promise<void>",
+        "signature": "(options: DocumnentQuery) => Promise<void>",
         "parameters": [
           {
             "name": "options",
             "docs": "",
-            "type": "DocumnentReference"
+            "type": "DocumnentQuery"
           }
         ],
         "returns": "Promise<void>",
@@ -157,20 +157,49 @@
             "text": "A Promise resolved once the document has been successfully\r\ndeleted from the backend (note that it won't resolve while you're offline)."
           }
         ],
-        "docs": "Deletes the document referred to by the specified DocumentReference.",
+        "docs": "Deletes the document referred to by the specified DocumnentQuery.",
         "complexTypes": [
-          "DocumnentReference"
+          "DocumnentQuery"
         ],
         "slug": "deletedocument"
       },
       {
-        "name": "addDocumentSnapshotListener",
-        "signature": "<T>(options: DocumnentReference, callback: DocumentSnapshotCallback<T>) => Promise<CallbackId>",
+        "name": "addDocument",
+        "signature": "<T>(options: AddDocument<T>) => Promise<DocumentReference>",
         "parameters": [
           {
             "name": "options",
             "docs": "",
-            "type": "DocumnentReference"
+            "type": "AddDocument<T>"
+          }
+        ],
+        "returns": "Promise<DocumentReference>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options"
+          },
+          {
+            "name": "returns",
+            "text": "A `Promise` resolved with a `DocumentReference` pointing to the\r\nnewly created document after it has been written to the backend (Note that it\r\nwon't resolve while you're offline)."
+          }
+        ],
+        "docs": "Add a new document to specified `CollectionQuery` with the given data,\r\nassigning it a document ID automatically.",
+        "complexTypes": [
+          "DocumentReference",
+          "AddDocument",
+          "T"
+        ],
+        "slug": "adddocument"
+      },
+      {
+        "name": "addDocumentSnapshotListener",
+        "signature": "<T>(options: DocumnentQuery, callback: DocumentSnapshotCallback<T>) => Promise<CallbackId>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "DocumnentQuery"
           },
           {
             "name": "callback",
@@ -195,7 +224,7 @@
         ],
         "docs": "Listen for snapshot changes on a document.",
         "complexTypes": [
-          "DocumnentReference",
+          "DocumnentQuery",
           "DocumentSnapshotCallback",
           "T",
           "CallbackId"
@@ -204,12 +233,12 @@
       },
       {
         "name": "getCollection",
-        "signature": "<T>(options: CollectionReference) => Promise<CollectionSnapshot<T>>",
+        "signature": "<T>(options: CollectionQuery) => Promise<CollectionSnapshot<T>>",
         "parameters": [
           {
             "name": "options",
             "docs": "",
-            "type": "CollectionReference"
+            "type": "CollectionQuery"
           }
         ],
         "returns": "Promise<CollectionSnapshot<T>>",
@@ -227,18 +256,18 @@
         "complexTypes": [
           "CollectionSnapshot",
           "T",
-          "CollectionReference"
+          "CollectionQuery"
         ],
         "slug": "getcollection"
       },
       {
         "name": "addCollectionSnapshotListener",
-        "signature": "<T>(options: CollectionReference, callback: CollectionSnapshotCallback<T>) => Promise<CallbackId>",
+        "signature": "<T>(options: CollectionQuery, callback: CollectionSnapshotCallback<T>) => Promise<CallbackId>",
         "parameters": [
           {
             "name": "options",
             "docs": "",
-            "type": "CollectionReference"
+            "type": "CollectionQuery"
           },
           {
             "name": "callback",
@@ -263,7 +292,7 @@
         ],
         "docs": "Listen for snapshot changes on a collection.",
         "complexTypes": [
-          "CollectionReference",
+          "CollectionQuery",
           "CollectionSnapshotCallback",
           "T",
           "CallbackId"
@@ -378,30 +407,6 @@
       "methods": [],
       "properties": [
         {
-          "name": "id",
-          "tags": [
-            {
-              "text": "1.0.0",
-              "name": "since"
-            }
-          ],
-          "docs": "The id of the document.",
-          "complexTypes": [],
-          "type": "string"
-        },
-        {
-          "name": "path",
-          "tags": [
-            {
-              "text": "1.0.0",
-              "name": "since"
-            }
-          ],
-          "docs": "A string representing the path of the referenced document (relative\r\nto the root of the database).",
-          "complexTypes": [],
-          "type": "string"
-        },
-        {
           "name": "data",
           "tags": [
             {
@@ -418,8 +423,8 @@
       ]
     },
     {
-      "name": "DocumnentReference",
-      "slug": "documnentreference",
+      "name": "DocumnentQuery",
+      "slug": "documnentquery",
       "docs": "",
       "tags": [],
       "methods": [],
@@ -478,6 +483,57 @@
       ]
     },
     {
+      "name": "DocumentReference",
+      "slug": "documentreference",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "id",
+          "tags": [
+            {
+              "text": "1.0.0",
+              "name": "since"
+            }
+          ],
+          "docs": "The id of the document.",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "path",
+          "tags": [
+            {
+              "text": "1.0.0",
+              "name": "since"
+            }
+          ],
+          "docs": "A string representing the path of the referenced document (relative\r\nto the root of the database).",
+          "complexTypes": [],
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "AddDocument",
+      "slug": "adddocument",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "data",
+          "tags": [],
+          "docs": "An Object containing the data for the new document.",
+          "complexTypes": [
+            "T"
+          ],
+          "type": "T"
+        }
+      ]
+    },
+    {
       "name": "CollectionSnapshot",
       "slug": "collectionsnapshot",
       "docs": "",
@@ -497,8 +553,8 @@
       ]
     },
     {
-      "name": "CollectionReference",
-      "slug": "collectionreference",
+      "name": "CollectionQuery",
+      "slug": "collectionquery",
       "docs": "",
       "tags": [],
       "methods": [],

@@ -9,6 +9,7 @@ import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -172,6 +173,39 @@ public class CapacitorFirestorePlugin extends Plugin {
 
         listener.addOnSuccessListener((value) -> {
             call.resolve();
+        });
+
+        listener.addOnFailureListener((error) -> {
+            call.reject(error.getMessage(), error);
+        });
+    }
+
+    @PluginMethod
+    public void addDocument(PluginCall call) {
+        String collectionReference = call.getString("reference");
+        JSObject data = call.getObject("data");
+
+        HashMap<String, Object> mapData = new HashMap<>();
+        Iterator<String> keys = data.keys();
+
+        while(keys.hasNext()) {
+            String key = keys.next();
+            try {
+                Object value = data.get(key);
+                mapData.put(key, value);
+            } catch (JSONException e) {
+                call.reject(e.getMessage(), e);
+                return;
+            }
+        }
+
+        Task<DocumentReference> listener = implementation.addDocument(collectionReference, mapData);
+
+        listener.addOnSuccessListener((value) -> {
+            JSObject result = new JSObject();
+            result.put("id", value.getId());
+            result.put("path", value.getPath());
+            call.resolve(result);
         });
 
         listener.addOnFailureListener((error) -> {
