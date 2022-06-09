@@ -39,12 +39,18 @@ public class CapacitorFirestorePlugin: CAPPlugin {
     
     @objc func signInWithCustomToken(_ call: CAPPluginCall)  {
         let token = call.getString("token");
-        implementation.signInWithCustomToken(token: token) { user, error in
-            if (error == nil && user != nil) {
-                call.resolve();
-            } else {
-                call.reject("Sign-in failed", nil, error, [:]);
+        do {
+            try implementation.signInWithCustomToken(token: token) { user, error in
+                if (error == nil && user != nil) {
+                    call.resolve();
+                } else {
+                    call.reject("Sign-in failed", nil, error, [:]);
+                }
             }
+        } catch CapacitorFirestoreError.runtimeError(let message) {
+            call.reject(message);
+        } catch {
+            call.reject("Unknown error", nil, error, [:]);
         }
     }
     
@@ -72,43 +78,77 @@ public class CapacitorFirestorePlugin: CAPPlugin {
         let callbackId = call.callbackId;
         
         guard let callbackId = callbackId as String? else {
-            assert(false, "unable to obtain callbackId from Capacitor");
+            call.reject("unable to obtain callbackId from Capacitor");
+            return
         }
         
         let documentReference = call.getString("reference");
-        let listener = implementation.addDocumentSnapshotListener(documentReference: documentReference) { value, error in
-            if (error != nil) {
-                call.reject("Document snapshot error", nil, error, [:]);
-            } else {
-                let result = self.implementation.ConvertSnapshotToJSObject(documentSnapshot: value);
-                call.resolve(result);
+        do {
+            let listener = try implementation.addDocumentSnapshotListener(documentReference: documentReference) { value, error in
+                if (error != nil) {
+                    call.reject("Document snapshot error", nil, error, [:]);
+                } else {
+                    do {
+                        let result = try self.implementation.ConvertSnapshotToJSObject(documentSnapshot: value);
+                        call.resolve(result);
+                    } catch CapacitorFirestoreError.runtimeError(let message) {
+                        call.reject(message);
+                    } catch {
+                        call.reject("Unknown error", nil, error, [:]);
+                    }
+                }
             }
+            
+            listeners[callbackId] = listener;
+        } catch CapacitorFirestoreError.runtimeError(let message) {
+            call.reject(message);
+        } catch {
+            call.reject("Unknown error", nil, error, [:]);
         }
 
-        listeners[callbackId] = listener;
     }
     
     @objc func getDocument(_ call: CAPPluginCall) {
         let documentReference = call.getString("reference");
-        implementation.getDocument(documentReference: documentReference) { value, error in
-            if (error != nil) {
-                call.reject("Document snapshot error", nil, error, [:]);
-            } else {
-                let result = self.implementation.ConvertSnapshotToJSObject(documentSnapshot: value);
-                call.resolve(result);
+        
+        do {
+            try implementation.getDocument(documentReference: documentReference) { value, error in
+                if (error != nil) {
+                    call.reject("Document snapshot error", nil, error, [:]);
+                } else {
+                    do {
+                        let result = try self.implementation.ConvertSnapshotToJSObject(documentSnapshot: value);
+                        call.resolve(result);
+                    } catch CapacitorFirestoreError.runtimeError(let message) {
+                        call.reject(message);
+                    } catch {
+                        call.reject("Unknown error", nil, error, [:]);
+                    }
+                }
             }
+        } catch CapacitorFirestoreError.runtimeError(let message) {
+            call.reject(message);
+        } catch {
+            call.reject("Unknown error", nil, error, [:]);
         }
     }
     
     @objc func updateDocument(_ call: CAPPluginCall) {
         let documentReference = call.getString("reference");
         let data = call.getObject("data");
-        implementation.updateDocument(documentReference: documentReference, data: data) { error in
-            if (error != nil) {
-                call.reject("Document update error", nil, error, [:]);
-            } else {
-                call.resolve();
+        
+        do {
+            try implementation.updateDocument(documentReference: documentReference, data: data) { error in
+                if (error != nil) {
+                    call.reject("Document update error", nil, error, [:]);
+                } else {
+                    call.resolve();
+                }
             }
+        } catch CapacitorFirestoreError.runtimeError(let message) {
+            call.reject(message);
+        } catch {
+            call.reject("Unknown error", nil, error, [:]);
         }
     }
     
@@ -116,40 +156,61 @@ public class CapacitorFirestorePlugin: CAPPlugin {
         let documentReference = call.getString("reference");
         let data = call.getObject("data");
         let merge = call.getBool("merge", false);
-        implementation.setDocument(documentReference: documentReference, data: data, merge: merge) { error in
-            if (error != nil) {
-                call.reject("Document set error", nil, error, [:]);
-            } else {
-                call.resolve();
+        
+        do {
+            try implementation.setDocument(documentReference: documentReference, data: data, merge: merge) { error in
+                if (error != nil) {
+                    call.reject("Document set error", nil, error, [:]);
+                } else {
+                    call.resolve();
+                }
             }
+        } catch CapacitorFirestoreError.runtimeError(let message) {
+            call.reject(message);
+        } catch {
+            call.reject("Unknown error", nil, error, [:]);
         }
     }
     
     @objc func deleteDocument(_ call: CAPPluginCall) {
         let documentReference = call.getString("reference");
 
-        implementation.deleteDocument(documentReference: documentReference) { error in
-            if (error != nil) {
-                call.reject("Document set error", nil, error, [:]);
-            } else {
-                call.resolve();
+        do {
+            try implementation.deleteDocument(documentReference: documentReference) { error in
+                if (error != nil) {
+                    call.reject("Document set error", nil, error, [:]);
+                } else {
+                    call.resolve();
+                }
             }
+        } catch CapacitorFirestoreError.runtimeError(let message) {
+            call.reject(message);
+        } catch {
+            call.reject("Unknown error", nil, error, [:]);
         }
     }
     
     @objc func addDocument(_ call: CAPPluginCall) {
         let collectionReference = call.getString("reference");
         let data = call.getObject("data");
-        let documentReference = implementation.addDocument(collectionReference: collectionReference, data: data) { error in
-            if (error != nil) {
-                call.reject("Document update error", nil, error, [:]);
-            }
-        }
         
-        call.resolve([
-            "id": documentReference.documentID,
-            "path": documentReference.path
-        ]);
+        do {
+            let documentReference = try implementation.addDocument(collectionReference: collectionReference, data: data) { error in
+                if (error != nil) {
+                    call.reject("Document update error", nil, error, [:]);
+                    return
+                }
+            }
+            
+            call.resolve([
+                "id": documentReference.documentID,
+                "path": documentReference.path
+            ]);
+        } catch CapacitorFirestoreError.runtimeError(let message) {
+            call.reject(message);
+        } catch {
+            call.reject("Unknown error", nil, error, [:]);
+        }
     }
     
     @objc func addCollectionSnapshotListener(_ call: CAPPluginCall) {
@@ -157,7 +218,8 @@ public class CapacitorFirestorePlugin: CAPPlugin {
         let callbackId = call.callbackId;
         
         guard let callbackId = callbackId as String? else {
-            assert(false, "unable to obtain callbackId from Capacitor");
+            call.reject("unable to obtain callbackId from Capacitor");
+            return
         }
         
         let collectionReference = call.getString("reference");
@@ -166,16 +228,24 @@ public class CapacitorFirestorePlugin: CAPPlugin {
         do {
             let queryConstaints = try implementation.ConvertJSArrayToQueryConstraints(array: clientQueryConstraints);
             
-            let listener = implementation.addCollectionSnapshotListener(collectionReference: collectionReference, queryConstaints: queryConstaints) { value, error in
+            let listener = try implementation.addCollectionSnapshotListener(collectionReference: collectionReference, queryConstaints: queryConstaints) { value, error in
                 if (error != nil) {
                     call.reject("Collection snapshot error", nil, error, [:]);
                 } else {
                     let docs = value!.documents;
                     var data: [JSObject] = [];
                     
-                    for item in docs {
-                        let result = self.implementation.ConvertSnapshotToJSObject(documentSnapshot: item);
-                        data.append(result);
+                    do {
+                        for item in docs {
+                            let result = try self.implementation.ConvertSnapshotToJSObject(documentSnapshot: item);
+                            data.append(result);
+                        }
+                    } catch CapacitorFirestoreError.runtimeError(let message) {
+                        call.reject(message);
+                        return
+                    } catch {
+                        call.reject("Unknown error", nil, error, [:]);
+                        return
                     }
                     
                     call.resolve([
@@ -194,22 +264,36 @@ public class CapacitorFirestorePlugin: CAPPlugin {
     
     @objc func getCollection(_ call: CAPPluginCall) {
         let collectionReference = call.getString("reference");
-        implementation.getCollection(collectionReference: collectionReference) { value, error in
-            if (error != nil) {
-                call.reject("Collection snapshot error", nil, error, [:]);
-            } else {
-                let docs = value!.documents;
-                var data: [JSObject] = [];
-                
-                for item in docs {
-                    let result = self.implementation.ConvertSnapshotToJSObject(documentSnapshot: item);
-                    data.append(result);
+        do {
+            try implementation.getCollection(collectionReference: collectionReference) { value, error in
+                if (error != nil) {
+                    call.reject("Collection snapshot error", nil, error, [:]);
+                } else {
+                    let docs = value!.documents;
+                    var data: [JSObject] = [];
+                    
+                    for item in docs {
+                        do {
+                            let result = try self.implementation.ConvertSnapshotToJSObject(documentSnapshot: item);
+                            data.append(result);
+                        } catch CapacitorFirestoreError.runtimeError(let message) {
+                            call.reject(message);
+                            return
+                        } catch {
+                            call.reject("Unknown error", nil, error, [:]);
+                            return
+                        }
+                    }
+                    
+                    call.resolve([
+                        "collection": data
+                    ]);
                 }
-                
-                call.resolve([
-                    "collection": data
-                ]);
             }
+        } catch CapacitorFirestoreError.runtimeError(let message) {
+            call.reject(message);
+        } catch {
+            call.reject("Unknown error", nil, error, [:]);
         }
     }
     

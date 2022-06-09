@@ -13,15 +13,15 @@ enum CapacitorFirestoreError: Error {
     
     @objc public func Initialize(projectId: String?, applicationId: String?, apiKey: String?) throws -> Void {
         guard let projectId = projectId as String? else {
-            assert(false, "ProjectId must not be null");
+            throw CapacitorFirestoreError.runtimeError("ProjectId must not be null");
         }
 
         guard let applicationId = applicationId as String? else {
-            assert(false, "ApplicationId must not be null");
+            throw CapacitorFirestoreError.runtimeError("ApplicationId must not be null");
         }
         
         guard let apiKey = apiKey as String? else {
-            assert(false, "apiKey must not be null");
+            throw CapacitorFirestoreError.runtimeError("apiKey must not be null");
         }
         
         let options = FirebaseOptions(googleAppID: applicationId, gcmSenderID: "");
@@ -37,14 +37,14 @@ enum CapacitorFirestoreError: Error {
         try self.InitializeFirestore();
     }
     
-    @objc public func signInWithCustomToken(token: String?, completion: @escaping (AuthDataResult?, Error?) -> Void) -> Void {
+    @objc public func signInWithCustomToken(token: String?, completion: @escaping (AuthDataResult?, Error?) -> Void) throws -> Void {
         guard let token = token as String? else {
-            assert(false, "token must not be null");
+            throw CapacitorFirestoreError.runtimeError("token must not be null");
         }
         
         guard let app = FirebaseApp.app(name: "CapacitorFirestore")
           else {
-            assert(false, "app must be initialized first");
+            throw CapacitorFirestoreError.runtimeError("app must be initialized first");
         }
         let auth = FirebaseAuth.Auth.auth(app: app);
         auth.signIn(withCustomToken: token) { user, error in
@@ -52,61 +52,61 @@ enum CapacitorFirestoreError: Error {
         };
     }
     
-    @objc public func addDocumentSnapshotListener(documentReference: String?, completion: @escaping (DocumentSnapshot?, Error?) -> Void) -> ListenerRegistration? {
+    public func addDocumentSnapshotListener(documentReference: String?, completion: @escaping (DocumentSnapshot?, Error?) -> Void) throws -> ListenerRegistration? {
         guard let documentReference = documentReference as String? else {
-            assert(false, "documentReference must not be null");
+            throw CapacitorFirestoreError.runtimeError("documentReference must not be null");
         }
         
         return self.db?.document(documentReference).addSnapshotListener(completion);
     }
     
-    @objc public func getDocument(documentReference: String?, completion: @escaping (DocumentSnapshot?, Error?) -> Void) -> Void {
+    @objc public func getDocument(documentReference: String?, completion: @escaping (DocumentSnapshot?, Error?) -> Void) throws -> Void {
         guard let documentReference = documentReference as String? else {
-            assert(false, "documentReference must not be null");
+            throw CapacitorFirestoreError.runtimeError("documentReference must not be null");
         }
         
         self.db?.document(documentReference).getDocument(completion: completion);
     }
     
-    public func updateDocument(documentReference: String?, data: JSObject?, completion: @escaping (Error?) -> Void) -> Void {
+    public func updateDocument(documentReference: String?, data: JSObject?, completion: @escaping (Error?) -> Void) throws -> Void {
         guard let documentReference = documentReference as String? else {
-            assert(false, "documentReference must not be null");
+            throw CapacitorFirestoreError.runtimeError("documentReference must not be null");
         }
         
         guard let data = data as JSObject? else {
-            assert(false, "data must not be null");
+            throw CapacitorFirestoreError.runtimeError("data must not be null");
         }
         
         self.db?.document(documentReference).updateData(data, completion: completion);
     }
     
-    public func setDocument(documentReference: String?, data: JSObject?, merge: Bool, completion: @escaping (Error?) -> Void) -> Void {
+    public func setDocument(documentReference: String?, data: JSObject?, merge: Bool, completion: @escaping (Error?) -> Void) throws -> Void {
         guard let documentReference = documentReference as String? else {
-            assert(false, "documentReference must not be null");
+            throw CapacitorFirestoreError.runtimeError("documentReference must not be null");
         }
         
         guard let data = data as JSObject? else {
-            assert(false, "data must not be null");
+            throw CapacitorFirestoreError.runtimeError("data must not be null");
         }
         
         self.db?.document(documentReference).setData(data, merge: merge, completion: completion);
     }
     
-    public func deleteDocument(documentReference: String?, completion: @escaping (Error?) -> Void) -> Void {
+    public func deleteDocument(documentReference: String?, completion: @escaping (Error?) -> Void) throws -> Void {
         guard let documentReference = documentReference as String? else {
-            assert(false, "documentReference must not be null");
+            throw CapacitorFirestoreError.runtimeError("documentReference must not be null");
         }
         
         self.db?.document(documentReference).delete(completion: completion);
     }
     
-    public func addDocument(collectionReference: String?, data: JSObject?, completion: @escaping (Error?) -> Void) -> DocumentReference {
+    public func addDocument(collectionReference: String?, data: JSObject?, completion: @escaping (Error?) -> Void) throws -> DocumentReference {
         guard let collectionReference = collectionReference as String? else {
-            assert(false, "collectionReference must not be null");
+            throw CapacitorFirestoreError.runtimeError("collectionReference must not be null");
         }
         
         guard let data = data as JSObject? else {
-            assert(false, "data must not be null");
+            throw CapacitorFirestoreError.runtimeError("data must not be null");
         }
         
         let documentReference = self.db?.collection(collectionReference).addDocument(data: data, completion: completion);
@@ -114,17 +114,17 @@ enum CapacitorFirestoreError: Error {
         return documentReference!;
     }
     
-    @objc public func addCollectionSnapshotListener(collectionReference: String?, queryConstaints: [JSQueryConstraints]?, completion: @escaping (QuerySnapshot?, Error?) -> Void) -> ListenerRegistration? {
+    public func addCollectionSnapshotListener(collectionReference: String?, queryConstaints: [JSQueryConstraints]?, completion: @escaping (QuerySnapshot?, Error?) -> Void) throws -> ListenerRegistration? {
         guard let collectionReference = collectionReference as String? else {
-            assert(false, "collectionReference must not be null");
+            throw CapacitorFirestoreError.runtimeError("collectionReference must not be null");
         }
         
         return self.db?.collection(collectionReference).addSnapshotListener(completion);
     }
     
-    @objc public func getCollection(collectionReference: String?, completion: @escaping (QuerySnapshot?, Error?) -> Void) -> Void {
+    @objc public func getCollection(collectionReference: String?, completion: @escaping (QuerySnapshot?, Error?) -> Void) throws -> Void {
         guard let collectionReference = collectionReference as String? else {
-            assert(false, "collectionReference must not be null");
+            throw CapacitorFirestoreError.runtimeError("collectionReference must not be null");
         }
         
         self.db?.collection(collectionReference).getDocuments(completion: completion);
@@ -165,9 +165,9 @@ enum CapacitorFirestoreError: Error {
         return list;
     }
     
-    public func ConvertSnapshotToJSObject(documentSnapshot: DocumentSnapshot?) -> JSObject {
+    public func ConvertSnapshotToJSObject(documentSnapshot: DocumentSnapshot?) throws -> JSObject {
         guard let documentSnapshot = documentSnapshot as DocumentSnapshot? else {
-            assert(false, "documentSnapshot must not be null");
+            throw CapacitorFirestoreError.runtimeError("documentSnapshot must not be null");
         }
         
         var result = JSObject();
@@ -177,10 +177,10 @@ enum CapacitorFirestoreError: Error {
         if (documentSnapshot.exists) {
             var data = JSObject();
             guard let documentData = documentSnapshot.data() as [String : Any]? else {
-                assert(false, "should not be possible, document exists but no data");
+                throw CapacitorFirestoreError.runtimeError("should not be possible, document exists but no data");
             }
             
-            documentData.keys.forEach { key in
+            try documentData.keys.forEach { key in
                 let value = documentData[key];
                 if value == nil {
                     data[key] = nil;
@@ -193,11 +193,11 @@ enum CapacitorFirestoreError: Error {
                     data[key] = jsonObject;
                 } else {
                     guard let value = value as Any? else {
-                        assert(false, "should not be possible, already guard against null");
+                        throw CapacitorFirestoreError.runtimeError("should not be possible, already guard against null");
                     }
                     
                     guard let value = JSTypes.coerceDictionaryToJSObject([key:value]) as JSObject? else {
-                        assert(false, "could not deserailize value for: " + key);
+                        throw CapacitorFirestoreError.runtimeError("could not deserailize value for: " + key);
                     }
 
                     data[key] = value[key];
@@ -222,7 +222,7 @@ enum CapacitorFirestoreError: Error {
     @objc private func InitializeFirestore() throws -> Void {
         guard let app = FirebaseApp.app(name: "CapacitorFirestore")
           else {
-            assert(false, "app must be initialized first");
+            throw CapacitorFirestoreError.runtimeError("app must be initialized first");
         }
         
         self.db?.terminate();
