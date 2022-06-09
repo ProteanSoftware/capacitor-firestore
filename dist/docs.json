@@ -98,15 +98,43 @@
           },
           {
             "name": "returns",
-            "text": "The document snapshot"
+            "text": "A `Promise` resolved once the data has been successfully written\r\nto the backend (note that it won't resolve while you're offline)."
           }
         ],
-        "docs": "Reads the document referred to by this DocumentReference",
+        "docs": "Updates fields in the document referred to by the specified DocumentReference.\r\nThe update will fail if applied to a document that does not exist.",
         "complexTypes": [
           "UpdateDocument",
           "T"
         ],
         "slug": "updatedocument"
+      },
+      {
+        "name": "setDocument",
+        "signature": "<T>(options: UpdateDocument<T>) => Promise<void>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "UpdateDocument<T>"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options"
+          },
+          {
+            "name": "returns",
+            "text": "A Promise resolved once the data has been successfully written\r\nto the backend (note that it won't resolve while you're offline)."
+          }
+        ],
+        "docs": "Writes to the document referred to by the specified DocumentReference.\r\nIf the document does not yet exist, it will be created.\r\nIf you provide merge or mergeFields, the provided data can be merged into an existing document.",
+        "complexTypes": [
+          "UpdateDocument",
+          "T"
+        ],
+        "slug": "setdocument"
       },
       {
         "name": "addDocumentSnapshotListener",
@@ -360,7 +388,7 @@
         {
           "name": "reference",
           "tags": [],
-          "docs": "",
+          "docs": "A reference to the document/collection",
           "complexTypes": [],
           "type": "string"
         }
@@ -376,11 +404,12 @@
         {
           "name": "data",
           "tags": [],
-          "docs": "",
+          "docs": "An object containing the fields and values with which to\r\nupdate the document. Fields can contain dots to reference nested fields\r\nwithin the document",
           "complexTypes": [
+            "Partial",
             "T"
           ],
-          "type": "T"
+          "type": "Partial<T>"
         }
       ]
     },
@@ -424,21 +453,21 @@
     {
       "name": "QueryConstraint",
       "slug": "queryconstraint",
-      "docs": "",
+      "docs": "A `QueryConstraint` is used to narrow the set of documents returned by a\r\nFirestore query.",
       "tags": [],
       "methods": [],
       "properties": [
         {
           "name": "fieldPath",
           "tags": [],
-          "docs": "",
+          "docs": "The path to compare",
           "complexTypes": [],
           "type": "string"
         },
         {
           "name": "opStr",
           "tags": [],
-          "docs": "",
+          "docs": "The operation string (e.g \"&lt;\", \"&lt;=\", \"==\", \"&lt;\",\r\n\"&lt;=\", \"!=\", \"array-contains\")",
           "complexTypes": [
             "QueryOperators"
           ],
@@ -447,7 +476,7 @@
         {
           "name": "value",
           "tags": [],
-          "docs": "",
+          "docs": "The value for comparison",
           "complexTypes": [],
           "type": "any"
         }
@@ -474,6 +503,20 @@
   ],
   "enums": [],
   "typeAliases": [
+    {
+      "name": "Partial",
+      "slug": "partial",
+      "docs": "Make all properties in T optional",
+      "types": [
+        {
+          "text": "{\r\n    [P in keyof T]?: T[P];\r\n}",
+          "complexTypes": [
+            "T",
+            "P"
+          ]
+        }
+      ]
+    },
     {
       "name": "DocumentSnapshotCallback",
       "slug": "documentsnapshotcallback",
@@ -502,7 +545,7 @@
     {
       "name": "QueryOperators",
       "slug": "queryoperators",
-      "docs": "",
+      "docs": "Filter conditions in a {@link QueryConstraint} clause are specified using the\r\nstrings '&lt;', '&lt;=', '==', '&gt;=', '&gt;', 'array-contains'",
       "types": [
         {
           "text": "\"==\"",

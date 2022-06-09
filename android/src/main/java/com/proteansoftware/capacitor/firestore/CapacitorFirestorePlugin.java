@@ -133,6 +133,37 @@ public class CapacitorFirestorePlugin extends Plugin {
         });
     }
 
+    @PluginMethod
+    public void setDocument(PluginCall call) {
+        String documentReference = call.getString("reference");
+        JSObject data = call.getObject("data");
+        Boolean merge = call.getBoolean("merge", false);
+
+        HashMap<String, Object> mapData = new HashMap<>();
+        Iterator<String> keys = data.keys();
+
+        while(keys.hasNext()) {
+            String key = keys.next();
+            try {
+                Object value = data.get(key);
+                mapData.put(key, value);
+            } catch (JSONException e) {
+                call.reject(e.getMessage(), e);
+                return;
+            }
+        }
+
+        Task<Void> listener = implementation.setDocument(documentReference, mapData, merge);
+
+        listener.addOnSuccessListener((value) -> {
+            call.resolve();
+        });
+
+        listener.addOnFailureListener((error) -> {
+            call.reject(error.getMessage(), error);
+        });
+    }
+
     @PluginMethod(returnType = PluginMethod.RETURN_CALLBACK)
     public void addDocumentSnapshotListener(PluginCall call) {
         call.setKeepAlive(true);

@@ -34,8 +34,20 @@ export interface FirestoreConfig {
 
 export type CallbackId = string;
 
+/**
+ * Filter conditions in a {@link QueryConstraint} clause are specified using the
+ * strings '&lt;', '&lt;=', '==', '&gt;=', '&gt;', 'array-contains'
+ */
 export type QueryOperators = "==" | ">=" | "<=" | "<" | ">" | "array-contains";
 
+/**
+ * 
+ * @param field The path to compare
+ * @param operator The operation string (e.g "&lt;", "&lt;=", "==", "&lt;",
+ * "&lt;=", "!=", "array-contains")
+ * @param value The value for comparison
+ * @returns The created {@link QueryConstraint}.
+ */
 export function createQueryConstraint(field: string, operator: QueryOperators, value: any): QueryConstraint {
   return {
     fieldPath: field,
@@ -44,9 +56,25 @@ export function createQueryConstraint(field: string, operator: QueryOperators, v
   };
 }
 
+/**
+ * A `QueryConstraint` is used to narrow the set of documents returned by a
+ * Firestore query.
+ */
 export interface QueryConstraint {
+  /**
+   * The path to compare
+   */
   fieldPath: string;
+
+  /**
+   * The operation string (e.g "&lt;", "&lt;=", "==", "&lt;",
+   * "&lt;=", "!=", "array-contains")
+   */
   opStr: QueryOperators;
+
+  /**
+   * The value for comparison
+   */
   value: any;
 }
 
@@ -55,6 +83,9 @@ export interface CollectionReference extends DocumnentReference {
 }
 
 export interface DocumnentReference {
+  /**
+   * A reference to the document/collection
+   */
   reference: string;
 }
 
@@ -87,9 +118,28 @@ export interface RemoveSnapshotListener {
 }
 
 export interface UpdateDocument<T> extends DocumnentReference {
-  data: T;
+  /**
+   * An object containing the fields and values with which to
+   * update the document. Fields can contain dots to reference nested fields
+   * within the document
+   */
+  data: Partial<T>;
 }
 
+export interface SetDocument<T> extends DocumnentReference {
+  /**
+   * A map of the fields and values for the document.
+   */
+  data: T;
+
+  /**
+   * Changes the behavior of a `setDocument()` call to only replace the
+   * values specified in its data argument. Fields omitted from the `setDocument()`
+   * call remain untouched. If your input sets any field to an empty map, all
+   * nested fields are overwritten.
+   */
+  merge?: boolean;
+}
 
 export type DocumentSnapshotCallback<T> = (data: DocumentSnapshot<T> | null, err?: any) => void;
 
@@ -109,18 +159,30 @@ export interface CapacitorFirestorePlugin {
   signInWithCustomToken(options: CustomToken): Promise<void>;
 
   /**
-    * Reads the document referred to by this DocumentReference
-    * @param options 
-    * @returns The document snapshot
-    */
+   * Reads the document referred to by this DocumentReference
+   * @param options 
+   * @returns The document snapshot
+   */
   getDocument<T>(options: DocumnentReference): Promise<DocumentSnapshot<T>>;
 
   /**
-    * Reads the document referred to by this DocumentReference
+    * Updates fields in the document referred to by the specified DocumentReference.
+    * The update will fail if applied to a document that does not exist.
     * @param options 
-    * @returns The document snapshot
+    * @returns A `Promise` resolved once the data has been successfully written
+    * to the backend (note that it won't resolve while you're offline).
     */
   updateDocument<T>(options: UpdateDocument<T>): Promise<void>;
+
+  /**
+   * Writes to the document referred to by the specified DocumentReference.
+   * If the document does not yet exist, it will be created.
+   * If you provide merge or mergeFields, the provided data can be merged into an existing document.
+   * @param options 
+   * @returns A Promise resolved once the data has been successfully written
+   * to the backend (note that it won't resolve while you're offline).
+   */
+  setDocument<T>(options: UpdateDocument<T>): Promise<void>;
 
   /**
    * Listen for snapshot changes on a document.
@@ -131,10 +193,10 @@ export interface CapacitorFirestorePlugin {
   addDocumentSnapshotListener<T>(options: DocumnentReference, callback: DocumentSnapshotCallback<T>): Promise<CallbackId>;
 
   /**
-  * Executes the query and returns the results as a CollectionSnapshot
-  * @param options 
-  * @returns The collection snapshot
-  */
+   * Executes the query and returns the results as a CollectionSnapshot
+   * @param options 
+   * @returns The collection snapshot
+   */
   getCollection<T>(options: CollectionReference): Promise<CollectionSnapshot<T>>;
 
   /**

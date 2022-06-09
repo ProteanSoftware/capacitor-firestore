@@ -17,6 +17,7 @@ npx cap sync
 * [`signInWithCustomToken(...)`](#signinwithcustomtoken)
 * [`getDocument(...)`](#getdocument)
 * [`updateDocument(...)`](#updatedocument)
+* [`setDocument(...)`](#setdocument)
 * [`addDocumentSnapshotListener(...)`](#adddocumentsnapshotlistener)
 * [`getCollection(...)`](#getcollection)
 * [`addCollectionSnapshotListener(...)`](#addcollectionsnapshotlistener)
@@ -82,7 +83,25 @@ Reads the document referred to by this DocumentReference
 updateDocument<T>(options: UpdateDocument<T>) => Promise<void>
 ```
 
-Reads the document referred to by this DocumentReference
+Updates fields in the document referred to by the specified DocumentReference.
+The update will fail if applied to a document that does not exist.
+
+| Param         | Type                                                               |
+| ------------- | ------------------------------------------------------------------ |
+| **`options`** | <code><a href="#updatedocument">UpdateDocument</a>&lt;T&gt;</code> |
+
+--------------------
+
+
+### setDocument(...)
+
+```typescript
+setDocument<T>(options: UpdateDocument<T>) => Promise<void>
+```
+
+Writes to the document referred to by the specified DocumentReference.
+If the document does not yet exist, it will be created.
+If you provide merge or mergeFields, the provided data can be merged into an existing document.
 
 | Param         | Type                                                               |
 | ------------- | ------------------------------------------------------------------ |
@@ -188,16 +207,16 @@ Stop listening for snapshot changes on a document or collection.
 
 #### DocumnentReference
 
-| Prop            | Type                |
-| --------------- | ------------------- |
-| **`reference`** | <code>string</code> |
+| Prop            | Type                | Description                            |
+| --------------- | ------------------- | -------------------------------------- |
+| **`reference`** | <code>string</code> | A reference to the document/collection |
 
 
 #### UpdateDocument
 
-| Prop       | Type           |
-| ---------- | -------------- |
-| **`data`** | <code>T</code> |
+| Prop       | Type                                                 | Description                                                                                                                                          |
+| ---------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`data`** | <code><a href="#partial">Partial</a>&lt;T&gt;</code> | An object containing the fields and values with which to update the document. Fields can contain dots to reference nested fields within the document |
 
 
 #### CollectionSnapshot
@@ -216,11 +235,14 @@ Stop listening for snapshot changes on a document or collection.
 
 #### QueryConstraint
 
-| Prop            | Type                                                      |
-| --------------- | --------------------------------------------------------- |
-| **`fieldPath`** | <code>string</code>                                       |
-| **`opStr`**     | <code><a href="#queryoperators">QueryOperators</a></code> |
-| **`value`**     | <code>any</code>                                          |
+A <a href="#queryconstraint">`QueryConstraint`</a> is used to narrow the set of documents returned by a
+Firestore query.
+
+| Prop            | Type                                                      | Description                                                                               |
+| --------------- | --------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| **`fieldPath`** | <code>string</code>                                       | The path to compare                                                                       |
+| **`opStr`**     | <code><a href="#queryoperators">QueryOperators</a></code> | The operation string (e.g "&lt;", "&lt;=", "==", "&lt;", "&lt;=", "!=", "array-contains") |
+| **`value`**     | <code>any</code>                                          | The value for comparison                                                                  |
 
 
 #### RemoveSnapshotListener
@@ -231,6 +253,13 @@ Stop listening for snapshot changes on a document or collection.
 
 
 ### Type Aliases
+
+
+#### Partial
+
+Make all properties in T optional
+
+<code>{ [P in keyof T]?: T[P]; }</code>
 
 
 #### DocumentSnapshotCallback
@@ -244,6 +273,9 @@ Stop listening for snapshot changes on a document or collection.
 
 
 #### QueryOperators
+
+Filter conditions in a {@link <a href="#queryconstraint">QueryConstraint</a>} clause are specified using the
+strings '&lt;', '&lt;=', '==', '&gt;=', '&gt;', 'array-contains'
 
 <code>"==" | "&gt;=" | "&lt;=" | "&lt;" | "&gt;" | "array-contains"</code>
 

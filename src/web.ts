@@ -12,6 +12,7 @@ import {
   getDoc,
   getDocs,
   updateDoc,
+  setDoc,
   collection,
   query,
   where,
@@ -30,7 +31,8 @@ import type {
   DocumnentReference,
   FirestoreConfig,
   RemoveSnapshotListener,
-  UpdateDocument
+  UpdateDocument,
+  SetDocument
 } from './definitions';
 
 export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFirestorePlugin {
@@ -111,7 +113,17 @@ export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFiresto
       return Promise.reject("Firestore not initialized");
     }
 
-    return updateDoc(doc(this.firestore, options.reference), options.data);
+    return updateDoc(doc(this.firestore, options.reference), options.data as T);
+  }
+
+  public setDocument<T>(options: SetDocument<T>): Promise<void> {
+    if (this.firestore === null) {
+      return Promise.reject("Firestore not initialized");
+    }
+
+    return setDoc(doc(this.firestore, options.reference), options.data as T, {
+      merge: options.merge
+    });
   }
 
   public addCollectionSnapshotListener<T>(options: CollectionReference, callback: CollectionSnapshotCallback<T>): Promise<CallbackId> {

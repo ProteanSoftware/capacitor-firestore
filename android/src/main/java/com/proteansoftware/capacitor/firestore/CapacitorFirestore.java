@@ -18,6 +18,8 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +78,14 @@ public class CapacitorFirestore {
 
     public Task<Void> updateDocument(String documentReference, Map<String, Object> data) {
         return this.db.document(documentReference).update(data);
+    }
+
+    public Task<Void> setDocument(String documentReference, Map<String, Object> data, Boolean merge) {
+        if (merge) {
+            return this.db.document(documentReference).set(data, SetOptions.merge());
+        } else {
+            return this.db.document(documentReference).set(data);
+        }
     }
 
     public Task<QuerySnapshot> getCollection(String collectionReference) {

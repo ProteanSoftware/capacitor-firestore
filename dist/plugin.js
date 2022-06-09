@@ -2,6 +2,14 @@ var capacitorCapacitorFirestore = (function (exports, core, app, auth, firestore
     'use strict';
 
     /// <reference types="@capacitor/cli" />
+    /**
+     *
+     * @param field The path to compare
+     * @param operator The operation string (e.g "&lt;", "&lt;=", "==", "&lt;",
+     * "&lt;=", "!=", "array-contains")
+     * @param value The value for comparison
+     * @returns The created {@link QueryConstraint}.
+     */
     function createQueryConstraint(field, operator, value) {
         return {
             fieldPath: field,
@@ -79,6 +87,14 @@ var capacitorCapacitorFirestore = (function (exports, core, app, auth, firestore
                 return Promise.reject("Firestore not initialized");
             }
             return firestore.updateDoc(firestore.doc(this.firestore, options.reference), options.data);
+        }
+        setDocument(options) {
+            if (this.firestore === null) {
+                return Promise.reject("Firestore not initialized");
+            }
+            return firestore.setDoc(firestore.doc(this.firestore, options.reference), options.data, {
+                merge: options.merge
+            });
         }
         addCollectionSnapshotListener(options, callback) {
             if (this.firestore === null) {
