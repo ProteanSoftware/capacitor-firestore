@@ -98,6 +98,13 @@ export interface DocumentSnapshot<T> {
   id: string;
 
   /**
+   * A string representing the path of the referenced document (relative
+   * to the root of the database).
+   * @since 1.0.0
+   */
+  path: string;
+
+  /**
    * The fields of the document or null if the document doesn't exist.
    *
    * @since 1.0.0

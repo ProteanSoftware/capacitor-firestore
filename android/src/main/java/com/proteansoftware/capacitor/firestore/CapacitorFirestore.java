@@ -136,6 +136,7 @@ public class CapacitorFirestore {
     public JSObject ConvertSnapshotToJSObject(DocumentSnapshot documentSnapshot) {
         JSObject result = new JSObject();
         result.put("id", documentSnapshot.getId());
+        result.put("path", documentSnapshot.getReference().getPath());
         if (documentSnapshot.exists()) {
             Map<String, Object> firestoreData = documentSnapshot.getData();
             JSObject data = new JSObject();

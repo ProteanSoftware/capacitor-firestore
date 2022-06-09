@@ -390,6 +390,18 @@
           "type": "string"
         },
         {
+          "name": "path",
+          "tags": [
+            {
+              "text": "1.0.0",
+              "name": "since"
+            }
+          ],
+          "docs": "A string representing the path of the referenced document (relative\r\nto the root of the database).",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
           "name": "data",
           "tags": [
             {

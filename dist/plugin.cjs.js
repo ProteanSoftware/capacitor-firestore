@@ -70,6 +70,7 @@ class CapacitorFirestoreWeb extends core.WebPlugin {
         const unSubFunc = firestore.onSnapshot(firestore.doc(this.firestore, options.reference), snapshot => {
             callback({
                 id: snapshot.id,
+                path: snapshot.ref.path,
                 data: snapshot.exists() ? snapshot.data() : null
             });
         });
@@ -84,6 +85,7 @@ class CapacitorFirestoreWeb extends core.WebPlugin {
         return firestore.getDoc(firestore.doc(this.firestore, options.reference)).then(snapshot => {
             return {
                 id: snapshot.id,
+                path: snapshot.ref.path,
                 data: snapshot.exists() ? snapshot.data() : null
             };
         });
@@ -125,6 +127,7 @@ class CapacitorFirestoreWeb extends core.WebPlugin {
                 collection: snapshot.docs.map(doc => {
                     return {
                         id: doc.id,
+                        path: doc.ref.path,
                         data: doc.data()
                     };
                 })
@@ -151,6 +154,7 @@ class CapacitorFirestoreWeb extends core.WebPlugin {
                 collection: snapshot.docs.map(doc => {
                     return {
                         id: doc.id,
+                        path: doc.ref.path,
                         data: doc.data()
                     };
                 })

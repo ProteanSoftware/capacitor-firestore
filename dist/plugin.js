@@ -64,6 +64,7 @@ var capacitorCapacitorFirestore = (function (exports, core, app, auth, firestore
             const unSubFunc = firestore.onSnapshot(firestore.doc(this.firestore, options.reference), snapshot => {
                 callback({
                     id: snapshot.id,
+                    path: snapshot.ref.path,
                     data: snapshot.exists() ? snapshot.data() : null
                 });
             });
@@ -78,6 +79,7 @@ var capacitorCapacitorFirestore = (function (exports, core, app, auth, firestore
             return firestore.getDoc(firestore.doc(this.firestore, options.reference)).then(snapshot => {
                 return {
                     id: snapshot.id,
+                    path: snapshot.ref.path,
                     data: snapshot.exists() ? snapshot.data() : null
                 };
             });
@@ -119,6 +121,7 @@ var capacitorCapacitorFirestore = (function (exports, core, app, auth, firestore
                     collection: snapshot.docs.map(doc => {
                         return {
                             id: doc.id,
+                            path: doc.ref.path,
                             data: doc.data()
                         };
                     })
@@ -145,6 +148,7 @@ var capacitorCapacitorFirestore = (function (exports, core, app, auth, firestore
                     collection: snapshot.docs.map(doc => {
                         return {
                             id: doc.id,
+                            path: doc.ref.path,
                             data: doc.data()
                         };
                     })

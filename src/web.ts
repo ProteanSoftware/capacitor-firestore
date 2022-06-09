@@ -86,6 +86,7 @@ export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFiresto
     const unSubFunc = onSnapshot(doc(this.firestore, options.reference), snapshot => {
       callback({
         id: snapshot.id,
+        path: snapshot.ref.path,
         data: snapshot.exists() ? snapshot.data() as T : null
       });
     });
@@ -104,6 +105,7 @@ export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFiresto
     return getDoc(doc(this.firestore, options.reference)).then(snapshot => {
       return {
         id: snapshot.id,
+        path: snapshot.ref.path,
         data: snapshot.exists() ? snapshot.data() as T : null
       };
     });
@@ -143,7 +145,7 @@ export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFiresto
     let collectionQuery: Query;
     if (options.queryConstraints) {
       const constraints = options.queryConstraints.map(constraint => where(constraint.fieldPath, constraint.opStr, constraint.value));
-      collectionQuery =  query(collection(this.firestore, options.reference), ...constraints);
+      collectionQuery = query(collection(this.firestore, options.reference), ...constraints);
     } else {
       collectionQuery = query(collection(this.firestore, options.reference));
     }
@@ -153,6 +155,7 @@ export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFiresto
         collection: snapshot.docs.map(doc => {
           return {
             id: doc.id,
+            path: doc.ref.path,
             data: doc.data() as T
           };
         })
@@ -173,7 +176,7 @@ export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFiresto
     let collectionQuery: Query;
     if (options.queryConstraints) {
       const constraints = options.queryConstraints.map(constraint => where(constraint.fieldPath, constraint.opStr, constraint.value));
-      collectionQuery =  query(collection(this.firestore, options.reference), ...constraints);
+      collectionQuery = query(collection(this.firestore, options.reference), ...constraints);
     } else {
       collectionQuery = query(collection(this.firestore, options.reference));
     }
@@ -183,6 +186,7 @@ export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFiresto
         collection: snapshot.docs.map(doc => {
           return {
             id: doc.id,
+            path: doc.ref.path,
             data: doc.data() as T
           };
         })

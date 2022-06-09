@@ -215,10 +215,11 @@ Stop listening for snapshot changes on a document or collection.
 
 #### DocumentSnapshot
 
-| Prop       | Type                   | Description                                                       | Since |
-| ---------- | ---------------------- | ----------------------------------------------------------------- | ----- |
-| **`id`**   | <code>string</code>    | The id of the document.                                           | 1.0.0 |
-| **`data`** | <code>T \| null</code> | The fields of the document or null if the document doesn't exist. | 1.0.0 |
+| Prop       | Type                   | Description                                                                                       | Since |
+| ---------- | ---------------------- | ------------------------------------------------------------------------------------------------- | ----- |
+| **`id`**   | <code>string</code>    | The id of the document.                                                                           | 1.0.0 |
+| **`path`** | <code>string</code>    | A string representing the path of the referenced document (relative to the root of the database). | 1.0.0 |
+| **`data`** | <code>T \| null</code> | The fields of the document or null if the document doesn't exist.                                 | 1.0.0 |
 
 
 #### DocumnentReference
