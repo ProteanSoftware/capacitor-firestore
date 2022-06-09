@@ -158,6 +158,8 @@ enum CapacitorFirestoreError: Error {
         
         var result = JSObject();
         result["id"] = documentSnapshot.documentID;
+        result["path"] = documentSnapshot.reference.path;
+
         if (documentSnapshot.exists) {
             var data = JSObject();
             guard let documentData = documentSnapshot.data() as [String : Any]? else {
