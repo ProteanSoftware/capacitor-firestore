@@ -88,6 +88,10 @@ public class CapacitorFirestore {
         }
     }
 
+    public Task<Void> deleteDocument(String documentReference) {
+        return this.db.document(documentReference).delete();
+    }
+
     public Task<QuerySnapshot> getCollection(String collectionReference) {
         return this.db.collection(collectionReference).get();
     }

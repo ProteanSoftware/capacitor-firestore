@@ -164,6 +164,21 @@ public class CapacitorFirestorePlugin extends Plugin {
         });
     }
 
+    @PluginMethod
+    public void deleteDocument(PluginCall call) {
+        String documentReference = call.getString("reference");
+
+        Task<Void> listener = implementation.deleteDocument(documentReference);
+
+        listener.addOnSuccessListener((value) -> {
+            call.resolve();
+        });
+
+        listener.addOnFailureListener((error) -> {
+            call.reject(error.getMessage(), error);
+        });
+    }
+
     @PluginMethod(returnType = PluginMethod.RETURN_CALLBACK)
     public void addDocumentSnapshotListener(PluginCall call) {
         call.setKeepAlive(true);

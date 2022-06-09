@@ -110,12 +110,12 @@
       },
       {
         "name": "setDocument",
-        "signature": "<T>(options: UpdateDocument<T>) => Promise<void>",
+        "signature": "<T>(options: SetDocument<T>) => Promise<void>",
         "parameters": [
           {
             "name": "options",
             "docs": "",
-            "type": "UpdateDocument<T>"
+            "type": "SetDocument<T>"
           }
         ],
         "returns": "Promise<void>",
@@ -131,10 +131,37 @@
         ],
         "docs": "Writes to the document referred to by the specified DocumentReference.\r\nIf the document does not yet exist, it will be created.\r\nIf you provide merge or mergeFields, the provided data can be merged into an existing document.",
         "complexTypes": [
-          "UpdateDocument",
+          "SetDocument",
           "T"
         ],
         "slug": "setdocument"
+      },
+      {
+        "name": "deleteDocument",
+        "signature": "(options: DocumnentReference) => Promise<void>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "DocumnentReference"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options"
+          },
+          {
+            "name": "returns",
+            "text": "A Promise resolved once the document has been successfully\r\ndeleted from the backend (note that it won't resolve while you're offline)."
+          }
+        ],
+        "docs": "Deletes the document referred to by the specified DocumentReference.",
+        "complexTypes": [
+          "DocumnentReference"
+        ],
+        "slug": "deletedocument"
       },
       {
         "name": "addDocumentSnapshotListener",
@@ -410,6 +437,31 @@
             "T"
           ],
           "type": "Partial<T>"
+        }
+      ]
+    },
+    {
+      "name": "SetDocument",
+      "slug": "setdocument",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "data",
+          "tags": [],
+          "docs": "A map of the fields and values for the document.",
+          "complexTypes": [
+            "T"
+          ],
+          "type": "T"
+        },
+        {
+          "name": "merge",
+          "tags": [],
+          "docs": "Changes the behavior of a `setDocument()` call to only replace the\r\nvalues specified in its data argument. Fields omitted from the `setDocument()`\r\ncall remain untouched. If your input sets any field to an empty map, all\r\nnested fields are overwritten.",
+          "complexTypes": [],
+          "type": "boolean | undefined"
         }
       ]
     },

@@ -13,6 +13,7 @@ import {
   getDocs,
   updateDoc,
   setDoc,
+  deleteDoc,
   collection,
   query,
   where,
@@ -124,6 +125,14 @@ export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFiresto
     return setDoc(doc(this.firestore, options.reference), options.data as T, {
       merge: options.merge
     });
+  }
+
+  public deleteDocument(options: DocumnentReference): Promise<void> {
+    if (this.firestore === null) {
+      return Promise.reject("Firestore not initialized");
+    }
+
+    return deleteDoc(doc(this.firestore, options.reference));
   }
 
   public addCollectionSnapshotListener<T>(options: CollectionReference, callback: CollectionSnapshotCallback<T>): Promise<CallbackId> {

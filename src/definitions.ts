@@ -182,7 +182,15 @@ export interface CapacitorFirestorePlugin {
    * @returns A Promise resolved once the data has been successfully written
    * to the backend (note that it won't resolve while you're offline).
    */
-  setDocument<T>(options: UpdateDocument<T>): Promise<void>;
+  setDocument<T>(options: SetDocument<T>): Promise<void>;
+
+  /**
+   * Deletes the document referred to by the specified DocumentReference.
+   * @param options 
+   * @returns A Promise resolved once the document has been successfully
+   * deleted from the backend (note that it won't resolve while you're offline).
+   */
+  deleteDocument(options: DocumnentReference): Promise<void>;
 
   /**
    * Listen for snapshot changes on a document.

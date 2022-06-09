@@ -18,6 +18,7 @@ npx cap sync
 * [`getDocument(...)`](#getdocument)
 * [`updateDocument(...)`](#updatedocument)
 * [`setDocument(...)`](#setdocument)
+* [`deleteDocument(...)`](#deletedocument)
 * [`addDocumentSnapshotListener(...)`](#adddocumentsnapshotlistener)
 * [`getCollection(...)`](#getcollection)
 * [`addCollectionSnapshotListener(...)`](#addcollectionsnapshotlistener)
@@ -96,16 +97,31 @@ The update will fail if applied to a document that does not exist.
 ### setDocument(...)
 
 ```typescript
-setDocument<T>(options: UpdateDocument<T>) => Promise<void>
+setDocument<T>(options: SetDocument<T>) => Promise<void>
 ```
 
 Writes to the document referred to by the specified DocumentReference.
 If the document does not yet exist, it will be created.
 If you provide merge or mergeFields, the provided data can be merged into an existing document.
 
-| Param         | Type                                                               |
-| ------------- | ------------------------------------------------------------------ |
-| **`options`** | <code><a href="#updatedocument">UpdateDocument</a>&lt;T&gt;</code> |
+| Param         | Type                                                         |
+| ------------- | ------------------------------------------------------------ |
+| **`options`** | <code><a href="#setdocument">SetDocument</a>&lt;T&gt;</code> |
+
+--------------------
+
+
+### deleteDocument(...)
+
+```typescript
+deleteDocument(options: DocumnentReference) => Promise<void>
+```
+
+Deletes the document referred to by the specified DocumentReference.
+
+| Param         | Type                                                              |
+| ------------- | ----------------------------------------------------------------- |
+| **`options`** | <code><a href="#documnentreference">DocumnentReference</a></code> |
 
 --------------------
 
@@ -217,6 +233,14 @@ Stop listening for snapshot changes on a document or collection.
 | Prop       | Type                                                 | Description                                                                                                                                          |
 | ---------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`data`** | <code><a href="#partial">Partial</a>&lt;T&gt;</code> | An object containing the fields and values with which to update the document. Fields can contain dots to reference nested fields within the document |
+
+
+#### SetDocument
+
+| Prop        | Type                 | Description                                                                                                                                                                                                                                               |
+| ----------- | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`data`**  | <code>T</code>       | A map of the fields and values for the document.                                                                                                                                                                                                          |
+| **`merge`** | <code>boolean</code> | Changes the behavior of a `setDocument()` call to only replace the values specified in its data argument. Fields omitted from the `setDocument()` call remain untouched. If your input sets any field to an empty map, all nested fields are overwritten. |
 
 
 #### CollectionSnapshot
