@@ -68,6 +68,30 @@ enum CapacitorFirestoreError: Error {
         self.db?.document(documentReference).getDocument(completion: completion);
     }
     
+    public func updateDocument(documentReference: String?, data: JSObject?, completion: @escaping (Error?) -> Void) -> Void {
+        guard let documentReference = documentReference as String? else {
+            assert(false, "documentReference must not be null");
+        }
+        
+        guard let data = data as JSObject? else {
+            assert(false, "data must not be null");
+        }
+        
+        self.db?.document(documentReference).updateData(data, completion: completion);
+    }
+    
+    public func setDocument(documentReference: String?, data: JSObject?, merge: Bool, completion: @escaping (Error?) -> Void) -> Void {
+        guard let documentReference = documentReference as String? else {
+            assert(false, "documentReference must not be null");
+        }
+        
+        guard let data = data as JSObject? else {
+            assert(false, "data must not be null");
+        }
+        
+        self.db?.document(documentReference).setData(data, merge: merge, completion: completion);
+    }
+    
     @objc public func addCollectionSnapshotListener(collectionReference: String?, queryConstaints: [JSQueryConstraints]?, completion: @escaping (QuerySnapshot?, Error?) -> Void) -> ListenerRegistration? {
         guard let collectionReference = collectionReference as String? else {
             assert(false, "collectionReference must not be null");
@@ -83,6 +107,7 @@ enum CapacitorFirestoreError: Error {
         
         self.db?.collection(collectionReference).getDocuments(completion: completion);
     }
+    
     
     public func ConvertJSArrayToQueryConstraints(array: [JSObject]?) throws -> [JSQueryConstraints]? {
         if (array == nil) {
