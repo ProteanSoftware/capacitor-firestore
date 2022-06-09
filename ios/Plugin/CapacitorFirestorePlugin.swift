@@ -137,6 +137,21 @@ public class CapacitorFirestorePlugin: CAPPlugin {
         }
     }
     
+    @objc func addDocument(_ call: CAPPluginCall) {
+        let collectionReference = call.getString("reference");
+        let data = call.getObject("data");
+        let documentReference = implementation.addDocument(collectionReference: collectionReference, data: data) { error in
+            if (error != nil) {
+                call.reject("Document update error", nil, error, [:]);
+            }
+        }
+        
+        call.resolve([
+            "id": documentReference.documentID,
+            "path": documentReference.path
+        ]);
+    }
+    
     @objc func addCollectionSnapshotListener(_ call: CAPPluginCall) {
         call.keepAlive = true;
         let callbackId = call.callbackId;
