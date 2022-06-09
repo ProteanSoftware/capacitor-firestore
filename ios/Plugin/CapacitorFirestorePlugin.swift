@@ -195,17 +195,18 @@ public class CapacitorFirestorePlugin: CAPPlugin {
         let data = call.getObject("data");
         
         do {
-            let documentReference = try implementation.addDocument(collectionReference: collectionReference, data: data) { error in
+            var documentReference: DocumentReference? = nil;
+            documentReference = try implementation.addDocument(collectionReference: collectionReference, data: data) { error in
                 if (error != nil) {
                     call.reject("Document update error", nil, error, [:]);
                     return
+                } else {
+                    call.resolve([
+                        "id": documentReference!.documentID,
+                        "path": documentReference!.path
+                    ]);
                 }
             }
-            
-            call.resolve([
-                "id": documentReference.documentID,
-                "path": documentReference.path
-            ]);
         } catch CapacitorFirestoreError.runtimeError(let message) {
             call.reject(message);
         } catch {
