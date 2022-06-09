@@ -212,4 +212,24 @@ public class CapacitorFirestorePlugin: CAPPlugin {
             }
         }
     }
+    
+    @objc func enableNetwork(_ call: CAPPluginCall) {
+        implementation.enableNetwork() { error in
+            if (error != nil) {
+                call.reject("Error enabling network", nil, error, [:]);
+            } else {
+                call.resolve();
+            }
+        }
+    }
+    
+    @objc func disableNetwork(_ call: CAPPluginCall) {
+        implementation.disableNetwork() { error in
+            if (error != nil) {
+                call.reject("Error disabling netowrk", nil, error, [:]);
+            } else {
+                call.resolve();
+            }
+        }
+    }
 }

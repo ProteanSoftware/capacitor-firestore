@@ -211,6 +211,14 @@ enum CapacitorFirestoreError: Error {
         return result;
     }
     
+    @objc public func enableNetwork(completion: @escaping (Error?) -> Void) -> Void {
+        self.db?.enableNetwork(completion: completion)
+    }
+    
+    @objc public func disableNetwork(completion: @escaping (Error?) -> Void) -> Void {
+        self.db?.disableNetwork(completion: completion)
+    }
+    
     @objc private func InitializeFirestore() throws -> Void {
         guard let app = FirebaseApp.app(name: "CapacitorFirestore")
           else {
