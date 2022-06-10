@@ -123,15 +123,22 @@ public class CapacitorFirestorePlugin extends Plugin {
             }
         }
 
-        Task<Void> listener = implementation.updateDocument(documentReference, mapData);
+        Task<Void> listener = null;
+        try {
+            listener = implementation.updateDocument(documentReference, mapData);
+        } catch (Exception e) {
+            call.reject(e.getMessage(), e);
+        }
 
-        listener.addOnSuccessListener((value) -> {
-            call.resolve();
-        });
+        if (listener != null) {
+            listener.addOnSuccessListener((value) -> {
+                call.resolve();
+            });
 
-        listener.addOnFailureListener((error) -> {
-            call.reject(error.getMessage(), error);
-        });
+            listener.addOnFailureListener((error) -> {
+                call.reject(error.getMessage(), error);
+            });
+        }
     }
 
     @PluginMethod
@@ -154,15 +161,22 @@ public class CapacitorFirestorePlugin extends Plugin {
             }
         }
 
-        Task<Void> listener = implementation.setDocument(documentReference, mapData, merge);
+        Task<Void> listener = null;
+        try {
+            listener = implementation.setDocument(documentReference, mapData, merge);
+        } catch (Exception e) {
+            call.reject(e.getMessage(), e);
+        }
 
-        listener.addOnSuccessListener((value) -> {
-            call.resolve();
-        });
+        if (listener != null) {
+            listener.addOnSuccessListener((value) -> {
+                call.resolve();
+            });
 
-        listener.addOnFailureListener((error) -> {
-            call.reject(error.getMessage(), error);
-        });
+            listener.addOnFailureListener((error) -> {
+                call.reject(error.getMessage(), error);
+            });
+        }
     }
 
     @PluginMethod
@@ -199,18 +213,25 @@ public class CapacitorFirestorePlugin extends Plugin {
             }
         }
 
-        Task<DocumentReference> listener = implementation.addDocument(collectionReference, mapData);
+        Task<DocumentReference> listener = null;
+        try {
+            listener = implementation.addDocument(collectionReference, mapData);
+        } catch (Exception e) {
+            call.reject(e.getMessage(), e);
+        }
 
-        listener.addOnSuccessListener((value) -> {
-            JSObject result = new JSObject();
-            result.put("id", value.getId());
-            result.put("path", value.getPath());
-            call.resolve(result);
-        });
+        if (listener != null) {
+            listener.addOnSuccessListener((value) -> {
+                JSObject result = new JSObject();
+                result.put("id", value.getId());
+                result.put("path", value.getPath());
+                call.resolve(result);
+            });
 
-        listener.addOnFailureListener((error) -> {
-            call.reject(error.getMessage(), error);
-        });
+            listener.addOnFailureListener((error) -> {
+                call.reject(error.getMessage(), error);
+            });
+        }
     }
 
     @PluginMethod(returnType = PluginMethod.RETURN_CALLBACK)

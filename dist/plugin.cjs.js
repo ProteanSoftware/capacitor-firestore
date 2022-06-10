@@ -3,11 +3,11 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
 var core = require('@capacitor/core');
+var firestore = require('firebase/firestore');
 var app = require('firebase/app');
 var auth = require('firebase/auth');
-var firestore = require('firebase/firestore');
 
-/// <reference types="@capacitor/cli" />
+/* eslint-disable no-prototype-builtins */
 /**
  *
  * @param field The path to compare
@@ -22,6 +22,38 @@ function createQueryConstraint(field, operator, value) {
         opStr: operator,
         value: value
     };
+}
+function prepDataForFirestore(data) {
+    for (const prop in data) {
+        if (data[prop] instanceof firestore.Timestamp) {
+            const timestamp = data[prop];
+            data[prop] = {
+                specialType: "Timestamp",
+                seconds: timestamp.seconds,
+                nanoseconds: timestamp.nanoseconds
+            };
+        }
+        if (data[prop] === undefined) {
+            delete data[prop];
+        }
+    }
+    return data;
+}
+function processDocumentData(data) {
+    for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+            const element = data[key];
+            if (element instanceof Object && element.hasOwnProperty("specialType")) {
+                switch (element.specialType) {
+                    case "Timestamp":
+                        data[key] = new firestore.Timestamp(element.seconds, element.nanoseconds);
+                        break;
+                    default:
+                        throw new Error("Unknown specialType: " + element.specialType);
+                }
+            }
+        }
+    }
 }
 
 const CapacitorFirestore = core.registerPlugin('CapacitorFirestore', {
@@ -209,4 +241,6 @@ var web = /*#__PURE__*/Object.freeze({
 
 exports.CapacitorFirestore = CapacitorFirestore;
 exports.createQueryConstraint = createQueryConstraint;
+exports.prepDataForFirestore = prepDataForFirestore;
+exports.processDocumentData = processDocumentData;
 //# sourceMappingURL=plugin.cjs.js.map

@@ -1,6 +1,6 @@
 import { registerPlugin } from '@capacitor/core';
 
-import { createQueryConstraint } from './definitions';
+import { createQueryConstraint, prepDataForFirestore, processDocumentData } from './definitions';
 import type { CapacitorFirestorePlugin } from './definitions';
 
 
@@ -9,4 +9,4 @@ const CapacitorFirestore = registerPlugin<CapacitorFirestorePlugin>('CapacitorFi
 });
 
 export * from './definitions';
-export { CapacitorFirestore, createQueryConstraint };
+export { CapacitorFirestore, createQueryConstraint, prepDataForFirestore, processDocumentData };

@@ -1,4 +1,7 @@
+/* eslint-disable no-prototype-builtins */
 /// <reference types="@capacitor/cli" />
+
+import { Timestamp } from "firebase/firestore";
 
 declare module "@capacitor/cli" {
   export interface PluginsConfig {
@@ -54,6 +57,42 @@ export function createQueryConstraint(field: string, operator: QueryOperators, v
     opStr: operator,
     value: value
   };
+}
+
+export function prepDataForFirestore<T>(data: T): T {
+  for (const prop in data) {
+    if (data[prop] instanceof Timestamp) {
+      const timestamp = data[prop] as unknown as Timestamp;
+      data[prop] = {
+        specialType: "Timestamp",
+        seconds: timestamp.seconds,
+        nanoseconds: timestamp.nanoseconds
+      } as any;
+    }
+
+    if (data[prop] === undefined) {
+      delete data[prop];
+    }
+  }
+
+  return data;
+}
+
+export function processDocumentData(data: any): void {
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      const element = data[key];
+      if (element instanceof Object && element.hasOwnProperty("specialType")) {
+        switch (element.specialType) {
+          case "Timestamp":
+            data[key] = new Timestamp(element.seconds, element.nanoseconds);
+            break;
+          default:
+            throw new Error("Unknown specialType: " + element.specialType);
+        }
+      }
+    }
+  }
 }
 
 /**

@@ -1,7 +1,7 @@
-var capacitorCapacitorFirestore = (function (exports, core, app, auth, firestore) {
+var capacitorCapacitorFirestore = (function (exports, core, firestore, app, auth) {
     'use strict';
 
-    /// <reference types="@capacitor/cli" />
+    /* eslint-disable no-prototype-builtins */
     /**
      *
      * @param field The path to compare
@@ -16,6 +16,38 @@ var capacitorCapacitorFirestore = (function (exports, core, app, auth, firestore
             opStr: operator,
             value: value
         };
+    }
+    function prepDataForFirestore(data) {
+        for (const prop in data) {
+            if (data[prop] instanceof firestore.Timestamp) {
+                const timestamp = data[prop];
+                data[prop] = {
+                    specialType: "Timestamp",
+                    seconds: timestamp.seconds,
+                    nanoseconds: timestamp.nanoseconds
+                };
+            }
+            if (data[prop] === undefined) {
+                delete data[prop];
+            }
+        }
+        return data;
+    }
+    function processDocumentData(data) {
+        for (const key in data) {
+            if (data.hasOwnProperty(key)) {
+                const element = data[key];
+                if (element instanceof Object && element.hasOwnProperty("specialType")) {
+                    switch (element.specialType) {
+                        case "Timestamp":
+                            data[key] = new firestore.Timestamp(element.seconds, element.nanoseconds);
+                            break;
+                        default:
+                            throw new Error("Unknown specialType: " + element.specialType);
+                    }
+                }
+            }
+        }
     }
 
     const CapacitorFirestore = core.registerPlugin('CapacitorFirestore', {
@@ -203,10 +235,12 @@ var capacitorCapacitorFirestore = (function (exports, core, app, auth, firestore
 
     exports.CapacitorFirestore = CapacitorFirestore;
     exports.createQueryConstraint = createQueryConstraint;
+    exports.prepDataForFirestore = prepDataForFirestore;
+    exports.processDocumentData = processDocumentData;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
     return exports;
 
-})({}, capacitorExports, app, auth, firestore);
+})({}, capacitorExports, firestore, app, auth);
 //# sourceMappingURL=plugin.js.map

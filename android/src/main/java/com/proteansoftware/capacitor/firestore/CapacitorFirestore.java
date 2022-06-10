@@ -77,11 +77,13 @@ public class CapacitorFirestore {
         return this.db.document(documentReference).get();
     }
 
-    public Task<Void> updateDocument(String documentReference, Map<String, Object> data) {
+    public Task<Void> updateDocument(String documentReference, Map<String, Object> data) throws Exception {
+        data = this.PrepDataForSend(data);
         return this.db.document(documentReference).update(data);
     }
 
-    public Task<Void> setDocument(String documentReference, Map<String, Object> data, Boolean merge) {
+    public Task<Void> setDocument(String documentReference, Map<String, Object> data, Boolean merge) throws Exception {
+        data = this.PrepDataForSend(data);
         if (merge) {
             return this.db.document(documentReference).set(data, SetOptions.merge());
         } else {
@@ -93,7 +95,8 @@ public class CapacitorFirestore {
         return this.db.document(documentReference).delete();
     }
 
-    public Task<DocumentReference> addDocument(String collectionReference, Map<String, Object> data) {
+    public Task<DocumentReference> addDocument(String collectionReference, Map<String, Object> data) throws Exception {
+        data = this.PrepDataForSend(data);
         return this.db.collection(collectionReference).add(data);
     }
 
@@ -194,6 +197,27 @@ public class CapacitorFirestore {
         }
 
         return list;
+    }
+
+    private Map<String, Object> PrepDataForSend(Map<String, Object> data) throws Exception {
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            Object value = entry.getValue();
+
+            if (value instanceof JSObject) {
+                JSObject jsObject = ((JSObject) value);
+
+                if (jsObject.has("specialType")) {
+                    String specialType = jsObject.getString("specialType");
+                    switch (specialType) {
+                        case "Timestamp":
+                            data.put(entry.getKey(), new Timestamp(jsObject.getLong("seconds"), jsObject.getInt("nanoseconds")));
+                            break;
+                        default:
+                            throw new Exception("Unhandled specialType:" + specialType);
+                    }
+                }
+            }
+        }
     }
 
     private void InitializeFirestore() throws Exception {

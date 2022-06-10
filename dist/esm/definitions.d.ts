@@ -41,6 +41,8 @@ export declare type QueryOperators = "==" | ">=" | "<=" | "<" | ">" | "array-con
  * @returns The created {@link QueryConstraint}.
  */
 export declare function createQueryConstraint(field: string, operator: QueryOperators, value: any): QueryConstraint;
+export declare function prepDataForFirestore<T>(data: T): T;
+export declare function processDocumentData(data: any): void;
 /**
  * A `QueryConstraint` is used to narrow the set of documents returned by a
  * Firestore query.
