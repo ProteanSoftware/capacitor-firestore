@@ -244,6 +244,12 @@ enum CapacitorFirestoreError: Error {
         var data = inputData;
         try data.keys.forEach { key in
             let value = data[key];
+
+            // magic int fix
+            if let numberValue = value as? Int {
+                data[key] = numberValue;
+            }
+
             if let timestampValue = value as? JSObject {
                 if (timestampValue.keys.contains("specialType")) {
                     let specialType = timestampValue["specialType"] as! String;
