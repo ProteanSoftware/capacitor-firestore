@@ -22,6 +22,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.json.JSONException;
@@ -200,6 +201,7 @@ public class CapacitorFirestore {
     }
 
     private Map<String, Object> PrepDataForSend(Map<String, Object> data) throws Exception {
+        Map<String, Object> prepared = new HashMap<>();
         for (Map.Entry<String, Object> entry : data.entrySet()) {
             Object value = entry.getValue();
 
@@ -210,14 +212,20 @@ public class CapacitorFirestore {
                     String specialType = jsObject.getString("specialType");
                     switch (specialType) {
                         case "Timestamp":
-                            data.put(entry.getKey(), new Timestamp(jsObject.getLong("seconds"), jsObject.getInt("nanoseconds")));
+                            prepared.put(entry.getKey(), new Timestamp(jsObject.getLong("seconds"), jsObject.getInt("nanoseconds")));
                             break;
                         default:
                             throw new Exception("Unhandled specialType:" + specialType);
                     }
+                } else {
+                    prepared.put(entry.getKey(), entry.getValue());
                 }
+            } else {
+                prepared.put(entry.getKey(), entry.getValue());
             }
         }
+
+        return prepared;
     }
 
     private void InitializeFirestore() throws Exception {
