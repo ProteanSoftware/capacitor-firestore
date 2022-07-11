@@ -88,13 +88,13 @@ enum CapacitorFirestoreError: Error {
             throw CapacitorFirestoreError.runtimeError("documentReference must not be null");
         }
         
-        guard var data = data as JSObject? else {
+        guard let data = data as JSObject? else {
             throw CapacitorFirestoreError.runtimeError("data must not be null");
         }
         
-        data = try self.PrepDataForSend(inputData: data);
+        let documentData = try self.PrepDataForSend(inputData: data);
         
-        self.db?.document(documentReference).updateData(data, completion: completion);
+        self.db?.document(documentReference).updateData(documentData, completion: completion);
     }
     
     public func setDocument(documentReference: String?, data: JSObject?, merge: Bool, completion: @escaping (Error?) -> Void) throws -> Void {
@@ -102,13 +102,13 @@ enum CapacitorFirestoreError: Error {
             throw CapacitorFirestoreError.runtimeError("documentReference must not be null");
         }
         
-        guard var data = data as JSObject? else {
+        guard let data = data as JSObject? else {
             throw CapacitorFirestoreError.runtimeError("data must not be null");
         }
         
-        data = try self.PrepDataForSend(inputData: data);
+        let documentData = try self.PrepDataForSend(inputData: data);
         
-        self.db?.document(documentReference).setData(data, merge: merge, completion: completion);
+        self.db?.document(documentReference).setData(documentData, merge: merge, completion: completion);
     }
     
     public func deleteDocument(documentReference: String?, completion: @escaping (Error?) -> Void) throws -> Void {
@@ -124,13 +124,13 @@ enum CapacitorFirestoreError: Error {
             throw CapacitorFirestoreError.runtimeError("collectionReference must not be null");
         }
         
-        guard var data = data as JSObject? else {
+        guard let data = data as JSObject? else {
             throw CapacitorFirestoreError.runtimeError("data must not be null");
         }
         
-        data = try self.PrepDataForSend(inputData: data);
+        let documentData = try self.PrepDataForSend(inputData: data);
         
-        let documentReference = self.db?.collection(collectionReference).addDocument(data: data, completion: completion);
+        let documentReference = self.db?.collection(collectionReference).addDocument(data: documentData, completion: completion);
         
         return documentReference;
     }
@@ -240,39 +240,37 @@ enum CapacitorFirestoreError: Error {
         self.db?.disableNetwork(completion: completion)
     }
     
-    private func PrepDataForSend(inputData: JSObject) throws -> JSObject {
-        var data = inputData;
+    private func PrepDataForSend(inputData: JSObject) throws -> Dictionary<String, Any> {
+        var returnData: [String: Any] = [:];
+        let data = inputData;
         try data.keys.forEach { key in
             let value = data[key];
 
             // magic int fix
             if let numberValue = value as? Int {
-                data[key] = numberValue;
-            }
-
-            if let timestampValue = value as? JSObject {
+                returnData[key] = numberValue;
+            } else if let timestampValue = value as? JSObject {
                 if (timestampValue.keys.contains("specialType")) {
                     let specialType = timestampValue["specialType"] as! String;
                     
                     switch specialType {
                     case "Timestamp":
                         let timestamp = FirebaseFirestore.Timestamp(seconds: Int64(timestampValue["seconds"] as! Int), nanoseconds: Int32(timestampValue["nanoseconds"] as! Int));
+                        returnData[key] = timestamp;
 
-                        guard let timestampObject = JSTypes.coerceDictionaryToJSObject([key:timestamp]) as JSObject? else {
-                            throw CapacitorFirestoreError.runtimeError("could not deserailize value for: " + key);
-                        }
-                        
-                        data[key] = timestampObject[key];
-                        
                         break;
                     default:
                         throw CapacitorFirestoreError.runtimeError("Unhandled specialType: " + specialType);
                     }
+                } else {
+                    returnData[key] = value;
                 }
+            } else {
+                returnData[key] = value;
             }
         }
         
-        return data;
+        return returnData;
     }
     
     @objc private func InitializeFirestore() throws -> Void {
