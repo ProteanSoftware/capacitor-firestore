@@ -153,7 +153,25 @@ public class CapacitorFirestore {
             for (Map.Entry<String, Object> entry : firestoreData.entrySet()) {
                 Object value = entry.getValue();
 
-                if (value instanceof Timestamp) {
+                if (value instanceof ArrayList) {
+                  ArrayList list = (ArrayList)value;
+
+                  JSArray array = new JSArray();
+                  for (Object i : list) {
+                    array.put(i);
+                  }
+
+                  value = array;
+                } else if (value instanceof HashMap) {
+                  HashMap<String, Object> list = (HashMap<String, Object>)value;
+
+                  JSObject map = new JSObject();
+                  for (Map.Entry<String, Object> i : list.entrySet()) {
+                    map.put(i.getKey(), i.getValue());
+                  }
+
+                  value = map;
+                } else if (value instanceof Timestamp) {
                     JSONObject jsonObject = new JSObject();
                     try {
                         jsonObject.put("seconds", ((Timestamp) value).getSeconds());
