@@ -3,6 +3,7 @@ ext {
     androidxAppCompatVersion = project.hasProperty('androidxAppCompatVersion') ? rootProject.ext.androidxAppCompatVersion : '1.2.0'
     androidxJunitVersion = project.hasProperty('androidxJunitVersion') ? rootProject.ext.androidxJunitVersion : '1.1.2'
     androidxEspressoCoreVersion = project.hasProperty('androidxEspressoCoreVersion') ? rootProject.ext.androidxEspressoCoreVersion : '3.3.0'
+    firebaseVersion = project.hasProperty('firebaseVersion') ? rootProject.ext.firebaseVersion : '30.1.0'
 }
 
 buildscript {
@@ -56,7 +57,7 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
 
-    implementation platform('com.google.firebase:firebase-bom:30.1.0')
+    implementation platform("com.google.firebase:firebase-bom:$firebaseVersion")
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-firestore'
 }
