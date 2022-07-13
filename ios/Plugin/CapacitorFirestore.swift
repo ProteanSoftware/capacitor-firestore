@@ -246,8 +246,12 @@ enum CapacitorFirestoreError: Error {
         try data.keys.forEach { key in
             let value = data[key];
 
+            // magic bool fix
+            if self.isBoolNumber(num: value) {
+                returnData[key] = value as! Bool;
+            }
             // magic int fix
-            if let numberValue = value as? Int {
+            else if let numberValue = value as? Int {
                 returnData[key] = numberValue;
             } else if let timestampValue = value as? JSObject {
                 if (timestampValue.keys.contains("specialType")) {
@@ -294,5 +298,16 @@ enum CapacitorFirestoreError: Error {
             self.db = Firestore.firestore(app: app);
             self.db?.settings = settings;
         }
+    }
+    
+    // https://stackoverflow.com/a/30223989
+    private func isBoolNumber(num: JSValue?) -> Bool {
+        if let nsNumberValue = num as? NSNumber {
+            let boolId = CFBooleanGetTypeID(); // the type ID of CFBoolean
+            let numId = CFGetTypeID(nsNumberValue); // the type ID of num
+            return numId == boolId;
+        }
+        
+        return false;
     }
 }
