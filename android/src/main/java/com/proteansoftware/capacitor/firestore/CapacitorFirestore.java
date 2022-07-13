@@ -223,7 +223,10 @@ public class CapacitorFirestore {
         for (Map.Entry<String, Object> entry : data.entrySet()) {
             Object value = entry.getValue();
 
-            if (value instanceof JSObject) {
+            // magic null fix
+            if (value.toString().equals("null")) {
+              prepared.put(entry.getKey(), null);
+            } else if (value instanceof JSObject) {
                 JSObject jsObject = ((JSObject) value);
 
                 if (jsObject.has("specialType")) {

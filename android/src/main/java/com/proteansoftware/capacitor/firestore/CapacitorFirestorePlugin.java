@@ -14,8 +14,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -109,18 +112,13 @@ public class CapacitorFirestorePlugin extends Plugin {
         String documentReference = call.getString("reference");
         JSObject data = call.getObject("data");
 
-        HashMap<String, Object> mapData = new HashMap<>();
-        Iterator<String> keys = data.keys();
+        HashMap<String, Object> mapData;
 
-        while(keys.hasNext()) {
-            String key = keys.next();
-            try {
-                Object value = data.get(key);
-                mapData.put(key, value);
-            } catch (JSONException e) {
-                call.reject(e.getMessage(), e);
-                return;
-            }
+        try {
+          mapData = mapJSObject(data);
+        } catch (JSONException e) {
+          call.reject(e.getMessage(), e);
+          return;
         }
 
         Task<Void> listener = null;
@@ -147,18 +145,13 @@ public class CapacitorFirestorePlugin extends Plugin {
         JSObject data = call.getObject("data");
         Boolean merge = call.getBoolean("merge", false);
 
-        HashMap<String, Object> mapData = new HashMap<>();
-        Iterator<String> keys = data.keys();
+        HashMap<String, Object> mapData;
 
-        while(keys.hasNext()) {
-            String key = keys.next();
-            try {
-                Object value = data.get(key);
-                mapData.put(key, value);
-            } catch (JSONException e) {
-                call.reject(e.getMessage(), e);
-                return;
-            }
+        try {
+          mapData = mapJSObject(data);
+        } catch (JSONException e) {
+          call.reject(e.getMessage(), e);
+          return;
         }
 
         Task<Void> listener = null;
@@ -199,18 +192,13 @@ public class CapacitorFirestorePlugin extends Plugin {
         String collectionReference = call.getString("reference");
         JSObject data = call.getObject("data");
 
-        HashMap<String, Object> mapData = new HashMap<>();
-        Iterator<String> keys = data.keys();
+        HashMap<String, Object> mapData;
 
-        while(keys.hasNext()) {
-            String key = keys.next();
-            try {
-                Object value = data.get(key);
-                mapData.put(key, value);
-            } catch (JSONException e) {
-                call.reject(e.getMessage(), e);
-                return;
-            }
+        try {
+            mapData = mapJSObject(data);
+        } catch (JSONException e) {
+            call.reject(e.getMessage(), e);
+            return;
         }
 
         Task<DocumentReference> listener = null;
@@ -342,4 +330,42 @@ public class CapacitorFirestorePlugin extends Plugin {
             call.reject(error.getMessage(), error);
         });
     }
+
+
+  private HashMap<String, Object> mapJSObject(JSONObject jsObject) throws JSONException {
+    HashMap<String, Object> mapData = new HashMap<>();
+    Iterator<String> keys = jsObject.keys();
+
+    while (keys.hasNext()) {
+      String key = keys.next();
+      Object value = jsObject.get(key);
+
+      if (value instanceof JSONObject) {
+        value = mapJSObject((JSONObject) value);
+      } else if (value instanceof JSONArray) {
+        value = mapJSArray((JSONArray) value);
+      }
+
+      mapData.put(key, value);
+    }
+
+    return mapData;
+  }
+
+  private ArrayList<Object> mapJSArray(JSONArray array) throws JSONException {
+      ArrayList<Object> arrayList = new ArrayList<>();
+      for (int x = 0; x < array.length(); x++) {
+        Object value = array.get(x);
+
+        if (value instanceof JSONObject) {
+          value = mapJSObject((JSONObject) value);
+        } else if (value instanceof JSONArray) {
+          value = mapJSArray((JSONArray) value);
+        }
+
+        arrayList.add(value);
+      }
+
+      return arrayList;
+  }
 }
