@@ -140,15 +140,75 @@ enum CapacitorFirestoreError: Error {
             throw CapacitorFirestoreError.runtimeError("collectionReference must not be null");
         }
         
-        return self.db?.collection(collectionReference).addSnapshotListener(completion);
+        var collection = self.db?.collection(collectionReference) as? Query;
+        
+        if let queryConstaints = queryConstaints {
+            for queryConstraint in queryConstaints {
+
+                switch (queryConstraint.operation) {
+                    case "==":
+                        collection = collection?.whereField(queryConstraint.fieldPath, isEqualTo: queryConstraint.value);
+                        break;
+                    case ">=":
+                        collection = collection?.whereField(queryConstraint.fieldPath, isGreaterThanOrEqualTo: queryConstraint.value);
+                        break;
+                    case "<=":
+                        collection = collection?.whereField(queryConstraint.fieldPath, isLessThanOrEqualTo: queryConstraint.value);
+                        break;
+                    case ">":
+                        collection = collection?.whereField(queryConstraint.fieldPath, isGreaterThan: queryConstraint.value);
+                        break;
+                    case "<":
+                        collection = collection?.whereField(queryConstraint.fieldPath, isLessThan: queryConstraint.value);
+                        break;
+                    case "array-contains":
+                        collection = collection?.whereField(queryConstraint.fieldPath, arrayContains: queryConstraint.value);
+                        break;
+                    default:
+                        throw CapacitorFirestoreError.runtimeError("query operation not support: " + queryConstraint.operation);
+                }
+            }
+        }
+        
+        return collection?.addSnapshotListener(completion);
     }
-    
-    @objc public func getCollection(collectionReference: String?, completion: @escaping (QuerySnapshot?, Error?) -> Void) throws -> Void {
+
+    @objc public func getCollection(collectionReference: String?, queryConstaints: [JSQueryConstraints]?, completion: @escaping (QuerySnapshot?, Error?) -> Void) throws -> Void {
         guard let collectionReference = collectionReference as String? else {
             throw CapacitorFirestoreError.runtimeError("collectionReference must not be null");
         }
         
-        self.db?.collection(collectionReference).getDocuments(completion: completion);
+        var collection = self.db?.collection(collectionReference) as? Query;
+        
+        if let queryConstaints = queryConstaints {
+            for queryConstraint in queryConstaints {
+
+                switch (queryConstraint.operation) {
+                    case "==":
+                        collection = collection?.whereField(queryConstraint.fieldPath, isEqualTo: queryConstraint.value);
+                        break;
+                    case ">=":
+                        collection = collection?.whereField(queryConstraint.fieldPath, isGreaterThanOrEqualTo: queryConstraint.value);
+                        break;
+                    case "<=":
+                        collection = collection?.whereField(queryConstraint.fieldPath, isLessThanOrEqualTo: queryConstraint.value);
+                        break;
+                    case ">":
+                        collection = collection?.whereField(queryConstraint.fieldPath, isGreaterThan: queryConstraint.value);
+                        break;
+                    case "<":
+                        collection = collection?.whereField(queryConstraint.fieldPath, isLessThan: queryConstraint.value);
+                        break;
+                    case "array-contains":
+                        collection = collection?.whereField(queryConstraint.fieldPath, arrayContains: queryConstraint.value);
+                        break;
+                    default:
+                        throw CapacitorFirestoreError.runtimeError("query operation not support: " + queryConstraint.operation);
+                }
+            }
+        }
+        
+        collection?.getDocuments(completion: completion);
     }
     
     

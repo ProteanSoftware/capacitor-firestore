@@ -267,8 +267,12 @@ public class CapacitorFirestorePlugin: CAPPlugin {
     
     @objc func getCollection(_ call: CAPPluginCall) {
         let collectionReference = call.getString("reference");
+        let clientQueryConstraints = call.getArray("queryConstraints", JSObject.self);
+
         do {
-            try implementation.getCollection(collectionReference: collectionReference) { value, error in
+            let queryConstaints = try implementation.ConvertJSArrayToQueryConstraints(array: clientQueryConstraints);
+
+            try implementation.getCollection(collectionReference: collectionReference, queryConstaints: queryConstaints) { value, error in
                 if (error != nil) {
                     call.reject("Collection snapshot error", nil, error, [:]);
                 } else {
