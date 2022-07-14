@@ -277,7 +277,7 @@ public class CapacitorFirestore {
                 String specialType = (String)jsObject.get("specialType");
                 switch (specialType) {
                   case "Timestamp":
-                    prepared.put(entry.getKey(), new Timestamp((Long)jsObject.get("seconds"), (Integer)jsObject.get("nanoseconds")));
+                    prepared.put(entry.getKey(), new Timestamp(Long.parseLong(jsObject.get("seconds").toString()), (int)jsObject.get("nanoseconds")));
                     break;
                   default:
                     throw new Exception("Unhandled specialType:" + specialType);
