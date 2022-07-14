@@ -270,6 +270,21 @@ public class CapacitorFirestore {
                 } else {
                     prepared.put(entry.getKey(), entry.getValue());
                 }
+            } else if (value instanceof HashMap) {
+              HashMap<String, Object> jsObject = ((HashMap<String, Object>) value);
+
+              if (jsObject.keySet().contains("specialType")) {
+                String specialType = (String)jsObject.get("specialType");
+                switch (specialType) {
+                  case "Timestamp":
+                    prepared.put(entry.getKey(), new Timestamp((Long)jsObject.get("seconds"), (Integer)jsObject.get("nanoseconds")));
+                    break;
+                  default:
+                    throw new Exception("Unhandled specialType:" + specialType);
+                }
+              } else {
+                prepared.put(entry.getKey(), entry.getValue());
+              }
             } else {
                 prepared.put(entry.getKey(), entry.getValue());
             }
