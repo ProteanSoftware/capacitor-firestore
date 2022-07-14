@@ -349,7 +349,9 @@ public class CapacitorFirestorePlugin extends Plugin {
       String key = keys.next();
       Object value = jsObject.get(key);
 
-      if (value instanceof JSONObject) {
+      if (value.toString().equals("null")) {
+        value = null;
+      } else if (value instanceof JSONObject) {
         value = mapJSObject((JSONObject) value);
       } else if (value instanceof JSONArray) {
         value = mapJSArray((JSONArray) value);
