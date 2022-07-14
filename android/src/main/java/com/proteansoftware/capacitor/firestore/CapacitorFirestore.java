@@ -255,8 +255,8 @@ public class CapacitorFirestore {
             // magic null fix
             if (value.toString().equals("null")) {
               prepared.put(entry.getKey(), null);
-            } else if (value instanceof JSObject) {
-                JSObject jsObject = ((JSObject) value);
+            } else if (value instanceof JSONObject) {
+                JSONObject jsObject = ((JSONObject) value);
 
                 if (jsObject.has("specialType")) {
                     String specialType = jsObject.getString("specialType");
