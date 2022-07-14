@@ -186,10 +186,19 @@ public class CapacitorFirestore {
                   ArrayList list = (ArrayList)value;
 
                   JSArray array = new JSArray();
-                  for (Object i : list) {
-                    array.put(i);
-                  }
+                  for (Object item : list) {
+                    if (item instanceof HashMap) {
+                      HashMap<String, Object> prop = (HashMap<String, Object>) item;
 
+                      JSObject map = new JSObject();
+                      for (Map.Entry<String, Object> i : prop.entrySet()) {
+                        map.put(i.getKey(), i.getValue());
+                      }
+                      array.put(map);
+                    } else {
+                      array.put(item);
+                    }
+                  }
                   value = array;
                 } else if (value instanceof HashMap) {
                   HashMap<String, Object> list = (HashMap<String, Object>)value;
