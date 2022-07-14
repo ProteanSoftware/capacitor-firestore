@@ -245,25 +245,34 @@ public class CapacitorFirestorePlugin extends Plugin {
     @PluginMethod
     public void getCollection(PluginCall call) {
         String documentReference = call.getString("reference");
-        Task<QuerySnapshot> listener = implementation.getCollection(documentReference);
+        JSArray clientQueryConstraints = call.getArray("queryConstraints");
+        Task<QuerySnapshot> listener;
 
-        listener.addOnSuccessListener((value) -> {
-            JSObject result = new JSObject();
-            JSArray items = new JSArray();
+        try {
+            List<JSQueryConstraints> queryConstraints = implementation.ConvertJSArrayToQueryConstraints(clientQueryConstraints);
+            listener = implementation.getCollection(documentReference, queryConstraints);
 
-            List<DocumentSnapshot> documents = value.getDocuments();
-            for (DocumentSnapshot documentSnapshot : documents) {
-                JSObject item = implementation.ConvertSnapshotToJSObject(documentSnapshot);
-                items.put(item);
-            }
+            listener.addOnSuccessListener((value) -> {
+                JSObject result = new JSObject();
+                JSArray items = new JSArray();
 
-            result.put("collection", items);
-            call.resolve(result);
-        });
+                List<DocumentSnapshot> documents = value.getDocuments();
+                for (DocumentSnapshot documentSnapshot : documents) {
+                    JSObject item = implementation.ConvertSnapshotToJSObject(documentSnapshot);
+                    items.put(item);
+                }
 
-        listener.addOnFailureListener((error) -> {
-           call.reject(error.getMessage(), error);
-        });
+                result.put("collection", items);
+                call.resolve(result);
+            });
+
+            listener.addOnFailureListener((error) -> {
+                call.reject(error.getMessage(), error);
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            call.reject(e.getMessage(), e);
+        }
     }
 
     @PluginMethod(returnType = PluginMethod.RETURN_CALLBACK)

@@ -101,8 +101,37 @@ public class CapacitorFirestore {
         return this.db.collection(collectionReference).add(data);
     }
 
-    public Task<QuerySnapshot> getCollection(String collectionReference) {
-        return this.db.collection(collectionReference).get();
+    public Task<QuerySnapshot> getCollection(String collectionReference, List<JSQueryConstraints> queryConstraints) throws Exception {
+        Query collection = this.db.collection(collectionReference);
+
+        for (JSQueryConstraints queryConstraint : queryConstraints) {
+            String operation = queryConstraint.getOperation();
+
+            switch (operation) {
+                case "==":
+                    collection = collection.whereEqualTo(queryConstraint.getFieldPath(), queryConstraint.getValue());
+                    break;
+                case ">=":
+                    collection = collection.whereGreaterThanOrEqualTo(queryConstraint.getFieldPath(), queryConstraint.getValue());
+                    break;
+                case "<=":
+                    collection = collection.whereLessThanOrEqualTo(queryConstraint.getFieldPath(), queryConstraint.getValue());
+                    break;
+                case ">":
+                    collection = collection.whereGreaterThan(queryConstraint.getFieldPath(), queryConstraint.getValue());
+                    break;
+                case "<":
+                    collection = collection.whereLessThan(queryConstraint.getFieldPath(), queryConstraint.getValue());
+                    break;
+                case "array-contains":
+                    collection = collection.whereArrayContains(queryConstraint.getFieldPath(), queryConstraint.getValue());
+                    break;
+                default:
+                    throw new Exception("query operation not support: " + operation);
+            }
+        }
+
+        return collection.get();
     }
 
     public ListenerRegistration addCollectionSnapshotListener(
