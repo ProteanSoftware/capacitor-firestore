@@ -181,45 +181,7 @@ public class CapacitorFirestore {
 
             for (Map.Entry<String, Object> entry : firestoreData.entrySet()) {
                 Object value = entry.getValue();
-
-                if (value instanceof ArrayList) {
-                  ArrayList list = (ArrayList)value;
-
-                  JSArray array = new JSArray();
-                  for (Object item : list) {
-                    if (item instanceof HashMap) {
-                      HashMap<String, Object> prop = (HashMap<String, Object>) item;
-
-                      JSObject map = new JSObject();
-                      for (Map.Entry<String, Object> i : prop.entrySet()) {
-                        map.put(i.getKey(), i.getValue());
-                      }
-                      array.put(map);
-                    } else {
-                      array.put(item);
-                    }
-                  }
-                  value = array;
-                } else if (value instanceof HashMap) {
-                  HashMap<String, Object> list = (HashMap<String, Object>)value;
-
-                  JSObject map = new JSObject();
-                  for (Map.Entry<String, Object> i : list.entrySet()) {
-                    map.put(i.getKey(), i.getValue());
-                  }
-
-                  value = map;
-                } else if (value instanceof Timestamp) {
-                    JSONObject jsonObject = new JSObject();
-                    try {
-                        jsonObject.put("seconds", ((Timestamp) value).getSeconds());
-                        jsonObject.put("nanoseconds", ((Timestamp) value).getNanoseconds());
-                        jsonObject.put("specialType", "Timestamp");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    value = jsonObject;
-                }
+                value = ConvertObjectRead(value);
 
                 data.put(entry.getKey(), value);
             }
@@ -260,46 +222,87 @@ public class CapacitorFirestore {
         Map<String, Object> prepared = new HashMap<>();
         for (Map.Entry<String, Object> entry : data.entrySet()) {
             Object value = entry.getValue();
-
-            // magic null fix
-            if (value.toString().equals("null")) {
-              prepared.put(entry.getKey(), null);
-            } else if (value instanceof JSONObject) {
-                JSONObject jsObject = ((JSONObject) value);
-
-                if (jsObject.has("specialType")) {
-                    String specialType = jsObject.getString("specialType");
-                    switch (specialType) {
-                        case "Timestamp":
-                            prepared.put(entry.getKey(), new Timestamp(jsObject.getLong("seconds"), jsObject.getInt("nanoseconds")));
-                            break;
-                        default:
-                            throw new Exception("Unhandled specialType:" + specialType);
-                    }
-                } else {
-                    prepared.put(entry.getKey(), entry.getValue());
-                }
-            } else if (value instanceof HashMap) {
-              HashMap<String, Object> jsObject = ((HashMap<String, Object>) value);
-
-              if (jsObject.keySet().contains("specialType")) {
-                String specialType = (String)jsObject.get("specialType");
-                switch (specialType) {
-                  case "Timestamp":
-                    prepared.put(entry.getKey(), new Timestamp(Long.parseLong(jsObject.get("seconds").toString()), (int)jsObject.get("nanoseconds")));
-                    break;
-                  default:
-                    throw new Exception("Unhandled specialType:" + specialType);
-                }
-              } else {
-                prepared.put(entry.getKey(), entry.getValue());
-              }
-            } else {
-                prepared.put(entry.getKey(), entry.getValue());
-            }
+            prepared.put(entry.getKey(), ConvertObjectWrite(value));
         }
 
         return prepared;
+    }
+
+    private Object ConvertObjectWrite(Object value) throws Exception {
+        if (value != null && value.toString().equals("null")) {
+            value = null;
+        } else if (value instanceof JSONObject) {
+            JSONObject jsObject = ((JSONObject) value);
+
+            if (jsObject.has("specialType")) {
+                String specialType = jsObject.getString("specialType");
+                switch (specialType) {
+                    case "Timestamp":
+                        value = new Timestamp(jsObject.getLong("seconds"), jsObject.getInt("nanoseconds"));
+                        break;
+                    default:
+                        throw new Exception("Unhandled specialType:" + specialType);
+                }
+            }
+        } else if (value instanceof HashMap) {
+            HashMap<String, Object> jsObject = ((HashMap<String, Object>) value);
+
+            if (jsObject.keySet().contains("specialType")) {
+                String specialType = (String) jsObject.get("specialType");
+                switch (specialType) {
+                    case "Timestamp":
+                        value = new Timestamp(Long.parseLong(jsObject.get("seconds").toString()), (int) jsObject.get("nanoseconds"));
+                        break;
+                    default:
+                        throw new Exception("Unhandled specialType:" + specialType);
+                }
+            }
+        }
+
+        return value;
+    }
+
+    private Object ConvertObjectRead(Object value) {
+        if (value instanceof ArrayList) {
+            ArrayList list = (ArrayList) value;
+
+            JSArray array = new JSArray();
+            for (Object item : list) {
+                if (item instanceof HashMap) {
+                    HashMap<String, Object> prop = (HashMap<String, Object>) item;
+
+                    JSObject map = new JSObject();
+                    for (Map.Entry<String, Object> i : prop.entrySet()) {
+                        map.put(i.getKey(), ConvertObjectRead(i.getValue()));
+                    }
+                    array.put(map);
+                } else {
+                    array.put(item);
+                }
+            }
+            value = array;
+        } else if (value instanceof HashMap) {
+            HashMap<String, Object> list = (HashMap<String, Object>) value;
+
+            JSObject map = new JSObject();
+            for (Map.Entry<String, Object> i : list.entrySet()) {
+                map.put(i.getKey(), ConvertObjectRead(i.getValue()));
+            }
+
+            value = map;
+        } else if (value instanceof Timestamp) {
+            JSONObject jsonObject = new JSObject();
+            try {
+                jsonObject.put("seconds", ((Timestamp) value).getSeconds());
+                jsonObject.put("nanoseconds", ((Timestamp) value).getNanoseconds());
+                jsonObject.put("specialType", "Timestamp");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            value = jsonObject;
+        }
+
+        return value;
     }
 
     private void InitializeFirestore() throws Exception {
