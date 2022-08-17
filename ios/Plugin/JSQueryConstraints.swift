@@ -9,13 +9,13 @@
 import Foundation
 
 @objc public class JSQueryConstraints: NSObject {
-    public let fieldPath: String;
-    public let operation: String;
-    public let value: Any;
-    
+    public let fieldPath: String
+    public let operation: String
+    public let value: Any
+
     init(fieldPath: String, operation: String, value: Any) {
-        self.fieldPath = fieldPath;
-        self.operation = operation;
-        self.value = value;
+        self.fieldPath = fieldPath
+        self.operation = operation
+        self.value = value
     }
 }
