@@ -65,10 +65,19 @@
     "@capacitor/core": "^3.0.0",
     "firebase": "^9.8.2"
   },
-  "prettier": "@ionic/prettier-config",
   "swiftlint": "@ionic/swiftlint-config",
   "eslintConfig": {
-    "extends": "@ionic/eslint-config/recommended"
+    "extends": "@ionic/eslint-config/recommended",
+    "rules": {
+      "@typescript-eslint/no-inferrable-types": "off",
+      "@typescript-eslint/quotes": [
+        "error",
+        "double",
+        {
+          "allowTemplateLiterals": true
+        }
+      ]
+    }
   },
   "capacitor": {
     "ios": {

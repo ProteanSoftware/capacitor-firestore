@@ -1,6 +1,7 @@
 package com.proteansoftware.capacitor.firestore;
 
 public class JSQueryConstraints {
+
     private String fieldPath;
     private String operation;
     private Object value;

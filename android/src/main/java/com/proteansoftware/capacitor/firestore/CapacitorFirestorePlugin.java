@@ -1,5 +1,6 @@
 package com.proteansoftware.capacitor.firestore;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import com.getcapacitor.JSArray;
@@ -13,22 +14,22 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import com.google.firebase.firestore.util.Util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 @CapacitorPlugin(name = "CapacitorFirestore")
 public class CapacitorFirestorePlugin extends Plugin {
 
     private CapacitorFirestore implementation = new CapacitorFirestore();
     private Map<String, ListenerRegistration> listeners = new HashMap<>();
+    private int pendingActions = 0;
 
     @Override
     public void load() {
@@ -42,6 +43,13 @@ public class CapacitorFirestorePlugin extends Plugin {
         } catch (Exception e) {
             Log.e("CapacitorFirestore", e.getMessage());
         }
+    }
+
+    @PluginMethod
+    public void getPendingActions(PluginCall call) {
+        JSObject object = new JSObject();
+        object.put("count", pendingActions);
+        call.resolve(object);
     }
 
     @PluginMethod
@@ -97,14 +105,18 @@ public class CapacitorFirestorePlugin extends Plugin {
         String documentReference = call.getString("reference");
         Task<DocumentSnapshot> listener = implementation.getDocument(documentReference);
 
-        listener.addOnSuccessListener((value) -> {
-            JSObject result = implementation.ConvertSnapshotToJSObject(value);
-            call.resolve(result);
-        });
+        listener.addOnSuccessListener(
+            value -> {
+                JSObject result = implementation.ConvertSnapshotToJSObject(value);
+                call.resolve(result);
+            }
+        );
 
-        listener.addOnFailureListener((error) -> {
-           call.reject(error.getMessage(), error);
-        });
+        listener.addOnFailureListener(
+            error -> {
+                call.reject(error.getMessage(), error);
+            }
+        );
     }
 
     @PluginMethod
@@ -115,27 +127,34 @@ public class CapacitorFirestorePlugin extends Plugin {
         HashMap<String, Object> mapData;
 
         try {
-          mapData = mapJSObject(data);
+            mapData = mapJSObject(data);
         } catch (JSONException e) {
-          call.reject(e.getMessage(), e);
-          return;
+            call.reject(e.getMessage(), e);
+            return;
         }
 
         Task<Void> listener = null;
         try {
+            pendingActions++;
             listener = implementation.updateDocument(documentReference, mapData);
+            call.resolve();
         } catch (Exception e) {
             call.reject(e.getMessage(), e);
         }
 
         if (listener != null) {
-            listener.addOnSuccessListener((value) -> {
-                call.resolve();
-            });
+            listener.addOnSuccessListener(
+                value -> {
+                    pendingActions--;
+                }
+            );
 
-            listener.addOnFailureListener((error) -> {
-                call.reject(error.getMessage(), error);
-            });
+            listener.addOnFailureListener(
+                error -> {
+                    pendingActions--;
+                    call.reject(error.getMessage(), error);
+                }
+            );
         }
     }
 
@@ -148,27 +167,34 @@ public class CapacitorFirestorePlugin extends Plugin {
         HashMap<String, Object> mapData;
 
         try {
-          mapData = mapJSObject(data);
+            mapData = mapJSObject(data);
         } catch (JSONException e) {
-          call.reject(e.getMessage(), e);
-          return;
+            call.reject(e.getMessage(), e);
+            return;
         }
 
         Task<Void> listener = null;
         try {
+            pendingActions++;
             listener = implementation.setDocument(documentReference, mapData, merge);
+            call.resolve();
         } catch (Exception e) {
             call.reject(e.getMessage(), e);
         }
 
         if (listener != null) {
-            listener.addOnSuccessListener((value) -> {
-                call.resolve();
-            });
+            listener.addOnSuccessListener(
+                value -> {
+                    pendingActions--;
+                }
+            );
 
-            listener.addOnFailureListener((error) -> {
-                call.reject(error.getMessage(), error);
-            });
+            listener.addOnFailureListener(
+                error -> {
+                    pendingActions--;
+                    call.reject(error.getMessage(), error);
+                }
+            );
         }
     }
 
@@ -176,15 +202,22 @@ public class CapacitorFirestorePlugin extends Plugin {
     public void deleteDocument(PluginCall call) {
         String documentReference = call.getString("reference");
 
+        pendingActions++;
         Task<Void> listener = implementation.deleteDocument(documentReference);
+        call.resolve();
 
-        listener.addOnSuccessListener((value) -> {
-            call.resolve();
-        });
+        listener.addOnSuccessListener(
+            value -> {
+                pendingActions--;
+            }
+        );
 
-        listener.addOnFailureListener((error) -> {
-            call.reject(error.getMessage(), error);
-        });
+        listener.addOnFailureListener(
+            error -> {
+                pendingActions--;
+                call.reject(error.getMessage(), error);
+            }
+        );
     }
 
     @PluginMethod
@@ -201,24 +234,34 @@ public class CapacitorFirestorePlugin extends Plugin {
             return;
         }
 
-        Task<DocumentReference> listener = null;
+        Task<Void> listener = null;
         try {
-            listener = implementation.addDocument(collectionReference, mapData);
+            pendingActions++;
+            @SuppressLint("RestrictedApi")
+            String docId = Util.autoId();
+            listener = implementation.addDocument(collectionReference, docId, mapData);
+            JSObject result = new JSObject();
+            result.put("id", docId);
+            result.put("path", collectionReference + "/" + docId);
+            pendingActions--;
+            call.resolve(result);
         } catch (Exception e) {
             call.reject(e.getMessage(), e);
         }
 
         if (listener != null) {
-            listener.addOnSuccessListener((value) -> {
-                JSObject result = new JSObject();
-                result.put("id", value.getId());
-                result.put("path", value.getPath());
-                call.resolve(result);
-            });
+            listener.addOnSuccessListener(
+                value -> {
+                    pendingActions--;
+                }
+            );
 
-            listener.addOnFailureListener((error) -> {
-                call.reject(error.getMessage(), error);
-            });
+            listener.addOnFailureListener(
+                error -> {
+                    pendingActions--;
+                    call.reject(error.getMessage(), error);
+                }
+            );
         }
     }
 
@@ -228,15 +271,15 @@ public class CapacitorFirestorePlugin extends Plugin {
         String callbackId = call.getCallbackId();
         String documentReference = call.getString("reference");
         ListenerRegistration listener = implementation.addDocumentSnapshotListener(
-                documentReference,
-                (value, error) -> {
-                    if (error != null) {
-                        call.reject(error.getMessage(), error);
-                    } else {
-                        JSObject result = implementation.ConvertSnapshotToJSObject(value);
-                        call.resolve(result);
-                    }
+            documentReference,
+            (value, error) -> {
+                if (error != null) {
+                    call.reject(error.getMessage(), error);
+                } else {
+                    JSObject result = implementation.ConvertSnapshotToJSObject(value);
+                    call.resolve(result);
                 }
+            }
         );
 
         listeners.put(callbackId, listener);
@@ -252,23 +295,27 @@ public class CapacitorFirestorePlugin extends Plugin {
             List<JSQueryConstraints> queryConstraints = implementation.ConvertJSArrayToQueryConstraints(clientQueryConstraints);
             listener = implementation.getCollection(documentReference, queryConstraints);
 
-            listener.addOnSuccessListener((value) -> {
-                JSObject result = new JSObject();
-                JSArray items = new JSArray();
+            listener.addOnSuccessListener(
+                value -> {
+                    JSObject result = new JSObject();
+                    JSArray items = new JSArray();
 
-                List<DocumentSnapshot> documents = value.getDocuments();
-                for (DocumentSnapshot documentSnapshot : documents) {
-                    JSObject item = implementation.ConvertSnapshotToJSObject(documentSnapshot);
-                    items.put(item);
+                    List<DocumentSnapshot> documents = value.getDocuments();
+                    for (DocumentSnapshot documentSnapshot : documents) {
+                        JSObject item = implementation.ConvertSnapshotToJSObject(documentSnapshot);
+                        items.put(item);
+                    }
+
+                    result.put("collection", items);
+                    call.resolve(result);
                 }
+            );
 
-                result.put("collection", items);
-                call.resolve(result);
-            });
-
-            listener.addOnFailureListener((error) -> {
-                call.reject(error.getMessage(), error);
-            });
+            listener.addOnFailureListener(
+                error -> {
+                    call.reject(error.getMessage(), error);
+                }
+            );
         } catch (Exception e) {
             e.printStackTrace();
             call.reject(e.getMessage(), e);
@@ -318,65 +365,72 @@ public class CapacitorFirestorePlugin extends Plugin {
     public void enableNetwork(PluginCall call) {
         Task<Void> listener = implementation.enableNetwork();
 
-        listener.addOnSuccessListener((value) -> {
-            call.resolve();
-        });
+        listener.addOnSuccessListener(
+            value -> {
+                call.resolve();
+            }
+        );
 
-        listener.addOnFailureListener((error) -> {
-            call.reject(error.getMessage(), error);
-        });
+        listener.addOnFailureListener(
+            error -> {
+                call.reject(error.getMessage(), error);
+            }
+        );
     }
 
     @PluginMethod
     public void disableNetwork(PluginCall call) {
         Task<Void> listener = implementation.disableNetwork();
 
-        listener.addOnSuccessListener((value) -> {
-            call.resolve();
-        });
+        listener.addOnSuccessListener(
+            value -> {
+                call.resolve();
+            }
+        );
 
-        listener.addOnFailureListener((error) -> {
-            call.reject(error.getMessage(), error);
-        });
+        listener.addOnFailureListener(
+            error -> {
+                call.reject(error.getMessage(), error);
+            }
+        );
     }
 
+    private HashMap<String, Object> mapJSObject(JSONObject jsObject) throws JSONException {
+        HashMap<String, Object> mapData = new HashMap<>();
+        Iterator<String> keys = jsObject.keys();
 
-  private HashMap<String, Object> mapJSObject(JSONObject jsObject) throws JSONException {
-    HashMap<String, Object> mapData = new HashMap<>();
-    Iterator<String> keys = jsObject.keys();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            Object value = jsObject.get(key);
 
-    while (keys.hasNext()) {
-      String key = keys.next();
-      Object value = jsObject.get(key);
+            if (value.toString().equals("null")) {
+                value = null;
+            } else if (value instanceof JSONObject) {
+                value = mapJSObject((JSONObject) value);
+            } else if (value instanceof JSONArray) {
+                value = mapJSArray((JSONArray) value);
+            }
 
-      if (value.toString().equals("null")) {
-        value = null;
-      } else if (value instanceof JSONObject) {
-        value = mapJSObject((JSONObject) value);
-      } else if (value instanceof JSONArray) {
-        value = mapJSArray((JSONArray) value);
-      }
-
-      mapData.put(key, value);
-    }
-
-    return mapData;
-  }
-
-  private ArrayList<Object> mapJSArray(JSONArray array) throws JSONException {
-      ArrayList<Object> arrayList = new ArrayList<>();
-      for (int x = 0; x < array.length(); x++) {
-        Object value = array.get(x);
-
-        if (value instanceof JSONObject) {
-          value = mapJSObject((JSONObject) value);
-        } else if (value instanceof JSONArray) {
-          value = mapJSArray((JSONArray) value);
+            mapData.put(key, value);
         }
 
-        arrayList.add(value);
-      }
+        return mapData;
+    }
 
-      return arrayList;
-  }
+    private ArrayList<Object> mapJSArray(JSONArray array) throws JSONException {
+        ArrayList<Object> arrayList = new ArrayList<>();
+        for (int x = 0; x < array.length(); x++) {
+            Object value = array.get(x);
+
+            if (value instanceof JSONObject) {
+                value = mapJSObject((JSONObject) value);
+            } else if (value instanceof JSONArray) {
+                value = mapJSArray((JSONArray) value);
+            }
+
+            arrayList.add(value);
+        }
+
+        return arrayList;
+    }
 }

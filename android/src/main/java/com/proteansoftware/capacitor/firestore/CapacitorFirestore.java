@@ -20,7 +20,6 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -96,9 +95,9 @@ public class CapacitorFirestore {
         return this.db.document(documentReference).delete();
     }
 
-    public Task<DocumentReference> addDocument(String collectionReference, Map<String, Object> data) throws Exception {
+    public Task<Void> addDocument(String collectionReference, String docId, Map<String, Object> data) throws Exception {
         data = this.PrepDataForSend(data);
-        return this.db.collection(collectionReference).add(data);
+        return this.db.collection(collectionReference).document(docId).set(data);
     }
 
     public Task<QuerySnapshot> getCollection(String collectionReference, List<JSQueryConstraints> queryConstraints) throws Exception {

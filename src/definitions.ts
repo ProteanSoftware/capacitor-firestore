@@ -27,11 +27,11 @@ export interface FirestoreConfig {
   applicationId?: string;
 
   /**
-  * Set the Firebase api key
-  *
-  * @since 1.0.0
-  * @example "XxxxxxxxxxxXXxxxxxxxxx"
-  */
+   * Set the Firebase api key
+   *
+   * @since 1.0.0
+   * @example "XxxxxxxxxxxXXxxxxxxxxx"
+   */
   apiKey?: string;
 }
 
@@ -44,29 +44,33 @@ export type CallbackId = string;
 export type QueryOperators = "==" | ">=" | "<=" | "<" | ">" | "array-contains";
 
 /**
- * 
+ *
  * @param field The path to compare
  * @param operator The operation string (e.g "&lt;", "&lt;=", "==", "&lt;",
  * "&lt;=", "!=", "array-contains")
  * @param value The value for comparison
  * @returns The created {@link QueryConstraint}.
  */
-export function createQueryConstraint(field: string, operator: QueryOperators, value: any): QueryConstraint {
+export function createQueryConstraint(
+  field: string,
+  operator: QueryOperators,
+  value: any,
+): QueryConstraint {
   return {
     fieldPath: field,
     opStr: operator,
-    value: value
+    value: value,
   };
 }
 
 export function prepDataForFirestore<T>(data: T): T {
   for (const prop in data) {
     if (data[prop] instanceof Timestamp) {
-      const timestamp = data[prop] as unknown as Timestamp;
+      const timestamp = (data[prop] as unknown) as Timestamp;
       data[prop] = {
         specialType: "Timestamp",
         seconds: timestamp.seconds,
-        nanoseconds: timestamp.nanoseconds
+        nanoseconds: timestamp.nanoseconds,
       } as any;
     }
 
@@ -130,10 +134,10 @@ export interface DocumnentQuery {
 
 export interface DocumentReference {
   /**
-  * The id of the document.
-  *
-  * @since 1.0.0
-  */
+   * The id of the document.
+   *
+   * @since 1.0.0
+   */
   id: string;
 
   /**
@@ -196,44 +200,59 @@ export interface AddDocument<T> extends DocumnentQuery {
   data: T;
 }
 
-export type DocumentSnapshotCallback<T> = (data: DocumentSnapshot<T> | null, err?: any) => void;
+export interface PendingActions {
+  count: number;
+}
 
-export type CollectionSnapshotCallback<T> = (data: CollectionSnapshot<T> | null, err?: any) => void;
+export type DocumentSnapshotCallback<T> = (
+  data: DocumentSnapshot<T> | null,
+  err?: any,
+) => void;
+
+export type CollectionSnapshotCallback<T> = (
+  data: CollectionSnapshot<T> | null,
+  err?: any,
+) => void;
 
 export interface CapacitorFirestorePlugin {
   /**
+   * Gets the number of pending write actions (i.e. setDocument, addDocument, updateDocument, deleteDocument)
+   */
+  getPendingActions(): Promise<PendingActions>;
+
+  /**
    * Configure the firestore instance with new configuration options.
-   * @param options 
+   * @param options
    */
   initializeFirestore(options: FirestoreConfig): Promise<void>;
 
   /**
    * Login to firestore using a customer JWT token.
-   * @param options 
+   * @param options
    */
   signInWithCustomToken(options: CustomToken): Promise<void>;
 
   /**
    * Reads the document referred to by this DocumnentQuery
-   * @param options 
+   * @param options
    * @returns The document snapshot
    */
   getDocument<T>(options: DocumnentQuery): Promise<DocumentSnapshot<T>>;
 
   /**
-    * Updates fields in the document referred to by the specified DocumnentQuery.
-    * The update will fail if applied to a document that does not exist.
-    * @param options 
-    * @returns A `Promise` resolved once the data has been successfully written
-    * to the backend (note that it won't resolve while you're offline).
-    */
+   * Updates fields in the document referred to by the specified DocumnentQuery.
+   * The update will fail if applied to a document that does not exist.
+   * @param options
+   * @returns A `Promise` resolved once the data has been successfully written
+   * to the backend (note that it won't resolve while you're offline).
+   */
   updateDocument<T>(options: UpdateDocument<T>): Promise<void>;
 
   /**
    * Writes to the document referred to by the specified DocumnentQuery.
    * If the document does not yet exist, it will be created.
    * If you provide merge or mergeFields, the provided data can be merged into an existing document.
-   * @param options 
+   * @param options
    * @returns A Promise resolved once the data has been successfully written
    * to the backend (note that it won't resolve while you're offline).
    */
@@ -241,7 +260,7 @@ export interface CapacitorFirestorePlugin {
 
   /**
    * Deletes the document referred to by the specified DocumnentQuery.
-   * @param options 
+   * @param options
    * @returns A Promise resolved once the document has been successfully
    * deleted from the backend (note that it won't resolve while you're offline).
    */
@@ -250,7 +269,7 @@ export interface CapacitorFirestorePlugin {
   /**
    * Add a new document to specified `CollectionQuery` with the given data,
    * assigning it a document ID automatically.
-   * @param options 
+   * @param options
    * @returns A `Promise` resolved with a `DocumentReference` pointing to the
    * newly created document after it has been written to the backend (Note that it
    * won't resolve while you're offline).
@@ -259,26 +278,32 @@ export interface CapacitorFirestorePlugin {
 
   /**
    * Listen for snapshot changes on a document.
-   * @param options 
+   * @param options
    * @param callback
    * @returns The callback id which can be used to remove the listener.
    */
-  addDocumentSnapshotListener<T>(options: DocumnentQuery, callback: DocumentSnapshotCallback<T>): Promise<CallbackId>;
+  addDocumentSnapshotListener<T>(
+    options: DocumnentQuery,
+    callback: DocumentSnapshotCallback<T>,
+  ): Promise<CallbackId>;
 
   /**
    * Executes the query and returns the results as a CollectionSnapshot
-   * @param options 
+   * @param options
    * @returns The collection snapshot
    */
   getCollection<T>(options: CollectionQuery): Promise<CollectionSnapshot<T>>;
 
   /**
    * Listen for snapshot changes on a collection.
-   * @param options 
-   * @param callback 
+   * @param options
+   * @param callback
    * @returns The callback id which can be used to remove the listener.
    */
-  addCollectionSnapshotListener<T>(options: CollectionQuery, callback: CollectionSnapshotCallback<T>): Promise<CallbackId>;
+  addCollectionSnapshotListener<T>(
+    options: CollectionQuery,
+    callback: CollectionSnapshotCallback<T>,
+  ): Promise<CallbackId>;
 
   /**
    * Stop listening for snapshot changes on a document or collection.
