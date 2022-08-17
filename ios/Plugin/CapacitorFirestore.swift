@@ -210,8 +210,7 @@ enum CapacitorFirestoreError: Error {
         
         collection?.getDocuments(completion: completion);
     }
-    
-    
+        
     public func ConvertJSArrayToQueryConstraints(array: [JSObject]?) throws -> [JSQueryConstraints]? {
         if (array == nil) {
             return nil;
@@ -234,6 +233,12 @@ enum CapacitorFirestoreError: Error {
                 } else {
                     throw CapacitorFirestoreError.runtimeError("unhandled JSONObject type for fieldPath: " + fieldPath);
                 }
+                break;
+            case let numberValue as NSNumber:
+                value = Int(truncating: numberValue);
+                break;
+            case let stringValue as NSString:
+                value = String(stringValue);
                 break;
             default:
                 value = jsValue as Any;
@@ -284,8 +289,7 @@ enum CapacitorFirestoreError: Error {
                     data[key] = value[key];
                 }
             }
-            
-            
+                        
             result["data"] = data;
         }
 
