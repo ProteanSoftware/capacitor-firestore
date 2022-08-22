@@ -11,6 +11,7 @@ enum CapacitorFirestoreError: Error {
 @objc public class CapacitorFirestore: NSObject {
     private var db: Firestore?
     private var app: FirebaseApp?
+    private var firebaseOptions: FirebaseOptions?
 
     @objc public func Initialize(projectId: String?, applicationId: String?, apiKey: String?) throws {
         guard let projectId = projectId as String? else {
@@ -25,31 +26,12 @@ enum CapacitorFirestoreError: Error {
             throw CapacitorFirestoreError.runtimeError("apiKey must not be null")
         }
 
-        let options = FirebaseOptions(googleAppID: applicationId, gcmSenderID: "")
+        self.firebaseOptions = FirebaseOptions(googleAppID: applicationId, gcmSenderID: "")
 
-        options.apiKey = apiKey
-        options.projectID = projectId
+        self.firebaseOptions!.apiKey = apiKey
+        self.firebaseOptions!.projectID = projectId
 
-        if self.app != nil {
-            app?.delete { error in
-                if error {
-                    print(error)
-                } else {
-                    do {
-                        self.db = nil
-                        FirebaseApp.configure(name: "CapacitorFirestore", options: options)
-                        self.app = FirebaseApp.app(name: "CapacitorFirestore")!
-                        try self.InitializeFirestore()
-                    } catch {
-                        print(error)
-                    }
-                }
-            }
-        } else {
-            FirebaseApp.configure(name: "CapacitorFirestore", options: options)
-            self.app = FirebaseApp.app(name: "CapacitorFirestore")!
-            try self.InitializeFirestore()
-        }
+        try self.configure()
     }
 
     @objc public func signOut() throws {
@@ -375,6 +357,27 @@ enum CapacitorFirestoreError: Error {
         } else {
             self.db = Firestore.firestore(app: app)
             self.db?.settings = settings
+        }
+    }
+    
+    private func configure() throws {
+        if self.app != nil {
+            self.app?.delete { complete in
+                if complete {
+                    do {
+                        self.db = nil
+                        FirebaseApp.configure(name: "CapacitorFirestore", options: self.firebaseOptions!)
+                        self.app = FirebaseApp.app(name: "CapacitorFirestore")!
+                        try self.InitializeFirestore()
+                    } catch {
+                        print(error)
+                    }
+                }
+            }
+        } else {
+            FirebaseApp.configure(name: "CapacitorFirestore", options: self.firebaseOptions!)
+            self.app = FirebaseApp.app(name: "CapacitorFirestore")!
+            try self.InitializeFirestore()
         }
     }
 
