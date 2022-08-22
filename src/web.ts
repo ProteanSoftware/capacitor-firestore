@@ -1,7 +1,7 @@
 import { WebPlugin } from "@capacitor/core";
 import { initializeApp, deleteApp } from "firebase/app";
 import type { FirebaseApp } from "firebase/app";
-import { getAuth, signInWithCustomToken } from "firebase/auth";
+import { getAuth, signInWithCustomToken, signOut } from "firebase/auth";
 import type { Firestore, Query, Unsubscribe } from "firebase/firestore";
 import {
   enableNetwork,
@@ -315,6 +315,15 @@ export class CapacitorFirestoreWeb
 
     const auth = getAuth(this.app);
     return signInWithCustomToken(auth, options.token).then();
+  }
+
+  public signOut(): Promise<void> {
+    if (this.app === null) {
+      return Promise.reject("app not initialized");
+    }
+
+    const auth = getAuth(this.app);
+    return signOut(auth);
   }
 
   public enableNetwork(): Promise<void> {

@@ -233,6 +233,11 @@ export interface CapacitorFirestorePlugin {
   signInWithCustomToken(options: CustomToken): Promise<void>;
 
   /**
+   * Sign out of firestore.
+   */
+  signOut(): Promise<void>;
+
+  /**
    * Reads the document referred to by this DocumnentQuery
    * @param options
    * @returns The document snapshot

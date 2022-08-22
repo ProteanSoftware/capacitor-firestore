@@ -46,6 +46,18 @@ public class CapacitorFirestorePlugin: CAPPlugin {
         }
     }
 
+    @objc func signOut(_ call: CAPPluginCall) {
+        do {
+            try implementation.signOut()
+        } catch CapacitorFirestoreError.runtimeError(let message) {
+            call.reject(message)
+        } catch {
+            call.reject("Unknown error", nil, error, [:])
+        }
+
+        call.resolve()
+    }
+
     @objc func signInWithCustomToken(_ call: CAPPluginCall) {
         let token = call.getString("token")
         do {

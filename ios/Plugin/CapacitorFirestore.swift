@@ -52,6 +52,20 @@ enum CapacitorFirestoreError: Error {
         }
     }
 
+    @objc public func signOut() throws {
+        guard let app = self.app as FirebaseApp?
+        else {
+            throw CapacitorFirestoreError.runtimeError("signInWithCustomToken - app must be initialized first")
+        }
+        let auth = FirebaseAuth.Auth.auth(app: app)
+
+        do {
+            try auth.signOut()
+        } catch let signOutError as NSError {
+            throw CapacitorFirestoreError.runtimeError("signOut - " + signOutError.localizedDescription)
+        }
+    }
+
     @objc public func signInWithCustomToken(token: String?, completion: @escaping (AuthDataResult?, Error?) -> Void) throws {
         guard let token = token as String? else {
             throw CapacitorFirestoreError.runtimeError("token must not be null")
