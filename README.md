@@ -13,8 +13,10 @@ npx cap sync
 
 <docgen-index>
 
+* [`getPendingActions()`](#getpendingactions)
 * [`initializeFirestore(...)`](#initializefirestore)
 * [`signInWithCustomToken(...)`](#signinwithcustomtoken)
+* [`signOut()`](#signout)
 * [`getDocument(...)`](#getdocument)
 * [`updateDocument(...)`](#updatedocument)
 * [`setDocument(...)`](#setdocument)
@@ -33,6 +35,19 @@ npx cap sync
 
 <docgen-api>
 <!--Update the source file JSDoc comments and rerun docgen to update the docs below-->
+
+### getPendingActions()
+
+```typescript
+getPendingActions() => Promise<PendingActions>
+```
+
+Gets the number of pending write actions (i.e. setDocument, addDocument, updateDocument, deleteDocument)
+
+**Returns:** <code>Promise&lt;<a href="#pendingactions">PendingActions</a>&gt;</code>
+
+--------------------
+
 
 ### initializeFirestore(...)
 
@@ -60,6 +75,17 @@ Login to firestore using a customer JWT token.
 | Param         | Type                                                |
 | ------------- | --------------------------------------------------- |
 | **`options`** | <code><a href="#customtoken">CustomToken</a></code> |
+
+--------------------
+
+
+### signOut()
+
+```typescript
+signOut() => Promise<void>
+```
+
+Sign out of firestore.
 
 --------------------
 
@@ -242,6 +268,13 @@ operations will be queued until the network is restored.
 
 
 ### Interfaces
+
+
+#### PendingActions
+
+| Prop        | Type                |
+| ----------- | ------------------- |
+| **`count`** | <code>number</code> |
 
 
 #### FirestoreConfig

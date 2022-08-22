@@ -81,6 +81,11 @@ public class CapacitorFirestorePlugin extends Plugin {
     }
 
     @PluginMethod
+    public void signOut(PluginCall call) {
+        implementation.signOut();
+    }
+
+    @PluginMethod
     public void removeSnapshotListener(PluginCall call) {
         String callbackId = call.getString("callbackId");
 

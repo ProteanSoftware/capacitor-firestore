@@ -69,6 +69,11 @@ public class CapacitorFirestore {
         auth.signInWithCustomToken(token).addOnCompleteListener(completeListener);
     }
 
+    public void signOut() {
+        FirebaseAuth auth = FirebaseAuth.getInstance(this.app);
+        auth.signOut();
+    }
+
     public ListenerRegistration addDocumentSnapshotListener(String documentReference, @NonNull EventListener<DocumentSnapshot> listener) {
         return this.db.document(documentReference).addSnapshotListener(listener);
     }
