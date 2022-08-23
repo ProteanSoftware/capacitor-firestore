@@ -317,6 +317,11 @@ export interface CapacitorFirestorePlugin {
   removeSnapshotListener(options: RemoveSnapshotListener): Promise<void>;
 
   /**
+   * Remove all active snapshot listners
+   */
+  clearAllSnapshotListeners(): Promise<void>;
+
+  /**
    * Re-enables use of the network for this Firestore instance after a prior
    * call to {@link disableNetwork}.
    *

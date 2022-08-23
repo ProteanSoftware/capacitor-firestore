@@ -308,6 +308,17 @@ export class CapacitorFirestoreWeb
     return Promise.resolve();
   }
 
+  public clearAllSnapshotListeners(): Promise<void> {
+    for (const item in this.subscriptions) {
+      const unSubFunc = this.subscriptions[item];
+      unSubFunc();
+
+      delete this.subscriptions[item];
+    }
+
+    return Promise.resolve();
+  }
+
   public signInWithCustomToken(options: CustomToken): Promise<void> {
     if (this.app === null) {
       return Promise.reject("app not initialized");

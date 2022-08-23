@@ -86,6 +86,17 @@ public class CapacitorFirestorePlugin extends Plugin {
     }
 
     @PluginMethod
+    public void clearAllSnapshotListeners(PluginCall call) {
+        for (ListenerRegistration listener : listeners.values()) {
+            listener.remove();
+        }
+
+        listeners = new HashMap<>();
+
+        call.resolve();
+    }
+
+    @PluginMethod
     public void removeSnapshotListener(PluginCall call) {
         String callbackId = call.getString("callbackId");
 
@@ -102,6 +113,7 @@ public class CapacitorFirestorePlugin extends Plugin {
         }
 
         listener.remove();
+        listeners.remove(callbackId);
         call.resolve();
     }
 
