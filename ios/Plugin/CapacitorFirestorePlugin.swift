@@ -26,7 +26,7 @@ public class CapacitorFirestorePlugin: CAPPlugin {
         }
     }
 
-    @objc func  getPendingActions(_ call: CAPPluginCall) {
+    @objc func getPendingActions(_ call: CAPPluginCall) {
         call.resolve([
             "count": pendingActions
         ])
@@ -73,6 +73,16 @@ public class CapacitorFirestorePlugin: CAPPlugin {
         } catch {
             call.reject("Unknown error", nil, error, [:])
         }
+    }
+    
+    @objc func clearAllSnapshotListeners(_ call: CAPPluginCall) {
+        listeners.values.forEach { ListenerRegistration in
+            ListenerRegistration.remove();
+        }
+        
+        listeners = [:]
+        
+        call.resolve()
     }
 
     @objc func removeSnapshotListener(_ call: CAPPluginCall) {
