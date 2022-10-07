@@ -26,6 +26,7 @@ npx cap sync
 * [`getCollection(...)`](#getcollection)
 * [`addCollectionSnapshotListener(...)`](#addcollectionsnapshotlistener)
 * [`removeSnapshotListener(...)`](#removesnapshotlistener)
+* [`clearAllSnapshotListeners()`](#clearallsnapshotlisteners)
 * [`enableNetwork()`](#enablenetwork)
 * [`disableNetwork()`](#disablenetwork)
 * [Interfaces](#interfaces)
@@ -237,6 +238,17 @@ Stop listening for snapshot changes on a document or collection.
 | Param         | Type                                                                      |
 | ------------- | ------------------------------------------------------------------------- |
 | **`options`** | <code><a href="#removesnapshotlistener">RemoveSnapshotListener</a></code> |
+
+--------------------
+
+
+### clearAllSnapshotListeners()
+
+```typescript
+clearAllSnapshotListeners() => Promise<void>
+```
+
+Remove all active snapshot listners
 
 --------------------
 
