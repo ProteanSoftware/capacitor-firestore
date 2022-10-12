@@ -56,43 +56,28 @@ export class CapacitorFirestoreWeb
     });
   }
 
-  public initializeFirestore(options: FirestoreConfig): Promise<void> {
-    let teardownPromise = Promise.resolve();
-
+  public async initializeFirestore(options: FirestoreConfig): Promise<void> {
+    if (this.app !== null) {
+      await deleteApp(this.app);
+    }
     if (this.firestore !== null) {
-      teardownPromise = terminate(this.firestore);
+      await terminate(this.firestore);
     }
 
-    teardownPromise = teardownPromise.then(() => {
-      if (this.app !== null) {
-        deleteApp(this.app);
-      }
+    this.app = initializeApp(
+      {
+        apiKey: options.apiKey,
+        appId: options.applicationId,
+        projectId: options.projectId,
+      },
+      "CapacitorFirestore",
+    );
+
+    this.firestore = initializeFirestore(this.app, {
+      cacheSizeBytes: CACHE_SIZE_UNLIMITED,
     });
 
-    const initPromise = teardownPromise.then(() => {
-      const app = initializeApp(
-        {
-          apiKey: options.apiKey,
-          appId: options.applicationId,
-          projectId: options.projectId,
-        },
-        "CapacitorFirestore",
-      );
-
-      this.app = app;
-
-      const firestore = initializeFirestore(app, {
-        cacheSizeBytes: CACHE_SIZE_UNLIMITED,
-      });
-
-      return firestore;
-    });
-
-    return initPromise.then(firestore => {
-      enableIndexedDbPersistence(firestore).then(() => {
-        this.firestore = firestore;
-      });
-    });
+    await enableIndexedDbPersistence(this.firestore);
   }
 
   public addDocumentSnapshotListener<T>(
@@ -120,18 +105,17 @@ export class CapacitorFirestoreWeb
     return Promise.resolve(id);
   }
 
-  public getDocument<T>(options: DocumnentQuery): Promise<DocumentSnapshot<T>> {
+  public async getDocument<T>(options: DocumnentQuery): Promise<DocumentSnapshot<T>> {
     if (this.firestore === null) {
       return Promise.reject("Firestore not initialized");
     }
 
-    return getDoc(doc(this.firestore, options.reference)).then(snapshot => {
-      return {
-        id: snapshot.id,
-        path: snapshot.ref.path,
-        data: snapshot.exists() ? (snapshot.data() as T) : null,
-      };
-    });
+    const snapshot = await getDoc(doc(this.firestore, options.reference));
+    return {
+      id: snapshot.id,
+      path: snapshot.ref.path,
+      data: snapshot.exists() ? (snapshot.data() as T) : null,
+    };
   }
 
   public updateDocument<T>(options: UpdateDocument<T>): Promise<void> {
@@ -260,7 +244,7 @@ export class CapacitorFirestoreWeb
     return Promise.resolve(id);
   }
 
-  public getCollection<T>(
+  public async getCollection<T>(
     options: CollectionQuery,
   ): Promise<CollectionSnapshot<T>> {
     if (this.firestore === null) {
@@ -280,17 +264,17 @@ export class CapacitorFirestoreWeb
       collectionQuery = query(collection(this.firestore, options.reference));
     }
 
-    return getDocs(collectionQuery).then(snapshot => {
-      return {
-        collection: snapshot.docs.map(doc => {
-          return {
-            id: doc.id,
-            path: doc.ref.path,
-            data: doc.data() as T,
-          };
-        }),
-      };
-    });
+    const snapshot = await getDocs(collectionQuery);
+
+    return {
+      collection: snapshot.docs.map(doc => {
+        return {
+          id: doc.id,
+          path: doc.ref.path,
+          data: doc.data() as T,
+        };
+      }),
+    };
   }
 
   public removeSnapshotListener(
@@ -319,13 +303,13 @@ export class CapacitorFirestoreWeb
     return Promise.resolve();
   }
 
-  public signInWithCustomToken(options: CustomToken): Promise<void> {
+  public async signInWithCustomToken(options: CustomToken): Promise<void> {
     if (this.app === null) {
       return Promise.reject("app not initialized");
     }
 
     const auth = getAuth(this.app);
-    return signInWithCustomToken(auth, options.token).then();
+    await signInWithCustomToken(auth, options.token);
   }
 
   public signOut(): Promise<void> {
