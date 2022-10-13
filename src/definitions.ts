@@ -1,6 +1,8 @@
 /* eslint-disable no-prototype-builtins */
 /// <reference types="@capacitor/cli" />
 
+import type { FirebaseApp } from "@firebase/app";
+import type { Firestore } from "@firebase/firestore";
 import { Timestamp } from "firebase/firestore";
 
 declare module "@capacitor/cli" {
@@ -342,10 +344,10 @@ export interface CapacitorFirestorePlugin {
   /**
    * Gets the current Firebase App
    */
-  getApp(): Promise<FirebaseApp>;
+  getApp(): { app: FirebaseApp | null; };
 
   /**
    * Gets the current Firestore database
    */
-  getFirestore(): Promise<Firestore>;
+  getFirestore(): { firestore: Firestore | null; };
 }
