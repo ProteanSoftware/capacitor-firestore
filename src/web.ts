@@ -352,4 +352,12 @@ export class CapacitorFirestoreWeb
 
     return disableNetwork(this.firestore);
   }
+
+  public getApp(): Promise<FirebaseApp> {
+    return { app };
+  }
+
+  public getFirestore(): Promise<Firestore> {
+    return { firestore };
+  }
 }

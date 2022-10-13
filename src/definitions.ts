@@ -338,4 +338,14 @@ export interface CapacitorFirestorePlugin {
    * @returns A `Promise` that is resolved once the network has been disabled.
    */
   disableNetwork(): Promise<void>;
+
+  /**
+   * Gets the current Firebase App
+   */
+  getApp(): Promise<FirebaseApp>;
+
+  /**
+   * Gets the current Firestore database
+   */
+  getFirestore(): Promise<Firestore>;
 }

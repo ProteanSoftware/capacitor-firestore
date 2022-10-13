@@ -17,6 +17,8 @@ CAP_PLUGIN(CapacitorFirestorePlugin, "CapacitorFirestore",
            CAP_PLUGIN_METHOD(getCollection, CAPPluginReturnPromise);
            CAP_PLUGIN_METHOD(enableNetwork, CAPPluginReturnPromise);
            CAP_PLUGIN_METHOD(disableNetwork, CAPPluginReturnPromise);
+           CAP_PLUGIN_METHOD(getApp, CAPPluginReturnPromise);
+           CAP_PLUGIN_METHOD(getFirestore, CAPPluginReturnPromise);
            CAP_PLUGIN_METHOD(addDocumentSnapshotListener, CAPPluginReturnCallback);
            CAP_PLUGIN_METHOD(addCollectionSnapshotListener, CAPPluginReturnCallback);
 )

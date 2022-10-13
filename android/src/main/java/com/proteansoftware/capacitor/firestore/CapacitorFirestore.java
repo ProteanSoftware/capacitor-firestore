@@ -334,4 +334,12 @@ public class CapacitorFirestore {
     public Task<Void> disableNetwork() {
         return this.db.enableNetwork();
     }
+
+    public FirebaseApp getApp() {
+        return this.app;
+    }
+
+    public FirebaseFirestore getFirestore() {
+        return this.db;
+    }
 }
