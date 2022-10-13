@@ -412,6 +412,21 @@ public class CapacitorFirestorePlugin extends Plugin {
         );
     }
 
+    @PluginMethod
+    public void getApp(PluginCall call) {
+        JSObject object = new JSObject();
+        object.put("app", implementation.getApp());
+        call.resolve(object);
+    }
+
+    @PluginMethod
+    public void getApp(PluginCall call) {
+        implementation.getApp();
+        JSObject object = new JSObject();
+        object.put("firestore", implementation.getFirestore());
+        call.resolve(object);
+    }
+
     private HashMap<String, Object> mapJSObject(JSONObject jsObject) throws JSONException {
         HashMap<String, Object> mapData = new HashMap<>();
         Iterator<String> keys = jsObject.keys();

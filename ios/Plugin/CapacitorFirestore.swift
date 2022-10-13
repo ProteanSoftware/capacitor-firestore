@@ -359,6 +359,20 @@ enum CapacitorFirestoreError: Error {
             self.db?.settings = settings
         }
     }
+
+
+    @objc public func getApp() -> JSObject {
+        var result = JSObject()
+        result["app"] = self.app
+        return result
+    }
+
+
+    @objc public func getFirestore() -> JSObject {
+        var result = JSObject()
+        result["firestore"] = self.db
+        return result
+    }
     
     private func configure() throws {
         if self.app != nil {

@@ -1,6 +1,8 @@
 /* eslint-disable no-prototype-builtins */
 /// <reference types="@capacitor/cli" />
 
+import type { FirebaseApp } from "@firebase/app";
+import type { Firestore } from "@firebase/firestore";
 import { Timestamp } from "firebase/firestore";
 
 declare module "@capacitor/cli" {
@@ -338,4 +340,14 @@ export interface CapacitorFirestorePlugin {
    * @returns A `Promise` that is resolved once the network has been disabled.
    */
   disableNetwork(): Promise<void>;
+
+  /**
+   * Gets the current Firebase App
+   */
+  getApp(): { app: FirebaseApp | null; };
+
+  /**
+   * Gets the current Firestore database
+   */
+  getFirestore(): { firestore: Firestore | null; };
 }
