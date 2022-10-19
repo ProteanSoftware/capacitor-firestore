@@ -21,6 +21,7 @@ import {
   where,
   CACHE_SIZE_UNLIMITED,
 } from "firebase/firestore";
+import { v4 as uuidv4 } from "uuid";
 
 import type {
   CallbackId,
@@ -114,7 +115,7 @@ export class CapacitorFirestoreWeb
       },
     );
 
-    const id = new Date().getTime().toString();
+    const id = uuidv4();
     this.subscriptions[id] = unSubFunc;
 
     return Promise.resolve(id);
@@ -254,7 +255,7 @@ export class CapacitorFirestoreWeb
       });
     });
 
-    const id = new Date().getTime().toString();
+    const id = uuidv4();
     this.subscriptions[id] = unSubFunc;
 
     return Promise.resolve(id);
@@ -352,4 +353,6 @@ export class CapacitorFirestoreWeb
 
     return disableNetwork(this.firestore);
   }
+
+
 }
