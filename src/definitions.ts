@@ -51,11 +51,7 @@ export type QueryOperators = "==" | ">=" | "<=" | "<" | ">" | "array-contains";
  * @param value The value for comparison
  * @returns The created {@link QueryConstraint}.
  */
-export function createQueryConstraint(
-  field: string,
-  operator: QueryOperators,
-  value: any,
-): QueryConstraint {
+export function createQueryConstraint(field: string, operator: QueryOperators, value: any): QueryConstraint {
   return {
     fieldPath: field,
     opStr: operator,
@@ -66,7 +62,7 @@ export function createQueryConstraint(
 export function prepDataForFirestore<T>(data: T): T {
   for (const prop in data) {
     if (data[prop] instanceof Timestamp) {
-      const timestamp = (data[prop] as unknown) as Timestamp;
+      const timestamp = data[prop] as unknown as Timestamp;
       data[prop] = {
         specialType: "Timestamp",
         seconds: timestamp.seconds,
@@ -204,15 +200,9 @@ export interface PendingActions {
   count: number;
 }
 
-export type DocumentSnapshotCallback<T> = (
-  data: DocumentSnapshot<T> | null,
-  err?: any,
-) => void;
+export type DocumentSnapshotCallback<T> = (data: DocumentSnapshot<T> | null, err?: any) => void;
 
-export type CollectionSnapshotCallback<T> = (
-  data: CollectionSnapshot<T> | null,
-  err?: any,
-) => void;
+export type CollectionSnapshotCallback<T> = (data: CollectionSnapshot<T> | null, err?: any) => void;
 
 export interface CapacitorFirestorePlugin {
   /**
@@ -287,10 +277,7 @@ export interface CapacitorFirestorePlugin {
    * @param callback
    * @returns The callback id which can be used to remove the listener.
    */
-  addDocumentSnapshotListener<T>(
-    options: DocumnentQuery,
-    callback: DocumentSnapshotCallback<T>,
-  ): Promise<CallbackId>;
+  addDocumentSnapshotListener<T>(options: DocumnentQuery, callback: DocumentSnapshotCallback<T>): Promise<CallbackId>;
 
   /**
    * Executes the query and returns the results as a CollectionSnapshot
@@ -307,7 +294,7 @@ export interface CapacitorFirestorePlugin {
    */
   addCollectionSnapshotListener<T>(
     options: CollectionQuery,
-    callback: CollectionSnapshotCallback<T>,
+    callback: CollectionSnapshotCallback<T>
   ): Promise<CallbackId>;
 
   /**
