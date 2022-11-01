@@ -41,9 +41,7 @@ import type {
   PendingActions,
 } from "./definitions";
 
-export class CapacitorFirestoreWeb
-  extends WebPlugin
-  implements CapacitorFirestorePlugin {
+export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFirestorePlugin {
   private app: FirebaseApp | null = null;
   private firestore: Firestore | null = null;
 
@@ -70,7 +68,7 @@ export class CapacitorFirestoreWeb
         appId: options.applicationId,
         projectId: options.projectId,
       },
-      "CapacitorFirestore",
+      "CapacitorFirestore"
     );
 
     this.firestore = initializeFirestore(this.app, {
@@ -82,22 +80,19 @@ export class CapacitorFirestoreWeb
 
   public addDocumentSnapshotListener<T>(
     options: DocumnentQuery,
-    callback: DocumentSnapshotCallback<T>,
+    callback: DocumentSnapshotCallback<T>
   ): Promise<CallbackId> {
     if (this.firestore === null) {
       return Promise.reject("Firestore not initialized");
     }
 
-    const unSubFunc = onSnapshot(
-      doc(this.firestore, options.reference),
-      snapshot => {
-        callback({
-          id: snapshot.id,
-          path: snapshot.ref.path,
-          data: snapshot.exists() ? (snapshot.data() as T) : null,
-        });
-      },
-    );
+    const unSubFunc = onSnapshot(doc(this.firestore, options.reference), (snapshot) => {
+      callback({
+        id: snapshot.id,
+        path: snapshot.ref.path,
+        data: snapshot.exists() ? (snapshot.data() as T) : null,
+      });
+    });
 
     const id = new Date().getTime().toString();
     this.subscriptions[id] = unSubFunc;
@@ -130,7 +125,7 @@ export class CapacitorFirestoreWeb
         .then(() => {
           this.pendingActions--;
         })
-        .catch(err => {
+        .catch((err) => {
           this.pendingActions--;
           reject(err);
         });
@@ -152,7 +147,7 @@ export class CapacitorFirestoreWeb
         .then(() => {
           this.pendingActions--;
         })
-        .catch(err => {
+        .catch((err) => {
           this.pendingActions--;
           reject(err);
         });
@@ -172,7 +167,7 @@ export class CapacitorFirestoreWeb
         .then(() => {
           this.pendingActions--;
         })
-        .catch(err => {
+        .catch((err) => {
           this.pendingActions--;
           reject(err);
         });
@@ -193,7 +188,7 @@ export class CapacitorFirestoreWeb
         .then(() => {
           this.pendingActions--;
         })
-        .catch(err => {
+        .catch((err) => {
           this.pendingActions--;
           reject(err);
         });
@@ -207,7 +202,7 @@ export class CapacitorFirestoreWeb
 
   public addCollectionSnapshotListener<T>(
     options: CollectionQuery,
-    callback: CollectionSnapshotCallback<T>,
+    callback: CollectionSnapshotCallback<T>
   ): Promise<CallbackId> {
     if (this.firestore === null) {
       return Promise.reject("Firestore not initialized");
@@ -215,20 +210,17 @@ export class CapacitorFirestoreWeb
 
     let collectionQuery: Query;
     if (options.queryConstraints) {
-      const constraints = options.queryConstraints.map(constraint =>
-        where(constraint.fieldPath, constraint.opStr, constraint.value),
+      const constraints = options.queryConstraints.map((constraint) =>
+        where(constraint.fieldPath, constraint.opStr, constraint.value)
       );
-      collectionQuery = query(
-        collection(this.firestore, options.reference),
-        ...constraints,
-      );
+      collectionQuery = query(collection(this.firestore, options.reference), ...constraints);
     } else {
       collectionQuery = query(collection(this.firestore, options.reference));
     }
 
-    const unSubFunc = onSnapshot(collectionQuery, snapshot => {
+    const unSubFunc = onSnapshot(collectionQuery, (snapshot) => {
       callback({
-        collection: snapshot.docs.map(doc => {
+        collection: snapshot.docs.map((doc) => {
           return {
             id: doc.id,
             path: doc.ref.path,
@@ -244,22 +236,17 @@ export class CapacitorFirestoreWeb
     return Promise.resolve(id);
   }
 
-  public async getCollection<T>(
-    options: CollectionQuery,
-  ): Promise<CollectionSnapshot<T>> {
+  public async getCollection<T>(options: CollectionQuery): Promise<CollectionSnapshot<T>> {
     if (this.firestore === null) {
       return Promise.reject("Firestore not initialized");
     }
 
     let collectionQuery: Query;
     if (options.queryConstraints) {
-      const constraints = options.queryConstraints.map(constraint =>
-        where(constraint.fieldPath, constraint.opStr, constraint.value),
+      const constraints = options.queryConstraints.map((constraint) =>
+        where(constraint.fieldPath, constraint.opStr, constraint.value)
       );
-      collectionQuery = query(
-        collection(this.firestore, options.reference),
-        ...constraints,
-      );
+      collectionQuery = query(collection(this.firestore, options.reference), ...constraints);
     } else {
       collectionQuery = query(collection(this.firestore, options.reference));
     }
@@ -267,7 +254,7 @@ export class CapacitorFirestoreWeb
     const snapshot = await getDocs(collectionQuery);
 
     return {
-      collection: snapshot.docs.map(doc => {
+      collection: snapshot.docs.map((doc) => {
         return {
           id: doc.id,
           path: doc.ref.path,
@@ -277,9 +264,7 @@ export class CapacitorFirestoreWeb
     };
   }
 
-  public removeSnapshotListener(
-    options: RemoveSnapshotListener,
-  ): Promise<void> {
+  public removeSnapshotListener(options: RemoveSnapshotListener): Promise<void> {
     const unSubFunc = this.subscriptions[options.callbackId];
 
     if (unSubFunc === undefined) {
