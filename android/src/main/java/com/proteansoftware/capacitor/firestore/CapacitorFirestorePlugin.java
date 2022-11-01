@@ -29,6 +29,7 @@ public class CapacitorFirestorePlugin extends Plugin {
 
     private CapacitorFirestore implementation = new CapacitorFirestore();
     private Map<String, ListenerRegistration> listeners = new HashMap<>();
+    private ArrayList<String> resolvedListeners = new ArrayList<>();
     private int pendingActions = 0;
 
     @Override
@@ -91,6 +92,7 @@ public class CapacitorFirestorePlugin extends Plugin {
             listener.remove();
         }
 
+        resolvedListeners.addAll(listeners.keySet());
         listeners = new HashMap<>();
 
         call.resolve();
@@ -105,6 +107,11 @@ public class CapacitorFirestorePlugin extends Plugin {
             return;
         }
 
+        if (resolvedListeners.contains(callbackId)) {
+            call.resolve();
+            return;
+        }
+
         ListenerRegistration listener = listeners.get(callbackId);
 
         if (listener == null) {
@@ -114,6 +121,7 @@ public class CapacitorFirestorePlugin extends Plugin {
 
         listener.remove();
         listeners.remove(callbackId);
+        resolvedListeners.add(callbackId);
         call.resolve();
     }
 
