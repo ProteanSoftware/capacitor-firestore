@@ -359,7 +359,7 @@ enum CapacitorFirestoreError: Error {
             self.db?.settings = settings
         }
     }
-    
+
     private func configure() throws {
         if self.app != nil {
             self.app?.delete { complete in

@@ -10,6 +10,7 @@ import FirebaseFirestore
 public class CapacitorFirestorePlugin: CAPPlugin {
     private let implementation = CapacitorFirestore()
     private var listeners: [ String: ListenerRegistration ] = [:]
+    private var resolvedListenders: [String] = []
     private var pendingActions: Int = 0
 
     override public func load() {
@@ -74,14 +75,15 @@ public class CapacitorFirestorePlugin: CAPPlugin {
             call.reject("Unknown error", nil, error, [:])
         }
     }
-    
+
     @objc func clearAllSnapshotListeners(_ call: CAPPluginCall) {
         listeners.values.forEach { ListenerRegistration in
-            ListenerRegistration.remove();
+            ListenerRegistration.remove()
         }
-        
+
+        resolvedListenders.append(contentsOf: listeners.keys)
         listeners = [:]
-        
+
         call.resolve()
     }
 
@@ -93,6 +95,11 @@ public class CapacitorFirestorePlugin: CAPPlugin {
             return
         }
 
+        if resolvedListenders.contains(callbackId!) {
+            call.resolve()
+            return
+        }
+
         let listener = listeners[callbackId!]
 
         if listener == nil {
@@ -101,6 +108,7 @@ public class CapacitorFirestorePlugin: CAPPlugin {
         }
 
         listener?.remove()
+        resolvedListenders.append(callbackId!)
         call.resolve()
     }
 
