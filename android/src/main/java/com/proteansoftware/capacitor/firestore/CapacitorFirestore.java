@@ -260,6 +260,12 @@ public class CapacitorFirestore {
                     default:
                         throw new Exception("Unhandled specialType:" + specialType);
                 }
+            } else {
+                JSObject map = new JSObject();
+                for (Map.Entry<String, Object> i : jsObject.entrySet()) {
+                    map.put(i.getKey(), ConvertObjectWrite(i.getValue()));
+                }
+                value = map;
             }
         } else if (value instanceof ArrayList) {
             ArrayList list = (ArrayList) value;
@@ -267,13 +273,7 @@ public class CapacitorFirestore {
             JSArray array = new JSArray();
             for (Object item : list) {
                 if (item instanceof HashMap) {
-                    HashMap<String, Object> prop = (HashMap<String, Object>) item;
-
-                    JSObject map = new JSObject();
-                    for (Map.Entry<String, Object> i : prop.entrySet()) {
-                        map.put(i.getKey(), ConvertObjectWrite(i.getValue()));
-                    }
-                    array.put(map);
+                    array.put(ConvertObjectWrite(item));
                 } else {
                     array.put(item);
                 }
@@ -291,13 +291,7 @@ public class CapacitorFirestore {
             JSArray array = new JSArray();
             for (Object item : list) {
                 if (item instanceof HashMap) {
-                    HashMap<String, Object> prop = (HashMap<String, Object>) item;
-
-                    JSObject map = new JSObject();
-                    for (Map.Entry<String, Object> i : prop.entrySet()) {
-                        map.put(i.getKey(), ConvertObjectRead(i.getValue()));
-                    }
-                    array.put(map);
+                    array.put(ConvertObjectRead(item));
                 } else {
                     array.put(item);
                 }
