@@ -292,6 +292,25 @@ enum CapacitorFirestoreError: Error {
                 }
                 jsonArray.append(safeValue!)
             }
+            
+            return jsonArray
+        } else if let arrayValue = value as? NSArray {
+            var jsonArray = JSArray()
+            for arrayItem in arrayValue {
+                let safeValue = try self.SafeReadValue(key: key, value: arrayItem)
+                if (safeValue == nil) {
+                    continue
+                }
+                jsonArray.append(safeValue!)
+            }
+            return jsonArray
+        } else if let dictionaryValue = value as? NSDictionary {
+            let keys = dictionaryValue.allKeys.compactMap { $0 as? String }
+            var result: JSObject = [:]
+            for key in keys {
+                try result[key] = self.SafeReadValue(key: key, value: dictionaryValue[key])
+            }
+            return result
         } else {
             guard let value = value as Any? else {
                 throw CapacitorFirestoreError.runtimeError("should not be possible, already guard against null")
@@ -303,8 +322,6 @@ enum CapacitorFirestoreError: Error {
 
             return value[key]
         }
-        
-        return nil;
     }
 
     @objc public func enableNetwork(completion: @escaping (Error?) -> Void) {
