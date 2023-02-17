@@ -264,32 +264,47 @@ enum CapacitorFirestoreError: Error {
 
             try documentData.keys.forEach { key in
                 let value = documentData[key]
-                if value == nil {
-                    data[key] = nil
-                } else if let timestampValue = value as? FirebaseFirestore.Timestamp {
-                    var jsonObject = JSObject()
-                    jsonObject["seconds"] = Int(timestampValue.seconds)
-                    jsonObject["nanoseconds"] = Int(timestampValue.nanoseconds)
-                    jsonObject["specialType"] = "Timestamp"
-
-                    data[key] = jsonObject
-                } else {
-                    guard let value = value as Any? else {
-                        throw CapacitorFirestoreError.runtimeError("should not be possible, already guard against null")
-                    }
-
-                    guard let value = JSTypes.coerceDictionaryToJSObject([key: value]) as JSObject? else {
-                        throw CapacitorFirestoreError.runtimeError("could not deserailize value for: " + key)
-                    }
-
-                    data[key] = value[key]
-                }
+                try data[key] = self.SafeReadValue(key: key, value: value)
             }
 
             result["data"] = data
         }
 
         return result
+    }
+    
+    private func SafeReadValue(key: String, value: Any?) throws -> JSValue? {
+        if value == nil {
+            return nil
+        } else if let timestampValue = value as? FirebaseFirestore.Timestamp {
+            var jsonObject = JSObject()
+            jsonObject["seconds"] = Int(timestampValue.seconds)
+            jsonObject["nanoseconds"] = Int(timestampValue.nanoseconds)
+            jsonObject["specialType"] = "Timestamp"
+
+            return jsonObject
+        } else if let arrayValue = value as? [Any] {
+            var jsonArray = JSArray()
+            for arrayItem in arrayValue {
+                let safeValue = try self.SafeReadValue(key: key, value: arrayItem)
+                if (safeValue == nil) {
+                    continue
+                }
+                jsonArray.append(safeValue!)
+            }
+        } else {
+            guard let value = value as Any? else {
+                throw CapacitorFirestoreError.runtimeError("should not be possible, already guard against null")
+            }
+
+            guard let value = JSTypes.coerceDictionaryToJSObject([key: value]) as JSObject? else {
+                throw CapacitorFirestoreError.runtimeError("could not deserailize value for: " + key)
+            }
+
+            return value[key]
+        }
+        
+        return nil;
     }
 
     @objc public func enableNetwork(completion: @escaping (Error?) -> Void) {
