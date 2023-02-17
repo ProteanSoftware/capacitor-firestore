@@ -261,6 +261,24 @@ public class CapacitorFirestore {
                         throw new Exception("Unhandled specialType:" + specialType);
                 }
             }
+        } else if (value instanceof ArrayList) {
+            ArrayList list = (ArrayList) value;
+
+            JSArray array = new JSArray();
+            for (Object item : list) {
+                if (item instanceof HashMap) {
+                    HashMap<String, Object> prop = (HashMap<String, Object>) item;
+
+                    JSObject map = new JSObject();
+                    for (Map.Entry<String, Object> i : prop.entrySet()) {
+                        map.put(i.getKey(), ConvertObjectWrite(i.getValue()));
+                    }
+                    array.put(map);
+                } else {
+                    array.put(item);
+                }
+            }
+            value = array;
         }
 
         return value;

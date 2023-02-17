@@ -68,6 +68,10 @@ export function prepDataForFirestore<T>(data: T): T {
         seconds: timestamp.seconds,
         nanoseconds: timestamp.nanoseconds,
       } as any;
+    } else if (data[prop] instanceof Array) {
+      (data[prop] as Array<object>).forEach(element => {
+        element = prepDataForFirestore(element);
+      });
     }
 
     if (data[prop] === undefined) {
@@ -90,6 +94,10 @@ export function processDocumentData(data: any): void {
           default:
             throw new Error("Unknown specialType: " + element.specialType);
         }
+      } else if (element instanceof Array) {
+        (element as Array<object>).forEach(item => {
+          processDocumentData(item);
+        })
       }
     }
   }
