@@ -272,7 +272,7 @@ enum CapacitorFirestoreError: Error {
 
         return result
     }
-    
+
     private func SafeReadValue(key: String, value: Any?) throws -> JSValue? {
         if value == nil {
             return nil
@@ -287,18 +287,18 @@ enum CapacitorFirestoreError: Error {
             var jsonArray = JSArray()
             for arrayItem in arrayValue {
                 let safeValue = try self.SafeReadValue(key: key, value: arrayItem)
-                if (safeValue == nil) {
+                if safeValue == nil {
                     continue
                 }
                 jsonArray.append(safeValue!)
             }
-            
+
             return jsonArray
         } else if let arrayValue = value as? NSArray {
             var jsonArray = JSArray()
             for arrayItem in arrayValue {
                 let safeValue = try self.SafeReadValue(key: key, value: arrayItem)
-                if (safeValue == nil) {
+                if safeValue == nil {
                     continue
                 }
                 jsonArray.append(safeValue!)
@@ -342,11 +342,11 @@ enum CapacitorFirestoreError: Error {
 
         return returnData
     }
-    
+
     private func SafeDataSend(value: JSValue?) throws -> Any? {
         // magic bool fix
         if self.isBoolNumber(num: value) {
-           return value as! Bool
+            return value as! Bool
         }
         // magic int fix
         else if let numberValue = value as? Int {
@@ -355,14 +355,14 @@ enum CapacitorFirestoreError: Error {
             var dataArray: [Any] = []
             for arrayItem in arrayValue {
                 let safeArrayItem = try self.SafeDataSend(value: arrayItem)
-                
+
                 if safeArrayItem == nil {
                     continue
                 }
-                
+
                 dataArray.append(safeArrayItem!)
             }
-            
+
             return dataArray
         } else if let timestampValue = value as? JSObject {
             if timestampValue.keys.contains("specialType") {
@@ -378,7 +378,7 @@ enum CapacitorFirestoreError: Error {
                     throw CapacitorFirestoreError.runtimeError("Unhandled specialType: " + specialType)
                 }
             } else {
-                var safeObject: [String:Any] = [:]
+                var safeObject: [String: Any] = [:]
                 for itemKey in timestampValue.keys {
                     safeObject[itemKey] = try self.SafeDataSend(value: timestampValue[itemKey])
                 }
