@@ -337,36 +337,56 @@ enum CapacitorFirestoreError: Error {
         let data = inputData
         try data.keys.forEach { key in
             let value = data[key]
-
-            // magic bool fix
-            if self.isBoolNumber(num: value) {
-                returnData[key] = value as! Bool
-            }
-            // magic int fix
-            else if let numberValue = value as? Int {
-                returnData[key] = numberValue
-            } else if let timestampValue = value as? JSObject {
-                if timestampValue.keys.contains("specialType") {
-                    let specialType = timestampValue["specialType"] as! String
-
-                    switch specialType {
-                    case "Timestamp":
-                        let timestamp = FirebaseFirestore.Timestamp(seconds: Int64(timestampValue["seconds"] as! Int), nanoseconds: Int32(timestampValue["nanoseconds"] as! Int))
-                        returnData[key] = timestamp
-
-                        break
-                    default:
-                        throw CapacitorFirestoreError.runtimeError("Unhandled specialType: " + specialType)
-                    }
-                } else {
-                    returnData[key] = value
-                }
-            } else {
-                returnData[key] = value
-            }
+            try returnData[key] = self.SafeDataSend(value: value)
         }
 
         return returnData
+    }
+    
+    private func SafeDataSend(value: JSValue?) throws -> Any? {
+        // magic bool fix
+        if self.isBoolNumber(num: value) {
+           return value as! Bool
+        }
+        // magic int fix
+        else if let numberValue = value as? Int {
+            return numberValue
+        } else if let arrayValue = value as? JSArray {
+            var dataArray: [Any] = []
+            for arrayItem in arrayValue {
+                let safeArrayItem = try self.SafeDataSend(value: arrayItem)
+                
+                if safeArrayItem == nil {
+                    continue
+                }
+                
+                dataArray.append(safeArrayItem!)
+            }
+            
+            return dataArray
+        } else if let timestampValue = value as? JSObject {
+            if timestampValue.keys.contains("specialType") {
+                let specialType = timestampValue["specialType"] as! String
+
+                switch specialType {
+                case "Timestamp":
+                    let timestamp = FirebaseFirestore.Timestamp(seconds: Int64(timestampValue["seconds"] as! Int), nanoseconds: Int32(timestampValue["nanoseconds"] as! Int))
+                    return timestamp
+
+                    break
+                default:
+                    throw CapacitorFirestoreError.runtimeError("Unhandled specialType: " + specialType)
+                }
+            } else {
+                var safeObject: [String:Any] = [:]
+                for itemKey in timestampValue.keys {
+                    safeObject[itemKey] = try self.SafeDataSend(value: timestampValue[itemKey])
+                }
+                return safeObject
+            }
+        } else {
+            return value
+        }
     }
 
     @objc private func InitializeFirestore() throws {
