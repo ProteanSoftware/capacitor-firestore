@@ -270,12 +270,12 @@ public class CapacitorFirestore {
         } else if (value instanceof ArrayList) {
             ArrayList list = (ArrayList) value;
 
-            JSArray array = new JSArray();
+            ArrayList array = new ArrayList();
             for (Object item : list) {
                 if (item instanceof HashMap) {
-                    array.put(ConvertObjectWrite(item));
+                    array.add(ConvertObjectWrite(item));
                 } else {
-                    array.put(item);
+                    array.add(item);
                 }
             }
             value = array;
