@@ -261,7 +261,7 @@ public class CapacitorFirestore {
                         throw new Exception("Unhandled specialType:" + specialType);
                 }
             } else {
-                JSObject map = new JSObject();
+                HashMap<String, Object> map = new HashMap<String, Object>();
                 for (Map.Entry<String, Object> i : jsObject.entrySet()) {
                     map.put(i.getKey(), ConvertObjectWrite(i.getValue()));
                 }
