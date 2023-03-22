@@ -231,7 +231,11 @@ enum CapacitorFirestoreError: Error {
                 }
                 break
             case let numberValue as NSNumber:
-                value = Int(truncating: numberValue)
+                if self.isBoolNumber(num: numberValue) {
+                    value = numberValue as! Bool
+                } else {
+                    value = Int(truncating: numberValue)
+                }
                 break
             case let stringValue as NSString:
                 value = String(stringValue)
