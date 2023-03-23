@@ -14,9 +14,10 @@ public class CapacitorFirestorePlugin: CAPPlugin {
     private var pendingActions: Int = 0
 
     override public func load() {
-        let projectId = getConfigValue("projectId") as? String
-        let applicationId = getConfigValue("applicationId") as? String
-        let apiKey = getConfigValue("apiKey") as? String
+        let config = getConfig()
+        let projectId = config.getString("projectId")
+        let applicationId = config.getString("applicationId")
+        let apiKey = config.getString("apiKey")
 
         if projectId != nil && applicationId != nil && apiKey != nil {
             do {
@@ -43,7 +44,8 @@ public class CapacitorFirestorePlugin: CAPPlugin {
         } catch CapacitorFirestoreError.runtimeError(let message) {
             call.reject(message)
         } catch {
-            call.reject("Unknown error", nil, error, [:])
+            let nsError = error as NSError
+            call.reject("Unknown error - " + nsError.localizedDescription, nil, error, [:])
         }
     }
 
@@ -53,7 +55,8 @@ public class CapacitorFirestorePlugin: CAPPlugin {
         } catch CapacitorFirestoreError.runtimeError(let message) {
             call.reject(message)
         } catch {
-            call.reject("Unknown error", nil, error, [:])
+            let nsError = error as NSError
+            call.reject("Unknown error - " + nsError.localizedDescription, nil, error, [:])
         }
 
         call.resolve()
@@ -66,13 +69,15 @@ public class CapacitorFirestorePlugin: CAPPlugin {
                 if error == nil && user != nil {
                     call.resolve()
                 } else {
-                    call.reject("Sign-in failed", nil, error, [:])
+                    let nsError = error as! NSError
+                    call.reject("Sign-in failed - " + nsError.localizedDescription, nil, error, [:])
                 }
             }
         } catch CapacitorFirestoreError.runtimeError(let message) {
             call.reject(message)
         } catch {
-            call.reject("Unknown error", nil, error, [:])
+            let nsError = error as NSError
+            call.reject("Unknown error - " + nsError.localizedDescription, nil, error, [:])
         }
     }
 
@@ -125,7 +130,8 @@ public class CapacitorFirestorePlugin: CAPPlugin {
         do {
             let listener = try implementation.addDocumentSnapshotListener(documentReference: documentReference) { value, error in
                 if error != nil {
-                    call.reject("Document snapshot error", nil, error, [:])
+                    let nsError = error as! NSError
+                    call.reject("Document snapshot error - " + nsError.localizedDescription, nil, error, [:])
                 } else {
                     do {
                         let result = try self.implementation.ConvertSnapshotToJSObject(documentSnapshot: value)
@@ -133,7 +139,8 @@ public class CapacitorFirestorePlugin: CAPPlugin {
                     } catch CapacitorFirestoreError.runtimeError(let message) {
                         call.reject(message)
                     } catch {
-                        call.reject("Unknown error", nil, error, [:])
+                        let nsError = error as NSError
+                        call.reject("Unknown error - " + nsError.localizedDescription, nil, error, [:])
                     }
                 }
             }
@@ -142,7 +149,8 @@ public class CapacitorFirestorePlugin: CAPPlugin {
         } catch CapacitorFirestoreError.runtimeError(let message) {
             call.reject(message)
         } catch {
-            call.reject("Unknown error", nil, error, [:])
+            let nsError = error as NSError
+            call.reject("Unknown error - " + nsError.localizedDescription, nil, error, [:])
         }
 
     }
@@ -153,7 +161,8 @@ public class CapacitorFirestorePlugin: CAPPlugin {
         do {
             try implementation.getDocument(documentReference: documentReference) { value, error in
                 if error != nil {
-                    call.reject("Document snapshot error", nil, error, [:])
+                    let nsError = error as! NSError
+                    call.reject("Document snapshot error - " + nsError.localizedDescription, nil, error, [:])
                 } else {
                     do {
                         let result = try self.implementation.ConvertSnapshotToJSObject(documentSnapshot: value)
@@ -161,14 +170,16 @@ public class CapacitorFirestorePlugin: CAPPlugin {
                     } catch CapacitorFirestoreError.runtimeError(let message) {
                         call.reject(message)
                     } catch {
-                        call.reject("Unknown error", nil, error, [:])
+                        let nsError = error as NSError
+                        call.reject("Unknown error - " + nsError.localizedDescription, nil, error, [:])
                     }
                 }
             }
         } catch CapacitorFirestoreError.runtimeError(let message) {
             call.reject(message)
         } catch {
-            call.reject("Unknown error", nil, error, [:])
+            let nsError = error as NSError
+            call.reject("Unknown error - " + nsError.localizedDescription, nil, error, [:])
         }
     }
 
@@ -181,14 +192,16 @@ public class CapacitorFirestorePlugin: CAPPlugin {
             try implementation.updateDocument(documentReference: documentReference, data: data) { error in
                 self.pendingActions -= 1
                 if error != nil {
-                    call.reject("Document update error", nil, error, [:])
+                    let nsError = error as! NSError
+                    call.reject("Document update error - " + nsError.localizedDescription, nil, error, [:])
                 }
             }
             call.resolve()
         } catch CapacitorFirestoreError.runtimeError(let message) {
             call.reject(message)
         } catch {
-            call.reject("Unknown error", nil, error, [:])
+            let nsError = error as NSError
+            call.reject("Unknown error - " + nsError.localizedDescription, nil, error, [:])
         }
     }
 
@@ -202,14 +215,16 @@ public class CapacitorFirestorePlugin: CAPPlugin {
             try implementation.setDocument(documentReference: documentReference, data: data, merge: merge) { error in
                 self.pendingActions -= 1
                 if error != nil {
-                    call.reject("Document set error", nil, error, [:])
+                    let nsError = error as! NSError
+                    call.reject("Document set error - " + nsError.localizedDescription, nil, error, [:])
                 }
             }
             call.resolve()
         } catch CapacitorFirestoreError.runtimeError(let message) {
             call.reject(message)
         } catch {
-            call.reject("Unknown error", nil, error, [:])
+            let nsError = error as NSError
+            call.reject("Unknown error - " + nsError.localizedDescription, nil, error, [:])
         }
     }
 
@@ -221,14 +236,16 @@ public class CapacitorFirestorePlugin: CAPPlugin {
             try implementation.deleteDocument(documentReference: documentReference) { error in
                 self.pendingActions -= 1
                 if error != nil {
-                    call.reject("Document set error", nil, error, [:])
+                    let nsError = error as! NSError
+                    call.reject("Document set error - " + nsError.localizedDescription, nil, error, [:])
                 }
             }
             call.resolve()
         } catch CapacitorFirestoreError.runtimeError(let message) {
             call.reject(message)
         } catch {
-            call.reject("Unknown error", nil, error, [:])
+            let nsError = error as NSError
+            call.reject("Unknown error - " + nsError.localizedDescription, nil, error, [:])
         }
     }
 
@@ -242,7 +259,8 @@ public class CapacitorFirestorePlugin: CAPPlugin {
             documentReference = try implementation.addDocument(collectionReference: collectionReference, data: data) { error in
                 self.pendingActions -= 1
                 if error != nil {
-                    call.reject("Document update error", nil, error, [:])
+                    let nsError = error as! NSError
+                    call.reject("Document update error - " + nsError.localizedDescription, nil, error, [:])
                     return
                 }
             }
@@ -253,7 +271,8 @@ public class CapacitorFirestorePlugin: CAPPlugin {
         } catch CapacitorFirestoreError.runtimeError(let message) {
             call.reject(message)
         } catch {
-            call.reject("Unknown error", nil, error, [:])
+            let nsError = error as NSError
+            call.reject("Unknown error - " + nsError.localizedDescription, nil, error, [:])
         }
     }
 
@@ -288,7 +307,8 @@ public class CapacitorFirestorePlugin: CAPPlugin {
                         call.reject(message)
                         return
                     } catch {
-                        call.reject("Unknown error", nil, error, [:])
+                        let nsError = error as NSError
+                        call.reject("Unknown error - " + nsError.localizedDescription, nil, error, [:])
                         return
                     }
 
@@ -302,7 +322,8 @@ public class CapacitorFirestorePlugin: CAPPlugin {
         } catch CapacitorFirestoreError.runtimeError(let message) {
             call.reject(message)
         } catch {
-            call.reject("Unknown error", nil, error, [:])
+            let nsError = error as NSError
+            call.reject("Unknown error - " + nsError.localizedDescription, nil, error, [:])
         }
     }
 
@@ -315,7 +336,8 @@ public class CapacitorFirestorePlugin: CAPPlugin {
 
             try implementation.getCollection(collectionReference: collectionReference, queryConstaints: queryConstaints) { value, error in
                 if error != nil {
-                    call.reject("Collection snapshot error", nil, error, [:])
+                    let nsError = error as! NSError
+                    call.reject("Collection snapshot error - " + nsError.localizedDescription, nil, error, [:])
                 } else {
                     let docs = value!.documents
                     var data: [JSObject] = []
@@ -328,7 +350,8 @@ public class CapacitorFirestorePlugin: CAPPlugin {
                             call.reject(message)
                             return
                         } catch {
-                            call.reject("Unknown error", nil, error, [:])
+                            let nsError = error as NSError
+                            call.reject("Unknown error - " + nsError.localizedDescription, nil, error, [:])
                             return
                         }
                     }
@@ -341,7 +364,8 @@ public class CapacitorFirestorePlugin: CAPPlugin {
         } catch CapacitorFirestoreError.runtimeError(let message) {
             call.reject(message)
         } catch {
-            call.reject("Unknown error", nil, error, [:])
+            let nsError = error as NSError
+            call.reject("Unknown error - " + nsError.localizedDescription, nil, error, [:])
         }
     }
 

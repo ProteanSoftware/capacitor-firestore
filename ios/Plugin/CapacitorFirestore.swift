@@ -440,8 +440,8 @@ enum CapacitorFirestoreError: Error {
     // https://stackoverflow.com/a/30223989
     private func isBoolNumber(num: JSValue?) -> Bool {
         if let nsNumberValue = num as? NSNumber {
-            let boolId = CFBooleanGetTypeID(); // the type ID of CFBoolean
-            let numId = CFGetTypeID(nsNumberValue); // the type ID of num
+            let boolId = CFBooleanGetTypeID() // the type ID of CFBoolean
+            let numId = CFGetTypeID(nsNumberValue) // the type ID of num
             return numId == boolId
         }
 
