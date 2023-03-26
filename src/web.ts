@@ -1,5 +1,5 @@
 import { WebPlugin } from "@capacitor/core";
-import { initializeApp, deleteApp } from "firebase/app";
+import { initializeApp, deleteApp, getApps } from "firebase/app";
 import type { FirebaseApp } from "firebase/app";
 import { getAuth, signInWithCustomToken, signOut } from "firebase/auth";
 import type { Firestore, Query, Unsubscribe } from "firebase/firestore";
@@ -55,11 +55,18 @@ export class CapacitorFirestoreWeb extends WebPlugin implements CapacitorFiresto
   }
 
   public async initializeFirestore(options: FirestoreConfig): Promise<void> {
+    if (this.firestore !== null) {
+      await terminate(this.firestore);
+    }
+
     if (this.app !== null) {
       await deleteApp(this.app);
     }
-    if (this.firestore !== null) {
-      await terminate(this.firestore);
+
+    const apps = getApps();
+    const app = apps.find((app) => app.name === "CapacitorFirestore");
+    if (app !== undefined) {
+      await deleteApp(app);
     }
 
     this.app = initializeApp(
