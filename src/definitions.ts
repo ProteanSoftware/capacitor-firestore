@@ -72,6 +72,8 @@ export function prepDataForFirestore<T>(data: T): T {
       (data[prop] as unknown as any[]).forEach((element) => {
         element = prepDataForFirestore(element);
       });
+    } else if (data[prop] instanceof Object) {
+      data[prop] = prepDataForFirestore(data[prop]);
     }
 
     if (data[prop] === undefined) {
