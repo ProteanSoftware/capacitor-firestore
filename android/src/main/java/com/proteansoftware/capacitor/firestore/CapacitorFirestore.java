@@ -59,10 +59,12 @@ public class CapacitorFirestore {
             app.delete();
         }
 
-        if (FirebaseApp.getApps(context).isEmpty()) {
+        var apps = FirebaseApp.getApps(context);
+
+        if (apps.isEmpty()) {
             this.app = FirebaseApp.initializeApp(context, options, "CapacitorFirestore");
         } else {
-            this.app = FirebaseApp.initializeApp(context, options);
+            this.app = apps.get(0);
         }
 
         this.InitializeFirestore();
