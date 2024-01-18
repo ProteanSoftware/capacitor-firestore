@@ -89,7 +89,9 @@ public class CapacitorFirestorePlugin extends Plugin {
     @PluginMethod
     public void clearAllSnapshotListeners(PluginCall call) {
         for (ListenerRegistration listener : listeners.values()) {
-            listener.remove();
+            if (listener != null) {
+                listener.remove();
+            }
         }
 
         resolvedListeners.addAll(listeners.keySet());
